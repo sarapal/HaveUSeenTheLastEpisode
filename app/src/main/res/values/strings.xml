@@ -2,4 +2,5 @@
     <string name="app_name">Have U Seen The Last Episode?</string>
 
     <string name="action_settings">Settings</string>
+    <string name="title_activity_facebook">FacebookActivity</string>
 </resources>
