@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">HaveUSeenTheLastEpisode</string>
+    <string name="app_name">Have U Seen The Last Episode?</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 </resources>
