@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
         <color name="primary">#3F51B5</color>
-        <color name="primary_dark">#1A237E</color>
-        <color name="accent">#D32F2F</color>
-        <color name="accent2">#E53935</color>
+        <color name="primary_dark">#303F9F</color>
+
+        <color name="accent">#EF5350</color>
+
         <color name="background">#212121</color>
         <color name="text_primary">#FFFFFF</color>
+
+        <color name="pressed">#C5CAE9</color>
+        <color name="checked">#03A9F4</color>
 </resources>

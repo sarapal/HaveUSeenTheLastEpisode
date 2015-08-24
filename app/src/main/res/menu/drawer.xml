@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_item_attachment"
+            android:icon="@drawable/ic_login"
+            android:title="@string/nav_item_login" />
+        <item
+            android:id="@+id/navigation_item_images"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/nav_item_settings" />
+        <item
+            android:id="@+id/navigation_item_location"
+            android:icon="@drawable/ic_share"
+            android:title="@string/nav_item_share" />
+
+        <item
+            android:icon="@drawable/ic_show"
+            android:title="@string/nav_item_tvshow"
+            android:checked="true" />
+    </group>
+
+</menu>
