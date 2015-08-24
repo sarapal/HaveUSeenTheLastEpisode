@@ -8,6 +8,6 @@
         <color name="background">#212121</color>
         <color name="text_primary">#FFFFFF</color>
 
-        <color name="pressed">#C5CAE9</color>
-        <color name="checked">#03A9F4</color>
+        <color name="pressed">#26c6da</color>
+        <color name="checked">#0097A7</color>
 </resources>
