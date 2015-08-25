@@ -51,10 +51,13 @@ public class FacebookActivity extends AppCompatActivity {
                 // App code
                 Log.d(logtag, "onSuccess Facebook");
                        /* make the API call */
+                Bundle bundle = new Bundle();
+
+                bundle.putString("fields", "id, name, picture");
                 new GraphRequest(
                         AccessToken.getCurrentAccessToken(),
                         "/me/friends",
-                        null,
+                        bundle,
                         HttpMethod.GET,
                         new GraphRequest.Callback() {
                             public void onCompleted(GraphResponse response) {
