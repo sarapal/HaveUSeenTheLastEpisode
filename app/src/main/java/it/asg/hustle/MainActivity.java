@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
-    private Button facebookButton;
     private Toolbar toolbar;
     private DrawerLayout myDrawerLayout;    //imposta NavigationDrawer
     private FloatingActionButton fab;
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 menuItem.setChecked(true);
                 myDrawerLayout.closeDrawers();
-                Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                // Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
                 if(menuItem.getTitle().equals(getResources().getString(R.string.nav_item_login))==true){
                     // accesso facebook
                     Intent intentactivityfacebook = new Intent(MainActivity.this, FacebookActivity.class);
