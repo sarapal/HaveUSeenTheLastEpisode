@@ -3,35 +3,64 @@ package it.asg.hustle;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 public class FacebookActivity extends AppCompatActivity {
-
-    Button loginButton;
+    String logtag = "ActivityFacebook";
+    LoginButton loginButton;
+    CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_facebook);
-/*
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        // Initialize the SDK before executing any other operations,
-        // especially, if you're using Facebook UI elements.
-        loginButton = (Button) findViewById(R.id.login_button);
-        final Intent intent = new Intent(this, com.facebook.FacebookActivity.class);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+
+        callbackManager = new CallbackManager.Factory().create();
+
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setReadPermissions("user_friends");
+
+        // Other app specific specialization
+
+        // Callback registration
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onClick(View v) {
-                startActivity(intent);
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+                Log.d(logtag, "onSuccess Facebook");
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.d(logtag, "onCancel Facebook");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+                Log.d(logtag, "onError Facebook");
             }
         });
-*/
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
