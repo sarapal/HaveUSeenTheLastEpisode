@@ -5,7 +5,6 @@
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -34,29 +33,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tablayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:layout_gravity="bottom"
-            app:layout_scrollFlags="enterAlways"
-            app:tabGravity="fill"/>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-    </LinearLayout>
-    <!--
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -67,9 +43,22 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingTop="24dp">
+        <!-- qui le info sull'episodio -->
 
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-    -->
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:src="@drawable/ic_plus" />
+
+
 </android.support.design.widget.CoordinatorLayout>

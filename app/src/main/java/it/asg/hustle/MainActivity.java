@@ -78,9 +78,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Crea un TvShowAdapter
         TvShowAdapter adapter = new TvShowAdapter(getSupportFragmentManager());
+        // Prende il ViewPager e imposta come adapter il TvShowAdapter: in base alla tab
+        // selezionata, mostra il fragment relativo
         ViewPager viewPager = (ViewPager)findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
+        // Prende il TabLayout e imposta il ViewPager
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -135,12 +139,12 @@ public class MainActivity extends AppCompatActivity {
             /*Log.d("asg","tabPosition "+tabPosition); */
             ArrayList<String> items = new ArrayList<String>();
             for(int i=0 ; i < 50 ; i++){
-                items.add("Element "+i);
+                items.add("TV-Show "+i);
             }
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
             RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setAdapter(new RecyclerAdapter(items));
+            recyclerView.setAdapter(new ShowRecyclerAdapter(items));
 
             /*switch (tabPosition){
                 case 0:
@@ -156,8 +160,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //sottoclasse per l'adapter per i fragment (delle varie tab)
-    static class TvShowAdapter extends FragmentStatePagerAdapter {
+    //sottoclasse per l'adapter per i fragment e i titoli (delle varie tab)
+    class TvShowAdapter extends FragmentStatePagerAdapter {
+        private int number_of_tabs=3;
 
         public TvShowAdapter(FragmentManager fm) {
             super(fm);
@@ -170,18 +175,21 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return number_of_tabs;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position){
                 case 0:
-                    return "My Tv-Shows";
+                    return getResources().getString(R.string.tab_myshow);
+                    // break;
                 case 1:
-                    return "Friends";
+                    return getResources().getString(R.string.tab_friends);
+                    // break;
                 case 2:
-                    return "Most viewed";
+                    return getResources().getString(R.string.tab_mostviewed);
+                    // break;
             }
             return "";
         }

@@ -14,11 +14,11 @@ import java.util.List;
  * Created by sara on 8/25/15.
  */
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class ShowRecyclerAdapter extends RecyclerView.Adapter<ShowRecyclerAdapter.ViewHolder> {
 
     private List<String> mItems;
 
-    RecyclerAdapter(List<String> items) {
+    ShowRecyclerAdapter(List<String> items) {
         mItems = items;
     }
 

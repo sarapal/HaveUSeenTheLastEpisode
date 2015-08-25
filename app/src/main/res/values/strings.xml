@@ -13,5 +13,13 @@
     <string name="nav_item_tvshow">Tv Shows</string>
     <string name="title_activity_show">ShowActivity</string>
 
-    <string name="second_activity_text">Second Activity TEST</string>
+    <string name="tab_myshow">My Tv-Show</string>
+    <string name="tab_friends">Friends\' Tv-Show</string>
+    <string name="tab_mostviewed">Most Viewed</string>
+
+    <string name="title_activity_episode">Episode Activity</string>
+
+    <string name="tab_show_info">Info</string>
+    <string name="tab_season">Season</string>
+
 </resources>

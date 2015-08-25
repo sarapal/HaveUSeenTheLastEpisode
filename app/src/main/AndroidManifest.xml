@@ -42,6 +42,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.asg.hustle.MainActivity" />
         </activity>
+        <activity
+            android:name=".EpisodeActivity"
+            android:label="@string/title_activity_episode" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.asg.hustle.ShowActivity" />
+        </activity>
     </application>
 
 </manifest>
