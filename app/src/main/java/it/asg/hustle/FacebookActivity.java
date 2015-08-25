@@ -24,6 +24,9 @@ import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+
+import org.json.JSONObject;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -51,8 +54,8 @@ public class FacebookActivity extends AppCompatActivity {
                 // App code
                 Log.d(logtag, "onSuccess Facebook");
                        /* make the API call */
+                /*
                 Bundle bundle = new Bundle();
-
                 bundle.putString("fields", "id, name, picture");
                 new GraphRequest(
                         AccessToken.getCurrentAccessToken(),
@@ -61,22 +64,22 @@ public class FacebookActivity extends AppCompatActivity {
                         HttpMethod.GET,
                         new GraphRequest.Callback() {
                             public void onCompleted(GraphResponse response) {
-                                 /* handle the result */
+
 
                                 Log.d(logtag,response.toString());
 
                             }
                         }
                 ).executeAsync();
+                */
 
+                new RequestFriendsList().execute();
             }
-
             @Override
             public void onCancel() {
                 // App code
                 Log.d(logtag, "onCancel Facebook");
             }
-
             @Override
             public void onError(FacebookException exception) {
                 // App code
@@ -100,6 +103,8 @@ public class FacebookActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_facebook, menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
