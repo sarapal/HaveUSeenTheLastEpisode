@@ -14,6 +14,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,6 +27,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -124,25 +128,31 @@ public class MainActivity extends AppCompatActivity {
             return fragment;
         }
 
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             Bundle args = getArguments();
             int tabPosition = args.getInt(TAB_POSITION);
-            TextView tab = new TextView(getActivity());
-            tab.setGravity(Gravity.CENTER);
-            switch (tabPosition){
+            /*Log.d("asg","tabPosition "+tabPosition); */
+            ArrayList<String> items = new ArrayList<String>();
+            for(int i=0 ; i < 50 ; i++){
+                items.add("Element "+i);
+            }
+            View v = inflater.inflate(R.layout.fragment_list_view, container, false);
+            RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerView.setAdapter(new RecyclerAdapter(items));
+
+            /*switch (tabPosition){
                 case 0:
-                    tab.setText("My Tv-Shows");
+
                     break;
                 case 1:
-                    tab.setText("My friends' Tv-Shows");
                     break;
                 case 2:
-                    tab.setText("Most viewed Tv-Shows");
+
                     break;
-            }
-            return tab;
+            }*/
+            return v;
         }
     }
 
