@@ -17,8 +17,9 @@ public class FacebookActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_facebook);
-
+/*
         FacebookSdk.sdkInitialize(getApplicationContext());
         // Initialize the SDK before executing any other operations,
         // especially, if you're using Facebook UI elements.
@@ -30,7 +31,7 @@ public class FacebookActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+*/
     }
 
     @Override
