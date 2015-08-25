@@ -57,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
                 menuItem.setChecked(true);
                 myDrawerLayout.closeDrawers();
                 Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                if(menuItem.getTitle().equals(getResources().getString(R.string.nav_item_login))==true){
+                    // accesso facebook
+                    Intent intentactivityfacebook = new Intent(MainActivity.this, FacebookActivity.class);
+                    startActivity(intentactivityfacebook);
+
+                }
                 return true;
             }
         });
@@ -66,16 +72,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("asg", "FAB was pressed");
-            }
-        });
-
-        /*apertura activity facebook*/
-        final Intent intentactivityfacebook = new Intent(this, FacebookActivity.class);
-        facebookButton = (Button) findViewById(R.id.activitybuttonFacebook);
-        facebookButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(intentactivityfacebook);
             }
         });
 
@@ -136,7 +132,17 @@ public class MainActivity extends AppCompatActivity {
             int tabPosition = args.getInt(TAB_POSITION);
             TextView tab = new TextView(getActivity());
             tab.setGravity(Gravity.CENTER);
-            tab.setText("My Series " + tabPosition);
+            switch (tabPosition){
+                case 0:
+                    tab.setText("My Tv-Shows");
+                    break;
+                case 1:
+                    tab.setText("My friends' Tv-Shows");
+                    break;
+                case 2:
+                    tab.setText("Most viewed Tv-Shows");
+                    break;
+            }
             return tab;
         }
     }
@@ -160,7 +166,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "Tab " + position;
+            switch (position){
+                case 0:
+                    return "My Tv-Shows";
+                case 1:
+                    return "Friends";
+                case 2:
+                    return "Most viewed";
+            }
+            return "";
         }
     }
 
