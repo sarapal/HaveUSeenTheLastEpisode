@@ -11,9 +11,7 @@ import com.facebook.HttpMethod;
 
 import org.json.JSONObject;
 
-/**
- * Created by andrea on 25/08/15.
- */
+
 public class RequestFriendsList extends AsyncTask<Void,Void,JSONObject> {
     String logtag = "Activity Facebook";
     @Override
@@ -31,14 +29,19 @@ public class RequestFriendsList extends AsyncTask<Void,Void,JSONObject> {
                     }
                 }
         ).executeAndWait();
-        Log.d(logtag, response.toString());
         return response.getJSONObject();
     }
 
     @Override
     protected void onPostExecute(JSONObject jsonObject) {
         super.onPostExecute(jsonObject);
-        Log.d(logtag, jsonObject.toString());
+        try {
+            Log.d(logtag, jsonObject.toString());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 }
 

@@ -28,6 +28,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+
 import java.util.ArrayList;
 
 
@@ -40,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+
+
         setContentView(R.layout.activity_main);
 
         // imposto ActionBar sulla Toolbar
@@ -195,4 +201,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new RequestFriendsList().execute();
+    }
 }
