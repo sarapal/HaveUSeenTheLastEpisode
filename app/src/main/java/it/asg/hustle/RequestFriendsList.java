@@ -11,9 +11,7 @@ import com.facebook.HttpMethod;
 
 import org.json.JSONObject;
 
-/**
- * Created by andrea on 25/08/15.
- */
+
 public class RequestFriendsList extends AsyncTask<Void,Void,JSONObject> {
     String logtag = "Activity Facebook";
     @Override
