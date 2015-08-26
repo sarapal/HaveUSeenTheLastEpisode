@@ -1,17 +1,14 @@
 package it.asg.hustle;
 
+import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
+import android.text.Html;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -20,74 +17,124 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.login.widget.ProfilePictureView;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 
-
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class FacebookActivity extends AppCompatActivity {
-    private String LOG_TAG = "ActivityFacebook";
-    LoginButton loginButton;
     CallbackManager callbackManager;
+    Button share,details;
+    ShareDialog shareDialog;
+    LoginButton login;
+    ProfilePictureView profile;
+    Dialog details_dialog;
+    TextView details_txt;
+    static String id = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_facebook);
 
-        //facebook login button
-        callbackManager = new CallbackManager.Factory().create();
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("user_friends");
-        // Other app specific specialization
-        // Callback registration
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        callbackManager = CallbackManager.Factory.create();
+        login = (LoginButton)findViewById(R.id.login_button);
+        profile = (ProfilePictureView)findViewById(R.id.picture);
+        shareDialog = new ShareDialog(this);
+        share = (Button)findViewById(R.id.share);
+        //details = (Button)findViewById(R.id.details);
+        //login.setReadPermissions("public_profile email");
+        share.setVisibility(View.INVISIBLE);
+        //details.setVisibility(View.INVISIBLE);
+        //details_dialog = new Dialog(this);
+        //details_dialog.setContentView(R.layout.dialog_details);
+        //details_dialog.setTitle("Details");
+        //details_txt = (TextView)details_dialog.findViewById(R.id.details);
+        /*details.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                Log.d(LOG_TAG, "onSuccess Facebook");
-                       /* make the API call */
-                /*
-                Bundle bundle = new Bundle();
-                bundle.putString("fields", "id, name, picture");
-                new GraphRequest(
-                        AccessToken.getCurrentAccessToken(),
-                        "/me/friends",
-                        bundle,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
-
-
-                                Log.d(logtag,response.toString());
-
-                            }
-                        }
-                ).executeAsync();
-                */
-
-                new RequestFriendsList().execute();
+            public void onClick(View view) {
+                details_dialog.show();
             }
+        });*/
+
+
+        if(AccessToken.getCurrentAccessToken() != null){
+            RequestData();
+            share.setVisibility(View.VISIBLE);
+            //details.setVisibility(View.VISIBLE);
+        }
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCancel() {
-                // App code
-                Log.d(LOG_TAG, "onCancel Facebook");
-            }
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-                Log.d(LOG_TAG, "onError Facebook");
+            public void onClick(View view) {
+                if(AccessToken.getCurrentAccessToken() != null) {
+                    share.setVisibility(View.INVISIBLE);
+                    //details.setVisibility(View.INVISIBLE);
+                    profile.setProfileId(null);
+                }
             }
         });
-        //end facebook login button
-    }
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ShareLinkContent content = new ShareLinkContent.Builder().build();
+                shareDialog.show(content);
 
+            }
+        });
+        login.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+
+                if(AccessToken.getCurrentAccessToken() != null){
+                    RequestData();
+                    share.setVisibility(View.VISIBLE);
+                    //details.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+            }
+        });
+
+    }
+    public void RequestData(){
+        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+            @Override
+            public void onCompleted(JSONObject object,GraphResponse response) {
+
+                JSONObject json = response.getJSONObject();
+                try {
+                    if(json != null){
+                        //String text = "<b>Name :</b> "+json.getString("name")+"<br><br><b>Email :</b> "+json.getString("email")+"<br><br><b>Profile link :</b> "+json.getString("link");
+                        //Log.d("HUSTLE", text);;
+                        //details_txt.setText(Html.fromHtml(text));
+                        Log.d("HUSTLE", json.getString("id"));
+
+                        profile.setProfileId(json.getString("id"));
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,link,picture");
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -95,28 +142,4 @@ public class FacebookActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_facebook, menu);
-        return true;
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

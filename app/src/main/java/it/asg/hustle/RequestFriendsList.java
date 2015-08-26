@@ -1,5 +1,6 @@
 package it.asg.hustle;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,11 +10,24 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class RequestFriendsList extends AsyncTask<Void,Void,JSONObject> {
     private String LOG_TAG = "ActivityFacebook";
+    private Context ctx;
+
+    public RequestFriendsList (Context context) {
+        this.ctx = context;
+    }
+
     @Override
     protected JSONObject doInBackground(Void... params) {
         Bundle bundle = new Bundle();
@@ -35,13 +49,7 @@ public class RequestFriendsList extends AsyncTask<Void,Void,JSONObject> {
     @Override
     protected void onPostExecute(JSONObject jsonObject) {
         super.onPostExecute(jsonObject);
-        try {
-            Log.d(LOG_TAG, jsonObject.toString());
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
+        Log.d("HUSTLE", jsonObject.toString());
     }
 }
 

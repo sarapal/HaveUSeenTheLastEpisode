@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
+import com.facebook.internal.Utility;
 
 import java.util.ArrayList;
 
@@ -212,6 +213,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new RequestFriendsList().execute();
+        //new RequestFriendsList(getApplicationContext()).execute();
+        //new MySelfRequest(getApplicationContext()).execute();
+
     }
 }
