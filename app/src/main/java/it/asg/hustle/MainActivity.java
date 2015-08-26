@@ -1,5 +1,6 @@
 package it.asg.hustle;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -19,12 +20,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout myDrawerLayout;    //imposta NavigationDrawer
     private FloatingActionButton fab;
     private NavigationView navigationView;
+
+    private MenuItem SearchAction;
+    private boolean isSearchOpened = false;
+    private EditText edtSeach;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 menuItem.setChecked(true);
                 myDrawerLayout.closeDrawers();
-                // Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
                 if(menuItem.getTitle().equals(getResources().getString(R.string.nav_item_login))==true){
                     // accesso facebook
                     Intent intentactivityfacebook = new Intent(MainActivity.this, FacebookActivity.class);
@@ -76,11 +87,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //click del FAB
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab_plus);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("asg", "FAB was pressed");
+                // Launch activity for searching a TV show
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class));
             }
         });
 
@@ -116,11 +129,86 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_settings:
                 return true;
+            case R.id.action_search:
+                handleMenuSearch();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+
+    protected void handleMenuSearch(){
+        ActionBar action = getSupportActionBar(); //get the actionbar
+
+        if(isSearchOpened){ //test if the search is open
+
+            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
+            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
+
+            //hides the keyboard
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(edtSeach.getWindowToken(), 0);
+
+            //add the search icon in the action bar
+            SearchAction.setIcon(getResources().getDrawable(R.drawable.ic_search));
+
+            isSearchOpened = false;
+        } else { //open the search entry
+
+            action.setDisplayShowCustomEnabled(true); //enable it to display a
+            // custom view in the action bar.
+            action.setCustomView(R.layout.search_bar);//add the custom view
+            action.setDisplayShowTitleEnabled(false); //hide the title
+
+            edtSeach = (EditText)action.getCustomView().findViewById(R.id.edtSearch); //the text editor
+
+            //this is a listener to do a search when the user clicks on search button
+            edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        String searchingTitle = v.getText().toString();
+                        Intent i = new Intent(getApplicationContext(), SearchActivity.class);
+                        Bundle b = new Bundle();
+                        b.putString("SearchTitle", searchingTitle);
+                        i.putExtras(b);
+                        startActivity(i);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            edtSeach.requestFocus();
+
+            //open the keyboard focused in the edtSearch
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
+
+            //add the close icon
+            SearchAction.setIcon(getResources().getDrawable(R.drawable.ic_close));
+            isSearchOpened = true;
+
+        }
+    }
+
+    //
+    @Override
+    public void onBackPressed() {
+        if(isSearchOpened) {
+            handleMenuSearch();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    // for serching button (on Toolbar)
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        SearchAction = menu.findItem(R.id.action_search);
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     // sottoclasse per gestire i fragment della pagina inziale
     public static class TvShowFragment extends Fragment {
@@ -206,4 +294,5 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         new RequestFriendsList().execute();
     }
+
 }
