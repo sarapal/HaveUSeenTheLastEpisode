@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
 
+
         setContentView(R.layout.activity_main);
 
         // imposto ActionBar sulla Toolbar
