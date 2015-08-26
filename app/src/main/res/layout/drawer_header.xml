@@ -12,7 +12,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/ic_login"
+        android:src="@drawable/unknown1"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
         android:id="@+id/circleView"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:text="@string/drawer_header_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:gravity="right" />
+        android:gravity="right|end" />
 
 
 </LinearLayout>

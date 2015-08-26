@@ -1,21 +1,32 @@
 package it.asg.hustle;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -32,7 +43,7 @@ public class ShowActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle("TV Show");
+        collapsingToolbar.setTitle("TV Show (Title)");
 
         SeasonsAdapter a = new SeasonsAdapter(getSupportFragmentManager());
 
@@ -57,9 +68,9 @@ public class ShowActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -90,11 +101,11 @@ public class ShowActivity extends AppCompatActivity {
             for(int i=0 ; i < 20 ; i++){
                 items.add("Element "+i);
             }
-            View v = inflater.inflate(R.layout.fragment_list_view, container, false);
+
+            View v = inflater.inflate(R.layout.fragment_episodes_view, container, false);
             RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            // TODO: cambia queso adapter in EpisodeRecyclerAdapter
-            recyclerView.setAdapter(new ShowRecyclerAdapter(items));
+            recyclerView.setAdapter(new EpisodeRecyclerAdapter(items));
 
             return v;
         }
@@ -133,5 +144,8 @@ public class ShowActivity extends AppCompatActivity {
             return "";
         }
     }
+
+
+
 
 }
