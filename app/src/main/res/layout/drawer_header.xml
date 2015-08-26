@@ -19,12 +19,12 @@
         app:border_width="2dp"
         app:border_color="#FFFFFF" />
 
-    <com.facebook.login.widget.ProfilePictureView
+    <!--<com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:layout_width="200sp"
-        android:layout_height="200sp"/>
+        android:layout_height="200sp"/>-->
 
     <TextView
         android:layout_width="match_parent"
