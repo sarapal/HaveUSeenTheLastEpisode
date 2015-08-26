@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
 
+
         setContentView(R.layout.activity_main);
 
         // imposto ActionBar sulla Toolbar
@@ -200,4 +201,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new RequestFriendsList().execute();
+    }
 }
