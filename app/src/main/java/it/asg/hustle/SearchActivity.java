@@ -26,11 +26,15 @@ public class SearchActivity extends AppCompatActivity {
         collapsingToolbar.setTitle("TV Show (Title)");
 
         Bundle b = getIntent().getExtras();
-        tvShowTitle = b.getString("SearchTitle");
 
-        edtTxt = (EditText) findViewById(R.id.finder);
-        edtTxt.setText(tvShowTitle);
-        edtTxt.setSelection(edtTxt.getText().length());
+        if (b != null) {
+            tvShowTitle = b.getString("SearchTitle");
+
+            edtTxt = (EditText) findViewById(R.id.finder);
+            edtTxt.setText(tvShowTitle);
+            edtTxt.setSelection(edtTxt.getText().length());
+        }
+
     }
 
     @Override
