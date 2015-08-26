@@ -31,7 +31,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class FacebookActivity extends AppCompatActivity {
-    String logtag = "ActivityFacebook";
+    private String LOG_TAG = "ActivityFacebook";
     LoginButton loginButton;
     CallbackManager callbackManager;
 
@@ -51,7 +51,7 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-                Log.d(logtag, "onSuccess Facebook");
+                Log.d(LOG_TAG, "onSuccess Facebook");
                        /* make the API call */
                 /*
                 Bundle bundle = new Bundle();
@@ -77,12 +77,12 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 // App code
-                Log.d(logtag, "onCancel Facebook");
+                Log.d(LOG_TAG, "onCancel Facebook");
             }
             @Override
             public void onError(FacebookException exception) {
                 // App code
-                Log.d(logtag, "onError Facebook");
+                Log.d(LOG_TAG, "onError Facebook");
             }
         });
         //end facebook login button

@@ -2,6 +2,7 @@ package it.asg.hustle;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
+    private String LOG_TAG = "HUSTLE";
     private Toolbar toolbar;
     private DrawerLayout myDrawerLayout;    //imposta NavigationDrawer
     private FloatingActionButton fab;
@@ -42,9 +44,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(LOG_TAG, "Initializint Facebook SDK");
         FacebookSdk.sdkInitialize(getApplicationContext());
-
-
+        Log.d(LOG_TAG, "Opening DB");
+        SQLiteDatabase db = openOrCreateDatabase("test.db", MODE_PRIVATE, null);
+        Log.d(LOG_TAG, "Executing initial queries");
+        db.execSQL(InitialQuery.create_series_table);
+        db.execSQL(InitialQuery.create_episodes_table);
+        Log.d(LOG_TAG, "Initial queries executed correctly");
 
         setContentView(R.layout.activity_main);
 
