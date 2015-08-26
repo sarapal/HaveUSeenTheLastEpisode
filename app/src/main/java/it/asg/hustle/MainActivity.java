@@ -22,6 +22,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -328,9 +329,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (name != null){
             account_name_facebook_tv.setText(name);
+            account_name_facebook_tv.invalidate();
         }
         else{
             account_name_facebook_tv.setText(getResources().getString(R.string.account_default_name));
+            account_name_facebook_tv.invalidate();
         }
     }
 

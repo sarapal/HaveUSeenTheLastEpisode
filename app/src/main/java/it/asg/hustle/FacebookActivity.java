@@ -81,7 +81,7 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(AccessToken.getCurrentAccessToken() != null) {
-                    Log.d("HUSTLE", "Setting id_facebook to NULL");
+                    Log.d("HUSTLE", "Setting id_facebook e name to NULL");
                     SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = options.edit();
                     editor.putString("id_facebook" ,null);
@@ -113,6 +113,7 @@ public class FacebookActivity extends AppCompatActivity {
                     RequestData();
                     share.setVisibility(View.VISIBLE);
                     //details.setVisibility(View.VISIBLE);
+
                 }
             }
 
@@ -141,12 +142,18 @@ public class FacebookActivity extends AppCompatActivity {
                         //String text = "<b>Name :</b> "+json.getString("name")+"<br><br><b>Email :</b> "+json.getString("email")+"<br><br><b>Profile link :</b> "+json.getString("link");
                         //Log.d("HUSTLE", text);;
                         //details_txt.setText(Html.fromHtml(text));
-                        Log.d("HUSTLE", "SAVING id_facebook :" +json.getString("id"));
+
                         SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = options.edit();
                         editor.putString("id_facebook" ,json.getString("id"));
                         editor.commit();
                         profile.setProfileId(json.getString("id"));
+
+                        options = getSharedPreferences("name_facebook", Context.MODE_PRIVATE);
+                        editor = options.edit();
+                        editor.putString("name_facebook", json.getString("name"));
+                        editor.commit();
+                        Log.d("HUSTLE", "SAVING id_facebook :" + json.getString("id") + " with name: " + json.getString("name"));
                     }
 
                 } catch (JSONException e) {

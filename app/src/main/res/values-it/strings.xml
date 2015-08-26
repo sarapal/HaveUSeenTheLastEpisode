@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Have U Seen The Last Episode?</string>
     <string name="action_search">Cerca</string>
     <string name="action_settings">Impostazioni</string>
     <string name="facebook_login_failed">Login facebook Fallito!</string>
@@ -17,4 +16,5 @@
     <string name="title_activity_search">Cerca</string>
     <string name="title_activity_show">Serie TV</string>
     <string name="account_default_name">Login non effettuato</string>
+    <string name="app_name">HUSTLE</string>
 </resources>
