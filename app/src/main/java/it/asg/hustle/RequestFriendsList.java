@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 
 public class RequestFriendsList extends AsyncTask<Void,Void,JSONObject> {
-    String logtag = "Activity Facebook";
+    private String LOG_TAG = "ActivityFacebook";
     @Override
     protected JSONObject doInBackground(Void... params) {
         Bundle bundle = new Bundle();
@@ -36,7 +36,7 @@ public class RequestFriendsList extends AsyncTask<Void,Void,JSONObject> {
     protected void onPostExecute(JSONObject jsonObject) {
         super.onPostExecute(jsonObject);
         try {
-            Log.d(logtag, jsonObject.toString());
+            Log.d(LOG_TAG, jsonObject.toString());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

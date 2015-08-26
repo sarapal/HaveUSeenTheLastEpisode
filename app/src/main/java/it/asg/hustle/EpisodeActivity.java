@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class EpisodeActivity extends AppCompatActivity {
+    private String LOG_TAG = "ActivityFacebook";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
