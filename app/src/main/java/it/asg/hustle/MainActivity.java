@@ -3,6 +3,9 @@ package it.asg.hustle;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -30,6 +33,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,16 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem SearchAction;
     private boolean isSearchOpened = false;
     private EditText edtSeach;
-
+    com.facebook.login.widget.ProfilePictureView profilePictureInvisible = null;
+    de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-
-
-
         setContentView(R.layout.activity_main);
 
         // imposto ActionBar sulla Toolbar
@@ -106,7 +108,10 @@ public class MainActivity extends AppCompatActivity {
         // Prende il TabLayout e imposta il ViewPager
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
+        circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.circleView);
+        profilePictureInvisible = (com.facebook.login.widget.ProfilePictureView)findViewById(R.id.profilePictureInvisible);
 
+        //updateCircleProfile();
     }
 
     @Override
@@ -126,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case android.R.id.home:
                 myDrawerLayout.openDrawer(GravityCompat.START);
+                updateCircleProfile();
                 return true;
             case R.id.action_settings:
                 return true;
@@ -292,7 +298,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-       // new RequestFriendsList().execute();
+        updateCircleProfile();
     }
 
+    void updateCircleProfile(){
+        SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
+        String id = options.getString("id_facebook", null);
+
+        Log.d("HUSTLE", "Sto per aggiornare, profileID: " + profilePictureInvisible.getProfileId() + " id delle preferenze: " +id);
+
+        if (id != null && (profilePictureInvisible.getProfileId() != id)){
+            Log.d("HUSTLE", "GETTING id facebook: " + id);
+            profilePictureInvisible.setProfileId(id);
+            Log.d("HUSTLE", "Prendo il profile id da invisible blabla: " + profilePictureInvisible.getProfileId());
+        }
+        else{
+            profilePictureInvisible.setProfileId(id);
+        }
+
+        Log.d("HUSTLE", "update circle profile");
+        //ImageView profileImageView = ((ImageView)profilePictureInvisible.getChildAt(0));
+        Bitmap bitmap  = ((BitmapDrawable)((ImageView)profilePictureInvisible.getChildAt(0)).getDrawable()).getBitmap();
+        circleImageView.setImageBitmap(bitmap);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 }

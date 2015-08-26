@@ -1,13 +1,18 @@
 package it.asg.hustle;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -36,6 +41,8 @@ public class FacebookActivity extends AppCompatActivity {
     Dialog details_dialog;
     TextView details_txt;
     static String id = null;
+    de.hdodenhof.circleimageview.CircleImageView circleProfile;
+
 
 
     @Override
@@ -63,6 +70,18 @@ public class FacebookActivity extends AppCompatActivity {
             }
         });*/
 
+        //prova pulsante
+        circleProfile = (de.hdodenhof.circleimageview.CircleImageView) findViewById(R.id.circleViewProfile);
+        circleProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = null;
+                ImageView profileImageView = ((ImageView)profile.getChildAt(0));
+                bitmap  = ((BitmapDrawable)profileImageView.getDrawable()).getBitmap();
+                circleProfile.setImageBitmap(bitmap);
+            }
+        });
+        //fine pulsante
 
         if(AccessToken.getCurrentAccessToken() != null){
             RequestData();
@@ -73,6 +92,11 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(AccessToken.getCurrentAccessToken() != null) {
+                    Log.d("HUSTLE", "Setting id_facebook to NULL");
+                    SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = options.edit();
+                    editor.putString("id_facebook" ,null);
+                    editor.commit();
                     share.setVisibility(View.INVISIBLE);
                     //details.setVisibility(View.INVISIBLE);
                     profile.setProfileId(null);
@@ -120,8 +144,11 @@ public class FacebookActivity extends AppCompatActivity {
                         //String text = "<b>Name :</b> "+json.getString("name")+"<br><br><b>Email :</b> "+json.getString("email")+"<br><br><b>Profile link :</b> "+json.getString("link");
                         //Log.d("HUSTLE", text);;
                         //details_txt.setText(Html.fromHtml(text));
-                        Log.d("HUSTLE", json.getString("id"));
-
+                        Log.d("HUSTLE", "SAVING id_facebook :" +json.getString("id"));
+                        SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = options.edit();
+                        editor.putString("id_facebook" ,json.getString("id"));
+                        editor.commit();
                         profile.setProfileId(json.getString("id"));
                     }
 
