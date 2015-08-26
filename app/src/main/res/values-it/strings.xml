@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Have U Seen The Last Episode?</string>
+    <string name="action_search">Cerca</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="facebook_login_failed">Login facebook Fallito!</string>
+    <string name="nav_item_settings">Impostazioni</string>
+    <string name="nav_item_share">Condividi</string>
+    <string name="nav_item_tvshow">Serie TV</string>
+    <string name="tab_friends">Serie di amici</string>
+    <string name="tab_mostviewed">Più viste</string>
+    <string name="tab_myshow">Le mie Serie TV</string>
+    <string name="tab_season">Stagione</string>
+    <string name="tab_show_info">Info</string>
+    <string name="title_activity_episode"> Episodi</string>
+    <string name="title_activity_facebook">Login con Facebook</string>
+    <string name="title_activity_search">Cerca</string>
+    <string name="title_activity_show">Serie TV</string>
+</resources>

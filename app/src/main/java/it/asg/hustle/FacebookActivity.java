@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -41,7 +42,6 @@ public class FacebookActivity extends AppCompatActivity {
     Dialog details_dialog;
     TextView details_txt;
     static String id = null;
-    de.hdodenhof.circleimageview.CircleImageView circleProfile;
 
 
 
@@ -70,18 +70,7 @@ public class FacebookActivity extends AppCompatActivity {
             }
         });*/
 
-        //prova pulsante
-        circleProfile = (de.hdodenhof.circleimageview.CircleImageView) findViewById(R.id.circleViewProfile);
-        circleProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = null;
-                ImageView profileImageView = ((ImageView)profile.getChildAt(0));
-                bitmap  = ((BitmapDrawable)profileImageView.getDrawable()).getBitmap();
-                circleProfile.setImageBitmap(bitmap);
-            }
-        });
-        //fine pulsante
+
 
         if(AccessToken.getCurrentAccessToken() != null){
             RequestData();
@@ -96,6 +85,11 @@ public class FacebookActivity extends AppCompatActivity {
                     SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = options.edit();
                     editor.putString("id_facebook" ,null);
+                    editor.commit();
+
+                    options = getSharedPreferences("name_facebook", Context.MODE_PRIVATE);
+                    editor = options.edit();
+                    editor.putString("name_facebook" ,null);
                     editor.commit();
                     share.setVisibility(View.INVISIBLE);
                     //details.setVisibility(View.INVISIBLE);
@@ -129,6 +123,9 @@ public class FacebookActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException exception) {
+                Toast.makeText(FacebookActivity.this, getResources().getString(R.string.facebook_login_failed).toString(), Toast.LENGTH_SHORT).show();
+
+
             }
         });
 
