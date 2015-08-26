@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -14,6 +16,9 @@ import android.widget.EditText;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -23,11 +28,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
     String tvShowTitle;
     EditText edtTxt;
     Button btn;
+    RecyclerView rw;
+    SearchShowRecyclerAdapter adapter;
+    ArrayList<Show> shows;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +50,14 @@ public class SearchActivity extends AppCompatActivity {
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle("TV Show (Title)");
 
+        shows = new ArrayList<Show>();
+
         edtTxt = (EditText) findViewById(R.id.finder);
         btn = (Button) findViewById(R.id.search_button);
+        rw = (RecyclerView) findViewById(R.id.recyclerview);
+        adapter = new SearchShowRecyclerAdapter(shows);
+        rw.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
+        rw.setAdapter(adapter);
 
         Bundle b = getIntent().getExtras();
 
@@ -90,6 +105,27 @@ public class SearchActivity extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 Log.d("HUSTLE", s);
+                JSONArray ja = null;
+                try {
+                    ja = new JSONArray(s);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                for (int i = 0; i<ja.length(); i++) {
+                    try {
+                        JSONObject jo = ja.getJSONObject(i);
+                        // TODO: prendi la serie tramite l'id con un nuovo AsyncTask
+                        Show s1 = new Show(jo);
+                        Log.d("HUSTLE", "Title: " + s1.toString());
+                        shows.add(s1);
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //Log.d("HUSTLE", ja.toString());
             }
         };
 
