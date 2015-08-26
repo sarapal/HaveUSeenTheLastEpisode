@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
             isSearchOpened = false;
         } else { //open the search entry
-
+            //
             action.setDisplayShowCustomEnabled(true); //enable it to display a
             // custom view in the action bar.
             action.setCustomView(R.layout.search_bar);//add the custom view
