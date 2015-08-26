@@ -25,5 +25,6 @@
     <string name="tab_season">Season</string>
     <string name="title_activity_search">Search...</string>
     <string name="facebook_login_failed">Facebook login Failed!</string>
+    <string name="account_default_name">Not logged</string>
 
 </resources>

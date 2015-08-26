@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText edtSeach;
     com.facebook.login.widget.ProfilePictureView profilePictureInvisible = null;
     de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
-
+    TextView account_name_facebook_tv = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.circleView);
         profilePictureInvisible = (com.facebook.login.widget.ProfilePictureView)findViewById(R.id.profilePictureInvisible);
-
-        //updateCircleProfile();
+        account_name_facebook_tv = (TextView) findViewById(R.id.account_name_facebook);
+        updateCircleProfile();
     }
 
     @Override
@@ -321,6 +321,17 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmap  = ((BitmapDrawable)((ImageView)profilePictureInvisible.getChildAt(0)).getDrawable()).getBitmap();
         circleImageView.setImageBitmap(bitmap);
 
+
+        //aggiornamento textview nome
+        options = getSharedPreferences("name_facebook", Context.MODE_PRIVATE);
+        String name = options.getString("name_facebook", null);
+
+        if (name != null){
+            account_name_facebook_tv.setText(name);
+        }
+        else{
+            account_name_facebook_tv.setText(getResources().getString(R.string.account_default_name));
+        }
     }
 
     @Override

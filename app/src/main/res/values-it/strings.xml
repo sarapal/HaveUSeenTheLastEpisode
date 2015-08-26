@@ -16,4 +16,5 @@
     <string name="title_activity_facebook">Login con Facebook</string>
     <string name="title_activity_search">Cerca</string>
     <string name="title_activity_show">Serie TV</string>
+    <string name="account_default_name">Login non effettuato</string>
 </resources>
