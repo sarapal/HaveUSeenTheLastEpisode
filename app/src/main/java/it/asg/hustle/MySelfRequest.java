@@ -58,7 +58,6 @@ public class MySelfRequest extends AsyncTask<Void,Void,JSONObject> {
         try {
             Log.d(LOG_TAG, jsonObject.toString());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
