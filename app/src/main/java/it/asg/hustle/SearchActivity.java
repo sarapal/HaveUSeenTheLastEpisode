@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -104,6 +105,8 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                if (s == null)
+                    return;
                 Log.d("HUSTLE", s);
                 JSONArray ja = null;
                 try {
@@ -117,9 +120,10 @@ public class SearchActivity extends AppCompatActivity {
                         JSONObject jo = ja.getJSONObject(i);
                         // TODO: prendi la serie tramite l'id con un nuovo AsyncTask
                         Show s1 = new Show(jo);
-                        Log.d("HUSTLE", "Title: " + s1.toString());
-                        shows.add(s1);
-                        adapter.notifyDataSetChanged();
+                        (new GetSerieByID()).execute(s1);
+                        //Log.d("HUSTLE", "Title: " + s1.toString());
+                        //shows.add(s1);
+                        //adapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -131,6 +135,42 @@ public class SearchActivity extends AppCompatActivity {
 
        at.execute();
 
+    }
+
+    class GetSerieByID extends AsyncTask<Show, Void, JSONObject> {
+
+        @Override
+        protected JSONObject doInBackground(Show... params) {
+            URL url = null;
+            String s = null;
+            JSONObject jo = null;
+            try {
+                url = new URL("http://192.168.0.111/getSeries.php?seriesid=" + params[0].id);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                s = br.readLine();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                jo = new JSONObject(s);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return jo;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+            shows.add(new Show(jsonObject));
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
