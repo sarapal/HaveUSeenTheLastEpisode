@@ -79,6 +79,8 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        Log.d("HUSTLE", "SearchActivity onCreate() completed");
+
     }
 
     private void doSearch(final String tvShowTitle) {
