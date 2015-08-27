@@ -31,7 +31,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
 
     private ArrayList<Show> shows;
     Context c = null;
-
+    // Passo anche il context così posso creare il ProgressDialog
     SearchShowRecyclerAdapter(ArrayList<Show> shows, Context c) {
         this.shows = shows;
         this.c = c;
@@ -103,11 +103,16 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 progressDialog.dismiss();
             }
         };
+
+        // Se l'immagine della serie non è stata scaricata
         if (item.bmp == null) {
             Log.d("HUSTLE", "Downloading image: " + item.banner);
+            // La scarica su un thread separato, ma solo se l'URL è diverso
+            // da quello qui sotto (che significa che la serie tv non ha banner)
             if (!item.banner.equals("http://thetvdb.com/banners/"))
                 at.execute(item.banner);
         } else {
+            // Se l'immagine della serie è già stata salvata, riusa quella
             viewHolder.mImageView.setImageBitmap(item.bmp);
         }
 

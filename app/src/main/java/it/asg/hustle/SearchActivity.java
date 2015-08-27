@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class SearchActivity extends AppCompatActivity {
     String tvShowTitle;
@@ -81,14 +82,14 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void doSearch(final String tvShowTitle) {
-
+        // Ogni volta che viene effettuata una nuova ricerca
+        // resetta l'ArrayList
         shows = new ArrayList<Show>();
         adapter = new SearchShowRecyclerAdapter(shows, this);
         rw.setAdapter(adapter);
 
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
         final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);
-
 
         AsyncTask<Void, Void, String> at = new AsyncTask<Void, Void, String>() {
 
@@ -106,8 +107,10 @@ public class SearchActivity extends AppCompatActivity {
             protected String doInBackground(Void... params) {
                 URL url = null;
                 String s = null;
+                // Prende la lingua del sistema
+                String lan = Locale.getDefault().getLanguage();
                 try {
-                    url = new URL("http://192.168.0.111/getSeries.php?seriesname=" + tvShowTitle);
+                    url = new URL("http://192.168.0.111/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -164,8 +167,10 @@ public class SearchActivity extends AppCompatActivity {
             URL url = null;
             String s = null;
             JSONObject jo = null;
+            // Prende la lingua del sistema
+            String lan = Locale.getDefault().getLanguage();
             try {
-                url = new URL("http://192.168.0.111/getSeries.php?seriesid=" + params[0].id);
+                url = new URL("http://192.168.0.111/getSeries.php?seriesid=" + params[0].id + "&language="+lan);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
