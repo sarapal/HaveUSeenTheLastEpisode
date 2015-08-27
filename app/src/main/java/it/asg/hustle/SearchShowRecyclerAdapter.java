@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,15 +43,26 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
-        Show item = shows.get(i);
-
+        final Show item = shows.get(i);
+        Log.d("HUSTLE", "AGGIUNGO ALLA LISTA: "+ item.toString());
+        Log.d("HUSTLE", "La lingua è " + item.language);
         viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
         viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                // TODO: lancia ShowActivity passandogli l'id della serie nell'intent
-                //context.startActivity(new Intent(context,EpisodeActivity.class));
+                Intent i = new Intent(context, ShowActivity.class);
+                i.putExtra("show", item.source.toString());
+                context.startActivity(i);
+            }
+        });
+        viewHolder.mImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent i = new Intent(context,ShowActivity.class);
+                i.putExtra("show", item.source.toString());
+                context.startActivity(i);
             }
         });
 
@@ -71,12 +84,15 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 viewHolder.mImageView.setImageBitmap(bitmap);
+                item.bmp = bitmap;
             }
         };
-
-        at.execute(item.poster);
-
-
+        if (item.bmp == null) {
+            Log.d("HUSTLE", "Downloading image: " + item.banner);
+            at.execute(item.banner);
+        } else {
+            viewHolder.mImageView.setImageBitmap(item.bmp);
+        }
 
     }
 

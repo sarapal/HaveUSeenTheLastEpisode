@@ -1,5 +1,6 @@
 package it.asg.hustle;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -80,9 +81,25 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void doSearch(final String tvShowTitle) {
+
+        shows.removeAll(shows);
+
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
+        final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);
+
 
         AsyncTask<Void, Void, String> at = new AsyncTask<Void, Void, String>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progDailog.setMessage("Loading...");
+                progDailog.setIndeterminate(false);
+                progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progDailog.setCancelable(true);
+                progDailog.show();
+            }
+
             @Override
             protected String doInBackground(Void... params) {
                 URL url = null;
@@ -128,6 +145,7 @@ public class SearchActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                progDailog.dismiss();
 
                 //Log.d("HUSTLE", ja.toString());
             }
@@ -161,14 +179,21 @@ public class SearchActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            Log.d("HUSTLE", "GET SERIE BY ID: " + jo.toString());
+            try {
+                Log.d("HUSTLE", "GET SERIE BY ID, language: " + jo.getString("language"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return jo;
         }
 
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             super.onPostExecute(jsonObject);
-            shows.add(new Show(jsonObject));
+            Show s = new Show(jsonObject);
+            Log.d("HUSTLE", "Creo show: " + jsonObject);
+            shows.add(s);
             adapter.notifyDataSetChanged();
         }
     }
