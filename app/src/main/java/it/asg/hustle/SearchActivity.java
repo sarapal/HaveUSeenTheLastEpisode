@@ -57,7 +57,7 @@ public class SearchActivity extends AppCompatActivity {
         edtTxt = (EditText) findViewById(R.id.finder);
         btn = (Button) findViewById(R.id.search_button);
         rw = (RecyclerView) findViewById(R.id.recyclerview);
-        adapter = new SearchShowRecyclerAdapter(shows);
+        adapter = new SearchShowRecyclerAdapter(shows, this);
         rw.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
         rw.setAdapter(adapter);
 
@@ -82,7 +82,9 @@ public class SearchActivity extends AppCompatActivity {
 
     private void doSearch(final String tvShowTitle) {
 
-        shows.removeAll(shows);
+        shows = new ArrayList<Show>();
+        adapter = new SearchShowRecyclerAdapter(shows, this);
+        rw.setAdapter(adapter);
 
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
         final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);

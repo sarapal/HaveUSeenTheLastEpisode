@@ -1,5 +1,6 @@
 package it.asg.hustle;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,9 +30,11 @@ import java.util.List;
 public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRecyclerAdapter.ViewHolder> {
 
     private ArrayList<Show> shows;
+    Context c = null;
 
-    SearchShowRecyclerAdapter(ArrayList<Show> shows) {
+    SearchShowRecyclerAdapter(ArrayList<Show> shows, Context c) {
         this.shows = shows;
+        this.c = c;
     }
 
     @Override
@@ -66,7 +69,19 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             }
         });
 
+        final ProgressDialog progressDialog = new ProgressDialog(c);
+
         AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog.setMessage("Loading...");
+                progressDialog.setIndeterminate(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
+
             @Override
             protected Bitmap doInBackground(String... params) {
                 Bitmap bm = null;
@@ -85,11 +100,13 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 super.onPostExecute(bitmap);
                 viewHolder.mImageView.setImageBitmap(bitmap);
                 item.bmp = bitmap;
+                progressDialog.dismiss();
             }
         };
         if (item.bmp == null) {
             Log.d("HUSTLE", "Downloading image: " + item.banner);
-            at.execute(item.banner);
+            if (!item.banner.equals("http://thetvdb.com/banners/"))
+                at.execute(item.banner);
         } else {
             viewHolder.mImageView.setImageBitmap(item.bmp);
         }
