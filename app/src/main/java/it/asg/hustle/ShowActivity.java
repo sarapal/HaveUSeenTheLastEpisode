@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,9 +29,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class ShowActivity extends AppCompatActivity {
+
+    private JSONObject show = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,20 @@ public class ShowActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
+
+        Bundle b = getIntent().getExtras();
+
+        if (b != null) {
+            String s = b.getString("show");
+            try {
+                show = new JSONObject(s);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        // TODO: mostra la serie nell'activity
+        Log.d("HUSTLE", "Devo mostrare la serie: " + show);
+
     }
 
     @Override

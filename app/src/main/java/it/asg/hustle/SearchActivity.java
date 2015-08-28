@@ -1,5 +1,6 @@
 package it.asg.hustle;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,10 +26,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class SearchActivity extends AppCompatActivity {
     String tvShowTitle;
@@ -55,7 +58,7 @@ public class SearchActivity extends AppCompatActivity {
         edtTxt = (EditText) findViewById(R.id.finder);
         btn = (Button) findViewById(R.id.search_button);
         rw = (RecyclerView) findViewById(R.id.recyclerview);
-        adapter = new SearchShowRecyclerAdapter(shows);
+        adapter = new SearchShowRecyclerAdapter(shows, this);
         rw.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
         rw.setAdapter(adapter);
 
@@ -76,18 +79,40 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        Log.d("HUSTLE", "SearchActivity onCreate() completed");
+
     }
 
     private void doSearch(final String tvShowTitle) {
+        // Ogni volta che viene effettuata una nuova ricerca
+        // resetta l'ArrayList
+        shows = new ArrayList<Show>();
+        adapter = new SearchShowRecyclerAdapter(shows, this);
+        rw.setAdapter(adapter);
+
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
+        final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);
 
         AsyncTask<Void, Void, String> at = new AsyncTask<Void, Void, String>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progDailog.setMessage("Loading...");
+                progDailog.setIndeterminate(false);
+                progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progDailog.setCancelable(true);
+                progDailog.show();
+            }
+
             @Override
             protected String doInBackground(Void... params) {
                 URL url = null;
                 String s = null;
+                // Prende la lingua del sistema
+                String lan = Locale.getDefault().getLanguage();
                 try {
-                    url = new URL("http://192.168.0.111/getSeries.php?seriesname=" + tvShowTitle);
+                    url = new URL("http://192.168.0.111/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -104,6 +129,8 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                if (s == null)
+                    return;
                 Log.d("HUSTLE", s);
                 JSONArray ja = null;
                 try {
@@ -117,13 +144,15 @@ public class SearchActivity extends AppCompatActivity {
                         JSONObject jo = ja.getJSONObject(i);
                         // TODO: prendi la serie tramite l'id con un nuovo AsyncTask
                         Show s1 = new Show(jo);
-                        Log.d("HUSTLE", "Title: " + s1.toString());
-                        shows.add(s1);
-                        adapter.notifyDataSetChanged();
+                        (new GetSerieByID()).execute(s1);
+                        //Log.d("HUSTLE", "Title: " + s1.toString());
+                        //shows.add(s1);
+                        //adapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+                progDailog.dismiss();
 
                 //Log.d("HUSTLE", ja.toString());
             }
@@ -131,6 +160,51 @@ public class SearchActivity extends AppCompatActivity {
 
        at.execute();
 
+    }
+
+    class GetSerieByID extends AsyncTask<Show, Void, JSONObject> {
+
+        @Override
+        protected JSONObject doInBackground(Show... params) {
+            URL url = null;
+            String s = null;
+            JSONObject jo = null;
+            // Prende la lingua del sistema
+            String lan = Locale.getDefault().getLanguage();
+            try {
+                url = new URL("http://192.168.0.111/getSeries.php?seriesid=" + params[0].id + "&language="+lan);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                s = br.readLine();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                jo = new JSONObject(s);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.d("HUSTLE", "GET SERIE BY ID: " + jo.toString());
+            try {
+                Log.d("HUSTLE", "GET SERIE BY ID, language: " + jo.getString("language"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return jo;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+            Show s = new Show(jsonObject);
+            Log.d("HUSTLE", "Creo show: " + jsonObject);
+            shows.add(s);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
