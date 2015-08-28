@@ -46,22 +46,23 @@
             android:layout_height="wrap_content">
 
             <EditText
+                android:background="@android:color/transparent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
                 android:layout_gravity="left"
                 android:id="@+id/finder" />
 
+            <!-- TODO: replace this button with FAB -->
+            <Button
+                android:id="@+id/search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_horizontal"
+                android:text="Search"/>
+
         </android.support.design.widget.TextInputLayout>
 
-        <!-- TODO: replace this button with FAB -->
-        <Button
-            android:id="@+id/search_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center_horizontal"
-            android:text="Search"/>
 
         <android.support.v7.widget.RecyclerView
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -75,3 +76,5 @@
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
+
+
