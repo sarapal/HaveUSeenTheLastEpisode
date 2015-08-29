@@ -12,8 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.SearchView;
+
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -35,11 +35,10 @@ import java.util.Locale;
 
 public class SearchActivity extends AppCompatActivity {
     String tvShowTitle;
-    EditText edtTxt;
-    Button btn;
     RecyclerView rw;
     SearchShowRecyclerAdapter adapter;
     ArrayList<Show> shows;
+    android.widget.SearchView searchv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,30 +54,34 @@ public class SearchActivity extends AppCompatActivity {
 
         shows = new ArrayList<Show>();
 
-        edtTxt = (EditText) findViewById(R.id.finder);
-        btn = (Button) findViewById(R.id.search_button);
+
+        searchv = (android.widget.SearchView) findViewById(R.id.searchView);
         rw = (RecyclerView) findViewById(R.id.recyclerview);
         adapter = new SearchShowRecyclerAdapter(shows, this);
         rw.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
         rw.setAdapter(adapter);
+        searchv.setSubmitButtonEnabled(true);
+        searchv.setIconifiedByDefault(false);
+        searchv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                doSearch(searchv.getQuery().toString());
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
 
         Bundle b = getIntent().getExtras();
 
         if (b != null) {
             tvShowTitle = b.getString("SearchTitle");
-            edtTxt.setText(tvShowTitle);
-            edtTxt.setSelection(edtTxt.getText().length());
-            
-            doSearch(tvShowTitle);
+            searchv.setQuery(tvShowTitle, true);
         }
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doSearch(edtTxt.getText().toString());
-            }
-        });
-
         Log.d("HUSTLE", "SearchActivity onCreate() completed");
 
     }
@@ -228,4 +231,6 @@ public class SearchActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
+
