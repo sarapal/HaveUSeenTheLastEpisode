@@ -349,10 +349,9 @@ public class MainActivity extends AppCompatActivity {
         if (id != null && (profilePictureInvisible.getProfileId() != id)){
             Log.d("HUSTLE", "GETTING id facebook: " + id);
             profilePictureInvisible.setProfileId(id);
-            Log.d("HUSTLE", "Prendo il profile id da invisible blabla: " + profilePictureInvisible.getProfileId());
         }
         else{
-            profilePictureInvisible.setProfileId(id);
+            ;
         }
 
         Log.d("HUSTLE", "update circle profile");
