@@ -138,11 +138,12 @@ public class SearchActivity extends AppCompatActivity {
                 JSONArray ja = null;
                 try {
                     ja = new JSONArray(s);
+                    ja.length();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                for (int i = 0; i<ja.length(); i++) {
+                for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
                     try {
                         JSONObject jo = ja.getJSONObject(i);
                         // TODO: prendi la serie tramite l'id con un nuovo AsyncTask

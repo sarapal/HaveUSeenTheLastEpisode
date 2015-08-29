@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("asg", "FAB was pressed");
+                Log.d("HUSTLE", "FAB was pressed");
                 // Launch activity for searching a TV show
                 startActivity(new Intent(getApplicationContext(), SearchActivity.class));
             }
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
-            RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
+            RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
             recyclerView.setHasFixedSize(true);
 
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity()  , 2);
@@ -280,8 +280,8 @@ public class MainActivity extends AppCompatActivity {
             it.asg.hustle.GridAdapter newAdapter = new GridAdapter();
             recyclerView.setAdapter(newAdapter);
 
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setAdapter(new ShowRecyclerAdapter(items));
+            //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            //recyclerView.setAdapter(new ShowRecyclerAdapter(items));
 
 
 
