@@ -69,8 +69,10 @@ public class ShowActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
         // TODO: mostra la serie nell'activity
         Log.d("HUSTLE", "Devo mostrare la serie: " + show);
+
 
     }
 

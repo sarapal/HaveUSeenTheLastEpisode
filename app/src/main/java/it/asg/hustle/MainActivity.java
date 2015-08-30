@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         // Crea un TvShowAdapter
         TvShowAdapter adapter = new TvShowAdapter(getSupportFragmentManager());
         // Prende il ViewPager e imposta come adapter il TvShowAdapter: in base alla tab
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case android.R.id.home:
                 myDrawerLayout.openDrawer(GravityCompat.START);
-                updateCircleProfile();
+                //updateCircleProfile();
                 return true;
             case R.id.action_settings:
                 return true;
@@ -237,12 +238,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+
     // sottoclasse per gestire i fragment della pagina inziale
     public static class TvShowFragment extends Fragment {
         private static final String TAB_POSITION = "tab_position";
 
         public TvShowFragment() {
-
         }
 
         public static TvShowFragment newInstance(int tabPosition) {
@@ -253,15 +254,17 @@ public class MainActivity extends AppCompatActivity {
             return fragment;
         }
 
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             Bundle args = getArguments();
-            int tabPosition = args.getInt(TAB_POSITION);
-            /*Log.d("asg","tabPosition "+tabPosition); */
+            /*int tabPosition = args.getInt(TAB_POSITION);
+            Log.d("asg","tabPosition "+tabPosition);
             ArrayList<String> items = new ArrayList<String>();
             for(int i=0 ; i < 50 ; i++){
                 items.add("TV-Show "+i);
-            }
+            } */
+
             /*View v = inflater.inflate(R.layout.fragment_list_view, container, false);
             RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -273,29 +276,20 @@ public class MainActivity extends AppCompatActivity {
             RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
             recyclerView.setHasFixedSize(true);
 
+
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity()  , 2);
             recyclerView.setLayoutManager(gridLayoutManager);
-
 
             it.asg.hustle.GridAdapter newAdapter = new GridAdapter();
             recyclerView.setAdapter(newAdapter);
 
+            //TODO: if tv-Show was press --> start the activity: ShowActivity for reading tv-show details
+
+
             //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             //recyclerView.setAdapter(new ShowRecyclerAdapter(items));
-
-
-
-            /*switch (tabPosition){
-                case 0:
-
-                    break;
-                case 1:
-                    break;
-                case 2:
-
-                    break;
-            }*/
             return v;
+
         }
     }
 
@@ -348,11 +342,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (id != null && (profilePictureInvisible.getProfileId() != id)){
             Log.d("HUSTLE", "GETTING id facebook: " + id);
-            profilePictureInvisible.setProfileId(id);
         }
         else{
-            ;
+            profilePictureInvisible.setProfileId(id);
         }
+
 
         Log.d("HUSTLE", "update circle profile");
         //ImageView profileImageView = ((ImageView)profilePictureInvisible.getChildAt(0));

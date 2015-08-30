@@ -78,7 +78,6 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-
         return mItems.size();
     }
 
