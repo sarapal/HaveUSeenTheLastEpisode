@@ -72,13 +72,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // initialize facebook sdk
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.title));
-
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
