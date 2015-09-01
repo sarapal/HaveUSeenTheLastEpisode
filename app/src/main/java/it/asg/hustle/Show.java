@@ -18,6 +18,11 @@ public class Show {
     public Bitmap bmp;
     public JSONObject source;
 
+    public Show(String title)
+    {
+        this.title = title;
+    }
+
     public Show(JSONObject jo) {
         Log.d("HUSTLE", "Chiamato costruttore show con parametro: " + jo.toString());
 
@@ -41,6 +46,11 @@ public class Show {
         }
         this.bmp = null;
         Log.d("HUSTLE", "Show creato con lingua: " + this.language);
+    }
+
+    public JSONObject toJSON()
+    {
+        return this.source;
     }
 
     @Override

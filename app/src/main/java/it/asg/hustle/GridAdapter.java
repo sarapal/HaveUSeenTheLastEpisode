@@ -17,50 +17,51 @@ import java.util.List;
  */
 public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
-    List<EndangeredItem> mItems;
+    List<GridItem> mItems;
 
     public GridAdapter() {
         super();
-        mItems = new ArrayList<EndangeredItem>();
-        EndangeredItem species = new EndangeredItem();
-        species.setName("Amur Leopard");
-        species.setThumbnail(R.drawable.unknown1);
-        mItems.add(species);
+        mItems = new ArrayList<GridItem>();
+        GridItem i1 = new GridItem();
+        i1.setName("Show1");
+        i1.setThumbnail(R.drawable.unknown1);
+        i1.setShow(new Show("item1"));
+        mItems.add(i1);
 
-        species = new EndangeredItem();
-        species.setName("Black Rhino");
-        species.setThumbnail(R.drawable.unknown1);
-        mItems.add(species);
+        GridItem i2 = new GridItem();
+        i2.setName("Show2");
+        i2.setThumbnail(R.drawable.unknown1);
+        mItems.add(i2);
 
-        species = new EndangeredItem();
-        species.setName("Orangutan");
-        species.setThumbnail(R.drawable.unknown1);
-        mItems.add(species);
+        GridItem i3 = new GridItem();
+        i3.setName("Show3");
+        i3.setThumbnail(R.drawable.unknown1);
+        mItems.add(i3);
 
-        species = new EndangeredItem();
-        species.setName("Sea Lions");
-        species.setThumbnail(R.drawable.unknown1);
-        mItems.add(species);
+        GridItem i4 = new GridItem();
+        i4.setName("Show4");
+        i4.setThumbnail(R.drawable.unknown1);
+        mItems.add(i4);
 
-        species = new EndangeredItem();
-        species.setName("Indian Elephant");
-        species.setThumbnail(R.drawable.unknown1);
-        mItems.add(species);
+        GridItem i5 = new GridItem();
+        i5.setName("Show5");
+        i5.setThumbnail(R.drawable.unknown1);
+        mItems.add(i5);
 
-        species = new EndangeredItem();
-        species.setName("Giant Panda");
-        species.setThumbnail(R.drawable.unknown1);
-        mItems.add(species);
+        GridItem i6 = new GridItem();
+        i6.setName("Show6");
+        i6.setThumbnail(R.drawable.unknown1);
+        mItems.add(i6);
 
-        species = new EndangeredItem();
-        species.setName("Snow Leopard");
-        species.setThumbnail(R.drawable.unknown1);
-        mItems.add(species);
+        GridItem i7 = new GridItem();
+        i7.setName("Show7");
+        i7.setThumbnail(R.drawable.unknown1);
+        mItems.add(i7);
 
-        species = new EndangeredItem();
-        species.setName("Dolphin");
-        species.setThumbnail(R.drawable.unknown1);
-        mItems.add(species);
+        GridItem i8 = new GridItem();
+        i8.setName("Show8");
+        i8.setThumbnail(R.drawable.unknown1);
+        mItems.add(i8);
     }
 
     @Override
@@ -73,17 +74,19 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
-        EndangeredItem nature = mItems.get(i);
-        viewHolder.tvspecies.setText(nature.getName());
-        viewHolder.imgThumbnail.setImageResource(nature.getThumbnail());
+        final GridItem item = mItems.get(i);
+        viewHolder.tvspecies.setText(item.getName());
+        viewHolder.imgThumbnail.setImageResource(item.getThumbnail());
 
         viewHolder.imgThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context= v.getContext();
-                Intent i = new Intent(context, ShowActivity.class);
-                i.putExtra("show", "showname");
-                context.startActivity(i);
+                Intent intent = new Intent(context, ShowActivity.class);
+                // TODO: add the show to the intent
+                // Show s = item. ....
+                // intent.putExtra("show", ... );
+                context.startActivity(intent);
             }
         });
     }
