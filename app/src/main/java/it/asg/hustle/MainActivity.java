@@ -41,6 +41,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem SearchAction;
     private boolean isSearchOpened = false;
     private EditText edtSeach;
+
     com.facebook.login.widget.ProfilePictureView profilePictureInvisible = null;
     de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
     TextView account_name_facebook_tv = null;
@@ -83,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-
         //prendo DrawerLayout
         myDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -105,10 +106,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
         //click del FAB
         fab = (FloatingActionButton) findViewById(R.id.fab_plus);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // Crea un TvShowAdapter
         TvShowAdapter adapter = new TvShowAdapter(getSupportFragmentManager());
         // Prende il ViewPager e imposta come adapter il TvShowAdapter: in base alla tab
@@ -130,9 +126,11 @@ public class MainActivity extends AppCompatActivity {
         // Prende il TabLayout e imposta il ViewPager
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
+        // Imposta
         circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.circleView);
         profilePictureInvisible = (com.facebook.login.widget.ProfilePictureView)findViewById(R.id.profilePictureInvisible);
         account_name_facebook_tv = (TextView) findViewById(R.id.account_name_facebook);
+        //Log.d("HUSTLE", "profilePictureInvisible: " + profilePictureInvisible);
         updateCircleProfile();
     }
 
@@ -152,8 +150,8 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case android.R.id.home:
+                updateCircleProfile();
                 myDrawerLayout.openDrawer(GravityCompat.START);
-                //updateCircleProfile();
                 return true;
             case R.id.action_settings:
                 return true;
@@ -270,21 +268,15 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             recyclerView.setAdapter(new ShowRecyclerAdapter(items)); */
 
-
-
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
             RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
             recyclerView.setHasFixedSize(true);
-
 
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity()  , 2);
             recyclerView.setLayoutManager(gridLayoutManager);
 
             it.asg.hustle.GridAdapter newAdapter = new GridAdapter();
             recyclerView.setAdapter(newAdapter);
-
-            //TODO: if tv-Show was press --> start the activity: ShowActivity for reading tv-show details
-
 
             //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             //recyclerView.setAdapter(new ShowRecyclerAdapter(items));
@@ -334,25 +326,20 @@ public class MainActivity extends AppCompatActivity {
         updateCircleProfile();
     }
 
-    void updateCircleProfile(){
+    void updateCircleProfile() {
         SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
         String id = options.getString("id_facebook", null);
 
-        Log.d("HUSTLE", "Sto per aggiornare, profileID: " + profilePictureInvisible.getProfileId() + " id delle preferenze: " +id);
+        String fbId = profilePictureInvisible.getProfileId();
+        Log.d("HUSTLE", "Sto per aggiornare facebook, profileID: " + profilePictureInvisible.getProfileId() + ", id delle preferenze: " + id);
 
-        if (id != null && (profilePictureInvisible.getProfileId() != id)){
-            Log.d("HUSTLE", "GETTING id facebook: " + id);
-        }
-        else{
-            profilePictureInvisible.setProfileId(id);
-        }
+        Log.d("HUSTLE", "SETTING id facebook: " + id);
+        profilePictureInvisible.setProfileId(id);
 
-
-        Log.d("HUSTLE", "update circle profile");
+        Log.d("HUSTLE", "Updating circle profile");
         //ImageView profileImageView = ((ImageView)profilePictureInvisible.getChildAt(0));
         Bitmap bitmap  = ((BitmapDrawable)((ImageView)profilePictureInvisible.getChildAt(0)).getDrawable()).getBitmap();
         circleImageView.setImageBitmap(bitmap);
-
 
         //aggiornamento textview nome
         options = getSharedPreferences("name_facebook", Context.MODE_PRIVATE);

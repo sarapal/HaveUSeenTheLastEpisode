@@ -1,5 +1,7 @@
 package it.asg.hustle;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,10 +72,20 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         EndangeredItem nature = mItems.get(i);
         viewHolder.tvspecies.setText(nature.getName());
         viewHolder.imgThumbnail.setImageResource(nature.getThumbnail());
+
+        viewHolder.imgThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context= v.getContext();
+                Intent i = new Intent(context, ShowActivity.class);
+                i.putExtra("show", "showname");
+                context.startActivity(i);
+            }
+        });
     }
 
     @Override
