@@ -115,7 +115,7 @@ public class SearchActivity extends AppCompatActivity {
                 // Prende la lingua del sistema
                 String lan = Locale.getDefault().getLanguage();
                 try {
-                    url = new URL("http://192.168.0.111/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan);
+                    url = new URL("http://hustle.altervista.org/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -176,7 +176,7 @@ public class SearchActivity extends AppCompatActivity {
             // Prende la lingua del sistema
             String lan = Locale.getDefault().getLanguage();
             try {
-                url = new URL("http://192.168.0.111/getSeries.php?seriesid=" + params[0].id + "&language="+lan);
+                url = new URL("http://hustle.altervista.org/getSeries.php?seriesid=" + params[0].id + "&language="+lan);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
