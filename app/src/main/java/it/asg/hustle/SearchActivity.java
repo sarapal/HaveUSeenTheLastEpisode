@@ -17,7 +17,7 @@ import android.widget.SearchView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import it.asg.hustle.Info.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
