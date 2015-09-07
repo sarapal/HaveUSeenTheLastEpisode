@@ -84,16 +84,20 @@ public class SearchActivity extends AppCompatActivity {
         searchv.clearFocus();
     }
 
-    private JSONObject searchDB(String tvShowTitle) {
-        String query = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE SeriesName='"+tvShowTitle+"';";
+    private JSONArray searchDB(String tvShowTitle) {
+        /*String query = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE SeriesName='"+tvShowTitle+"';";
         Cursor c = DBHelper.getInstance(this).getWritableDatabase().rawQuery(query, null);
-        Log.d("HUSTLE", c.toString());
+        Log.d("HUSTLE", c.toString());*/
         return null;
     }
 
     private void doSearch(final String tvShowTitle) {
         hideKeyboard();
-        searchDB(tvShowTitle);
+        JSONArray ja = searchDB(tvShowTitle);
+        if (ja != null) {
+            handleJson(ja, false);
+            return;
+        }
         // Ogni volta che viene effettuata una nuova ricerca
         // resetta l'ArrayList
         shows = new ArrayList<Show>();
@@ -150,24 +154,32 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
-                    try {
-                        JSONObject jo = ja.getJSONObject(i);
-                        Log.d("HUSTLE", "Show: " + jo.toString());
-                        Show s1 = new Show(jo);
-                        shows.add(s1);
-                        adapter.notifyDataSetChanged();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
+                handleJson(ja, true);
                 progDailog.dismiss();
                 //Log.d("HUSTLE", ja.toString());
             }
         };
 
         at.execute();
+    }
+    // add è true se la stagione va aggiunta al DB, falso altrimenti
+    public void handleJson(JSONArray ja, boolean add) {
+        for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
+            try {
+                JSONObject jo = ja.getJSONObject(i);
+                Log.d("HUSTLE", "Show: " + jo.toString());
+                Show s1 = new Show(jo);
+                shows.add(s1);
+                adapter.notifyDataSetChanged();
+                // TODO: aggiungi serie TB al database
+                if (add) {
+                    Log.d("HUSTLE", "Sto per aggiungere la serie al DB");
+                    s1.addToDB(this);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

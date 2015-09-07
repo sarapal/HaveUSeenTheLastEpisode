@@ -1,5 +1,7 @@
 package it.asg.hustle.Info;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -7,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import it.asg.hustle.DBHelper;
 
 /**
  * Created by sara on 8/26/15.
@@ -61,6 +65,17 @@ public class Show {
     public JSONObject toJSON()
     {
         return this.source;
+    }
+
+    public boolean addToDB(Context c) {
+        String query = "INSERT INTO tvseries (seriesid, Actors, Airs_DayOfWeek, Airs_Time, FirstAired, Genre, Language, Network, " +
+                    "Overview, Rating, SeriesName, Status, banner, fanart, lastupdated, poster, seasons) VALUES (\"?\", \"?\",\"?\", " +
+                    "\"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\");";
+        String[] args = new String[]{"ciao", "ops"};
+        //SQLiteDatabase db = new DBHelper(c).getWritableDatabase();
+        //db.rawQuery(query, args);
+        // TODO: aggiungi la serie al DB e ritorna il risultato
+        return false;
     }
 
     @Override
