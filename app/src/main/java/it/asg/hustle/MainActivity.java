@@ -83,11 +83,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // apre o crea il db
-        db = DataBase.getInstance();
+        //db = DataBase.getInstance();
         // esegue le query iniziali
-        db.execSQL(InitialQuery.create_series_table);
-        db.execSQL(InitialQuery.create_episodes_table);
-        db.execSQL(InitialQuery.create_seen_episodes_table);
+        //db.execSQL(InitialQuery.create_series_table);
+        //db.execSQL(InitialQuery.create_episodes_table);
+        //db.execSQL(InitialQuery.create_seen_episodes_table);
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
