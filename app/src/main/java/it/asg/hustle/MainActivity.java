@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     static int numOfElements = 3;          //3=default(small and normal); 4=large; 5=xlarge
 
     private SQLiteDatabase db = null;
+    private SQLiteOpenHelper helper = null;
 
     com.facebook.login.widget.ProfilePictureView profilePictureInvisible = null;
     de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
@@ -83,11 +85,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // apre o crea il db
-        //db = DataBase.getInstance();
-        // esegue le query iniziali
-        //db.execSQL(InitialQuery.create_series_table);
-        //db.execSQL(InitialQuery.create_episodes_table);
-        //db.execSQL(InitialQuery.create_seen_episodes_table);
+        helper = new DBHelper(this);
+        db = helper.getWritableDatabase();
+        Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
