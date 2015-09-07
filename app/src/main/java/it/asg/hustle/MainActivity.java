@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +25,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -60,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem SearchAction;
     private boolean isSearchOpened = false;
     private EditText edtSeach;
+
+    private Display display;
+    static int numOfElements = 3;          //3=default(small and normal); 4=large; 5=xlarge
 
     com.facebook.login.widget.ProfilePictureView profilePictureInvisible = null;
     de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
@@ -116,6 +122,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), SearchActivity.class));
             }
         });
+
+
+        // prendo dimensioni del display per vedere quanti elementi della griglia posso mettere
+        display = getWindowManager().getDefaultDisplay();
+        MainActivity.numOfElements = getDisplayDimensions(display);
+
 
         // Crea un TvShowAdapter
         TvShowAdapter adapter = new TvShowAdapter(getSupportFragmentManager());
@@ -272,7 +284,8 @@ public class MainActivity extends AppCompatActivity {
             RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
             recyclerView.setHasFixedSize(true);
 
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity()  , 2);
+
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity() , numOfElements);
             recyclerView.setLayoutManager(gridLayoutManager);
 
             it.asg.hustle.GridAdapter newAdapter = new GridAdapter();
@@ -283,6 +296,24 @@ public class MainActivity extends AppCompatActivity {
             return v;
 
         }
+    }
+
+    public int getDisplayDimensions(Display d){
+        Point size = new Point();
+        d.getSize(size);
+        int widthPX = size.x;
+        //int heightPX = size.y;
+        int widthDPI = pxToDp(widthPX);
+        //int heightDPI = pxToDp(heightPX);
+
+
+        Log.d("asg", "widthDPI vale: " +widthDPI);
+        int wPX = (int) getResources().getDimension(R.dimen.grid_item_RelativeLayout_width);
+        int wDP = pxToDp(wPX);
+        Log.d("asg","W vale: "+wDP);
+        int num = (int) Math.floor(widthDPI/wDP);
+        Log.d("asg", "widthDPI/num vale: " + num);
+        return num;
     }
 
     //sottoclasse per l'adapter per i fragment e i titoli (delle varie tab)
@@ -358,5 +389,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    public int pxToDp(int px) {
+        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+        int dp = (int) ((px/displayMetrics.density)+0.5);
+        return dp;
     }
 }
