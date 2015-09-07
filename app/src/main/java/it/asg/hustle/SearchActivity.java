@@ -115,7 +115,7 @@ public class SearchActivity extends AppCompatActivity {
                 // Prende la lingua del sistema
                 String lan = Locale.getDefault().getLanguage();
                 try {
-                    url = new URL("http://hustle.altervista.org/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan);
+                    url = new URL("http://hustle.altervista.org/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan+"&full");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -146,12 +146,9 @@ public class SearchActivity extends AppCompatActivity {
                 for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
                     try {
                         JSONObject jo = ja.getJSONObject(i);
-                        // TODO: prendi la serie tramite l'id con un nuovo AsyncTask
                         Show s1 = new Show(jo);
-                        (new GetSerieByID()).execute(s1);
-                        //Log.d("HUSTLE", "Title: " + s1.toString());
-                        //shows.add(s1);
-                        //adapter.notifyDataSetChanged();
+                        shows.add(s1);
+                        adapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -164,51 +161,6 @@ public class SearchActivity extends AppCompatActivity {
 
        at.execute();
 
-    }
-
-    // AsyncTask per prendere informazioni sulla serie TV in base all'id
-    class GetSerieByID extends AsyncTask<Show, Void, JSONObject> {
-        @Override
-        protected JSONObject doInBackground(Show... params) {
-            URL url = null;
-            String s = null;
-            JSONObject jo = null;
-            // Prende la lingua del sistema
-            String lan = Locale.getDefault().getLanguage();
-            try {
-                url = new URL("http://hustle.altervista.org/getSeries.php?seriesid=" + params[0].id + "&language="+lan);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                s = br.readLine();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                jo = new JSONObject(s);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Log.d("HUSTLE", "GET SERIE BY ID: " + jo.toString());
-            try {
-                Log.d("HUSTLE", "GET SERIE BY ID, language: " + jo.getString("language"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return jo;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            super.onPostExecute(jsonObject);
-            Show s = new Show(jsonObject);
-            Log.d("HUSTLE", "Creo show: " + jsonObject);
-            shows.add(s);
-            adapter.notifyDataSetChanged();
-        }
     }
 
     @Override
