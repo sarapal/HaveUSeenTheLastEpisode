@@ -70,12 +70,13 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
         });
 
         final ProgressDialog progressDialog = new ProgressDialog(c);
+        final String msg_loading = c.getResources().getString(R.string.loading_image);
 
         AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressDialog.setMessage("Loading...");
+                progressDialog.setMessage(msg_loading);
                 progressDialog.setIndeterminate(false);
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progressDialog.setCancelable(true);
@@ -109,6 +110,9 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             Log.d("HUSTLE", "Downloading image: " + item.banner);
             // La scarica su un thread separato, ma solo se l'URL è diverso
             // da quello qui sotto (che significa che la serie tv non ha banner)
+            if (item.banner == null) {
+                return;
+            }
             if (!item.banner.equals("http://thetvdb.com/banners/"))
                 at.execute(item.banner);
         } else {

@@ -74,7 +74,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-
         Bundle b = getIntent().getExtras();
 
         if (b != null) {
@@ -94,14 +93,15 @@ public class SearchActivity extends AppCompatActivity {
 
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
         final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);
+        final String msg_loading = getResources().getString(R.string.searching);
 
-        // AsyncTask per prendere info limitate (id, nome, lingua) su una Serie TV in base
+        // AsyncTask per prendere info su una Serie TV in base
         // al nome. Potrebbe ritornare più elementi in un JSONArray
         AsyncTask<Void, Void, String> at = new AsyncTask<Void, Void, String>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progDailog.setMessage("Loading...");
+                progDailog.setMessage(msg_loading);
                 progDailog.setIndeterminate(false);
                 progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progDailog.setCancelable(true);
@@ -125,7 +125,6 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 return s;
             }
 
@@ -146,6 +145,7 @@ public class SearchActivity extends AppCompatActivity {
                 for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
                     try {
                         JSONObject jo = ja.getJSONObject(i);
+                        Log.d("HUSTLE", "Show: " + jo.toString());
                         Show s1 = new Show(jo);
                         shows.add(s1);
                         adapter.notifyDataSetChanged();
