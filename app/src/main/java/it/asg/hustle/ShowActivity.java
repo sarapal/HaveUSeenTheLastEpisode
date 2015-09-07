@@ -84,7 +84,7 @@ public class ShowActivity extends AppCompatActivity {
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         try {
-            collapsingToolbar.setTitle(show.getString("title"));
+            collapsingToolbar.setTitle(show.getString("seriesname"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -94,15 +94,15 @@ public class ShowActivity extends AppCompatActivity {
         ViewPager viewPager = (ViewPager)findViewById(R.id.viewpager);
         viewPager.setAdapter(a);
 
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
+        tabLayout.setupWithViewPager(viewPager);
+
         //get poster image
         posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
         if(posterBitmap!=null){posterImageView.setImageBitmap(posterBitmap);}
 
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
-        tabLayout.setupWithViewPager(viewPager);
 
-
-
+        a.
         // TODO: mostra la serie nell'activity
         Log.d("HUSTLE", "Devo mostrare la serie: " + show);
 
