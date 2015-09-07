@@ -1,13 +1,12 @@
 package it.asg.hustle;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -21,7 +20,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
@@ -67,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     private Display display;
     static int numOfElements = 3;          //3=default(small and normal); 4=large; 5=xlarge
 
+    private SQLiteDatabase db = null;
+
     com.facebook.login.widget.ProfilePictureView profilePictureInvisible = null;
     de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
     TextView account_name_facebook_tv = null;
@@ -81,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
         // initialize facebook sdk
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+
+        // apre o crea il db
+        //db = DataBase.getInstance();
+        // esegue le query iniziali
+        //db.execSQL(InitialQuery.create_series_table);
+        //db.execSQL(InitialQuery.create_episodes_table);
+        //db.execSQL(InitialQuery.create_seen_episodes_table);
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -123,11 +130,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // prendo dimensioni del display per vedere quanti elementi della griglia posso mettere
         display = getWindowManager().getDefaultDisplay();
         MainActivity.numOfElements = getDisplayDimensions(display);
-
 
         // Crea un TvShowAdapter
         TvShowAdapter adapter = new TvShowAdapter(getSupportFragmentManager());
