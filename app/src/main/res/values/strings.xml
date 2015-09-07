@@ -30,4 +30,7 @@
     <string name="account_default_name">Not logged</string>
     <string name="search_activity_hint">\"Search your TV show\"</string>
 
+    <string name="searching">Searching...</string>
+    <string name="loading_image">Loading image...</string>
+
 </resources>

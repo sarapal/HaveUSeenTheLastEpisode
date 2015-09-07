@@ -74,7 +74,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-
         Bundle b = getIntent().getExtras();
 
         if (b != null) {
@@ -94,14 +93,15 @@ public class SearchActivity extends AppCompatActivity {
 
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
         final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);
+        final String msg_loading = getResources().getString(R.string.searching);
 
-        // AsyncTask per prendere info limitate (id, nome, lingua) su una Serie TV in base
+        // AsyncTask per prendere info su una Serie TV in base
         // al nome. Potrebbe ritornare più elementi in un JSONArray
         AsyncTask<Void, Void, String> at = new AsyncTask<Void, Void, String>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progDailog.setMessage("Loading...");
+                progDailog.setMessage(msg_loading);
                 progDailog.setIndeterminate(false);
                 progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 progDailog.setCancelable(true);
@@ -115,7 +115,7 @@ public class SearchActivity extends AppCompatActivity {
                 // Prende la lingua del sistema
                 String lan = Locale.getDefault().getLanguage();
                 try {
-                    url = new URL("http://hustle.altervista.org/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan);
+                    url = new URL("http://hustle.altervista.org/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan+"&full");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -125,7 +125,6 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 return s;
             }
 
@@ -146,12 +145,10 @@ public class SearchActivity extends AppCompatActivity {
                 for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
                     try {
                         JSONObject jo = ja.getJSONObject(i);
-                        // TODO: prendi la serie tramite l'id con un nuovo AsyncTask
+                        Log.d("HUSTLE", "Show: " + jo.toString());
                         Show s1 = new Show(jo);
-                        (new GetSerieByID()).execute(s1);
-                        //Log.d("HUSTLE", "Title: " + s1.toString());
-                        //shows.add(s1);
-                        //adapter.notifyDataSetChanged();
+                        shows.add(s1);
+                        adapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -164,51 +161,6 @@ public class SearchActivity extends AppCompatActivity {
 
        at.execute();
 
-    }
-
-    // AsyncTask per prendere informazioni sulla serie TV in base all'id
-    class GetSerieByID extends AsyncTask<Show, Void, JSONObject> {
-        @Override
-        protected JSONObject doInBackground(Show... params) {
-            URL url = null;
-            String s = null;
-            JSONObject jo = null;
-            // Prende la lingua del sistema
-            String lan = Locale.getDefault().getLanguage();
-            try {
-                url = new URL("http://hustle.altervista.org/getSeries.php?seriesid=" + params[0].id + "&language="+lan);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                s = br.readLine();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                jo = new JSONObject(s);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Log.d("HUSTLE", "GET SERIE BY ID: " + jo.toString());
-            try {
-                Log.d("HUSTLE", "GET SERIE BY ID, language: " + jo.getString("language"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return jo;
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            super.onPostExecute(jsonObject);
-            Show s = new Show(jsonObject);
-            Log.d("HUSTLE", "Creo show: " + jsonObject);
-            shows.add(s);
-            adapter.notifyDataSetChanged();
-        }
     }
 
     @Override
