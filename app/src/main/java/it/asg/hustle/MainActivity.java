@@ -88,10 +88,6 @@ public class MainActivity extends AppCompatActivity {
         helper = new DBHelper(this);
         db = helper.getWritableDatabase();
         Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
-        // esegue le query iniziali
-        //db.execSQL(InitialQuery.create_series_table);
-        //db.execSQL(InitialQuery.create_episodes_table);
-        //db.execSQL(InitialQuery.create_seen_episodes_table);
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);

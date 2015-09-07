@@ -6,6 +6,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by gbyolo on 9/7/15.
+ * Classe DBHelper, così ogni volta che l'utente apre il DB lui prova a creare le tabelle
+ * se non esistono già. Inoltre garantisce l'utilizzo tra vari thread mediante il pattern Singleton
+ * ovvero, si usa una variabile privata statica, e il metodo getInstance() che, se l'istanza è null
+ * la crea e la ritorna, altrimenti ritorna l'istanza perché esisteva già. Inoltre con l'attributo
+ * synchronized, il metodo getInstance() è privo di race condition quando chiamato da più thread.
  */
 public class DBHelper extends SQLiteOpenHelper {
 

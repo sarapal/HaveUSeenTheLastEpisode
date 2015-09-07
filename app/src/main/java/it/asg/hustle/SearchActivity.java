@@ -1,6 +1,7 @@
 package it.asg.hustle;
 
 import android.app.ProgressDialog;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,12 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.SearchView;
 
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -84,7 +80,20 @@ public class SearchActivity extends AppCompatActivity {
 
     }
 
+    private void hideKeyboard() {
+        searchv.clearFocus();
+    }
+
+    private JSONObject searchDB(String tvShowTitle) {
+        String query = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE SeriesName='"+tvShowTitle+"';";
+        Cursor c = DBHelper.getInstance(this).getWritableDatabase().rawQuery(query, null);
+        Log.d("HUSTLE", c.toString());
+        return null;
+    }
+
     private void doSearch(final String tvShowTitle) {
+        hideKeyboard();
+        searchDB(tvShowTitle);
         // Ogni volta che viene effettuata una nuova ricerca
         // resetta l'ArrayList
         shows = new ArrayList<Show>();
@@ -154,13 +163,11 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
                 progDailog.dismiss();
-
                 //Log.d("HUSTLE", ja.toString());
             }
         };
 
-       at.execute();
-
+        at.execute();
     }
 
     @Override
