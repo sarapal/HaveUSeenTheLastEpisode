@@ -1,10 +1,12 @@
-package it.asg.hustle;
+package it.asg.hustle.Info;
 
 import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by sara on 8/26/15.
@@ -16,7 +18,10 @@ public class Show {
     public String language;
     public String banner;
     public Bitmap bmp;
+    public int seasonNumber;
     public JSONObject source;
+    public ArrayList<Season> seasonsList;
+
 
     public Show(String title)
     {
@@ -29,6 +34,8 @@ public class Show {
         try {
             if (jo.has("poster")) {
                 this.banner = jo.getString("banner");
+            }if (jo.has("seasons")) {
+                this.seasonNumber = jo.getInt("seasons");
             }
             this.title = jo.getString("seriesname");
             if (jo.has("id")) {

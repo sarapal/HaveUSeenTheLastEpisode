@@ -1,4 +1,4 @@
-package it.asg.hustle;
+package it.asg.hustle.Info;
 
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by sara on 8/26/15.
+ * Created by andrea on 9/7/15.
  */
 public class Episode{
     public String title;

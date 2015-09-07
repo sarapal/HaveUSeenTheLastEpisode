@@ -1,38 +1,26 @@
 package it.asg.hustle;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,22 +32,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Locale;
+
+import it.asg.hustle.Info.Episode;
+import it.asg.hustle.Info.Season;
+import it.asg.hustle.Info.Show;
 
 public class ShowActivity extends AppCompatActivity {
     private ImageView posterImageView;
-    private JSONObject show = null;
+    private JSONObject showJSON = null;
     private Bitmap posterBitmap = null;
+    private Show show;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster");
         if (savedInstanceState != null) try {
-            show = new JSONObject(savedInstanceState.getString("show"));
+            showJSON = new JSONObject(savedInstanceState.getString("show"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -70,8 +61,9 @@ public class ShowActivity extends AppCompatActivity {
         if (b != null) {
             String s = b.getString("show");
             try {
-                show = new JSONObject(s);
-                doGetShowPoster(show.getString("fanart"));
+                showJSON = new JSONObject(s);
+                show = new Show(showJSON);
+                doGetShowPoster(showJSON.getString("fanart"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -84,7 +76,7 @@ public class ShowActivity extends AppCompatActivity {
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         try {
-            collapsingToolbar.setTitle(show.getString("seriesname"));
+            collapsingToolbar.setTitle(showJSON.getString("seriesname"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -96,6 +88,7 @@ public class ShowActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         //get poster image
         posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
@@ -103,7 +96,7 @@ public class ShowActivity extends AppCompatActivity {
 
 
         // TODO: mostra la serie nell'activity
-        Log.d("HUSTLE", "Devo mostrare la serie: " + show);
+        Log.d("HUSTLE", "Devo mostrare la serie: " + showJSON);
 
 
     }
@@ -138,10 +131,67 @@ public class ShowActivity extends AppCompatActivity {
 
     }
 
+    private void doGetSeason(final String showID, final int seasonNumber) {
+
+
+        AsyncTask<String, Void, ArrayList<Episode>> at = new AsyncTask<String, Void, ArrayList<Episode>>() {
+
+            @Override
+            protected ArrayList<Episode> doInBackground(String... params) {
+                ArrayList<Episode> season = new ArrayList<Episode>();
+                String s=null;
+                JSONArray seasonJSON = null;
+                //richiesta dati episodi della stagione
+                while (seasonJSON == null) {
+                    try {
+                        URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + showID + "&season=" + seasonNumber);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        s = br.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //creazione array dalla risposta
+                    try {
+                        seasonJSON = new JSONArray(s);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //creazione elemento java da arraylist
+                Season seasonList = new Season();
+                seasonList.source = seasonJSON;
+                for (int i = 0; i< (seasonJSON != null ? seasonJSON.length() : 0); i++) {
+                    try {
+                        JSONObject jo = seasonJSON.getJSONObject(i);
+                        Episode ep = new Episode(jo);
+                        season.add(ep);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Episode> seasonList) {
+                super.onPostExecute(seasonList);
+
+
+
+            }
+        };
+        at.execute();
+
+    }
+
+
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
         savedInstanceState.putParcelable("poster", posterBitmap);
-        savedInstanceState.putString("show", show.toString());
+        savedInstanceState.putString("show", showJSON.toString());
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -186,12 +236,20 @@ public class ShowActivity extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            // TODO: barra di notifica deve colorarsi con immagine poster! deve!
             Bundle args = getArguments();
             int tabPosition = args.getInt(TAB_POSITION);
             // TODO: modifica questo fragment in modo da mostrare le info sulla serie TV
             ArrayList<String> items = new ArrayList<String>();
-            for(int i=0 ; i < 20 ; i++){
-                items.add("Element "+i);
+            if(tabPosition == 0){
+                for(int i=0 ; i < 20 ; i++){
+                    items.add("Info "+i);
+                }
+            }
+            else {
+                for (int i = 1; i < 20; i++) {
+                    items.add("Puntata " + i);
+                }
             }
 
             View v = inflater.inflate(R.layout.fragment_episodes_view, container, false);
@@ -206,7 +264,7 @@ public class ShowActivity extends AppCompatActivity {
     //sottoclasse per l'adapter per i fragment (delle varie tab)
     class SeasonsAdapter extends FragmentStatePagerAdapter {
 
-        private int number_of_tabs=2;
+        private int number_of_tabs=show.seasonNumber;
 
         public SeasonsAdapter(FragmentManager fm) {
             super(fm);
@@ -225,13 +283,16 @@ public class ShowActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
 
-            switch (position){
-                case 0:
-                    return getResources().getString(R.string.tab_show_info);
+            if (position == 0) {
+                return getResources().getString(R.string.tab_show_info);
+            }
+            int i=1;
+                // break;
+            for (i=1; i<=number_of_tabs; i++) {
+                if (position == i) {
+                    return getResources().getString(R.string.tab_season) + " " + i;
                     // break;
-                case 1:
-                    return getResources().getString(R.string.tab_season);
-                    // break;
+                }
             }
             return "";
         }

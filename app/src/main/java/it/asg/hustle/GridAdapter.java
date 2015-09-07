@@ -12,6 +12,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.asg.hustle.Info.Show;
+
 /**
  * Created by Edwin on 28/02/2015.
  */

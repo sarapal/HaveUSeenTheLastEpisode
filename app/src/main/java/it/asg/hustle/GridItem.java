@@ -1,5 +1,7 @@
 package it.asg.hustle;
 
+import it.asg.hustle.Info.Show;
+
 public class GridItem {
     private String mName;
     private int mThumbnail;
