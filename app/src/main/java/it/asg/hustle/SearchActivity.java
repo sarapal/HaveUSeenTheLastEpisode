@@ -54,7 +54,6 @@ public class SearchActivity extends AppCompatActivity {
 
         shows = new ArrayList<Show>();
 
-
         searchv = (android.widget.SearchView) findViewById(R.id.searchView);
         rw = (RecyclerView) findViewById(R.id.recyclerview);
         adapter = new SearchShowRecyclerAdapter(shows, this);
@@ -96,8 +95,9 @@ public class SearchActivity extends AppCompatActivity {
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
         final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);
 
+        // AsyncTask per prendere info limitate (id, nome, lingua) su una Serie TV in base
+        // al nome. Potrebbe ritornare più elementi in un JSONArray
         AsyncTask<Void, Void, String> at = new AsyncTask<Void, Void, String>() {
-
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -166,8 +166,8 @@ public class SearchActivity extends AppCompatActivity {
 
     }
 
+    // AsyncTask per prendere informazioni sulla serie TV in base all'id
     class GetSerieByID extends AsyncTask<Show, Void, JSONObject> {
-
         @Override
         protected JSONObject doInBackground(Show... params) {
             URL url = null;
