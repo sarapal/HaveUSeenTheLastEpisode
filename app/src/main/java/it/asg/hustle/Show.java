@@ -36,8 +36,11 @@ public class Show {
             } else if (jo.has("seriesid")) {
                 this.id = "" + jo.getLong("seriesid");
             }
+            if (jo.has("overview")) {
+                this.overview =jo.getString("overview");
+            }
 
-            Log.d("HUSTLE", "Show in crazione con lingua: " + jo.getString("language"));
+            Log.d("HUSTLE", "Show in creazione con lingua: " + jo.getString("language"));
             this.language = new String(jo.getString("language"));
 
             this.source = jo;

@@ -1,7 +1,11 @@
 package it.asg.hustle;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -27,21 +31,51 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class ShowActivity extends AppCompatActivity {
-
+    private ImageView posterImageView;
     private JSONObject show = null;
+    private Bitmap posterBitmap = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster");
+        if (savedInstanceState != null) try {
+            show = new JSONObject(savedInstanceState.getString("show"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         setContentView(R.layout.activity_show);
+
+        Bundle b = getIntent().getExtras();
+
+        if (b != null) {
+            String s = b.getString("show");
+            try {
+                show = new JSONObject(s);
+                doGetShowPoster(show.getString("fanart"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         // get toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -49,7 +83,11 @@ public class ShowActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle("TV Show (Title)");
+        try {
+            collapsingToolbar.setTitle(show.getString("seriesname"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         SeasonsAdapter a = new SeasonsAdapter(getSupportFragmentManager());
 
@@ -59,21 +97,54 @@ public class ShowActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
 
-        Bundle b = getIntent().getExtras();
+        //get poster image
+        posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
+        if(posterBitmap!=null){posterImageView.setImageBitmap(posterBitmap);}
 
-        if (b != null) {
-            String s = b.getString("show");
-            try {
-                show = new JSONObject(s);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
+        a.
         // TODO: mostra la serie nell'activity
         Log.d("HUSTLE", "Devo mostrare la serie: " + show);
 
 
+    }
+
+    private void doGetShowPoster(String imageUrl) {
+
+
+        AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
+
+            @Override
+            protected Bitmap doInBackground(String... params) {
+                Bitmap bm = null;
+                InputStream in = null;
+                try {
+                    in = new java.net.URL(params[0]).openStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                bm = BitmapFactory.decodeStream(in);
+                return bm;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+                posterImageView.setImageBitmap(bitmap);
+                posterBitmap = bitmap;
+
+            }
+        };
+        at.execute(imageUrl);
+
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putParcelable("poster", posterBitmap);
+        savedInstanceState.putString("show", show.toString());
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
