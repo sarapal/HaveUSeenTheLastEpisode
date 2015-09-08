@@ -173,7 +173,7 @@ public class SearchActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 if (add) {
                     Log.d("HUSTLE", "Sto per aggiungere la serie al DB");
-                    s1.addToDB(this);
+                    //s1.addToDB(this);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
