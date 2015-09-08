@@ -171,7 +171,6 @@ public class SearchActivity extends AppCompatActivity {
                 Show s1 = new Show(jo);
                 shows.add(s1);
                 adapter.notifyDataSetChanged();
-                // TODO: aggiungi serie TB al database
                 if (add) {
                     Log.d("HUSTLE", "Sto per aggiungere la serie al DB");
                     s1.addToDB(this);
