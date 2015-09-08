@@ -42,8 +42,9 @@ import it.asg.hustle.Info.Show;
 public class ShowActivity extends AppCompatActivity {
     private ImageView posterImageView;
     private JSONObject showJSON = null;
+    private JSONArray seasonsJSON = null;
     private Bitmap posterBitmap = null;
-    private Show show;
+    public static Show show;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,23 +52,33 @@ public class ShowActivity extends AppCompatActivity {
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster");
         if (savedInstanceState != null) try {
             showJSON = new JSONObject(savedInstanceState.getString("show"));
+            if (seasonsJSON != null){
+                int i;
+                for (i=0; i<seasonsJSON.length();i++){
+                    show.seasonsList.set(i, new Season((JSONArray) seasonsJSON.get(i)) );
+                }
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        setContentView(R.layout.activity_show);
+        if(savedInstanceState == null){
+            Bundle b = getIntent().getExtras();
 
-        Bundle b = getIntent().getExtras();
-
-        if (b != null) {
-            String s = b.getString("show");
-            try {
-                showJSON = new JSONObject(s);
-                show = new Show(showJSON);
-                doGetShowPoster(showJSON.getString("fanart"));
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (b != null) {
+                String s = b.getString("show");
+                try {
+                    showJSON = new JSONObject(s);
+                    show = new Show(showJSON);
+                    doGetShowPoster(showJSON.getString("fanart"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
+        setContentView(R.layout.activity_show);
+
+
 
         // get toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -94,11 +105,10 @@ public class ShowActivity extends AppCompatActivity {
         posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
         if(posterBitmap!=null){posterImageView.setImageBitmap(posterBitmap);}
 
+        if(show.seasonsList==null){doGetInfo(show);}
 
         // TODO: mostra la serie nell'activity
         Log.d("HUSTLE", "Devo mostrare la serie: " + showJSON);
-
-
     }
 
     private void doGetShowPoster(String imageUrl) {
@@ -131,20 +141,17 @@ public class ShowActivity extends AppCompatActivity {
 
     }
 
-    private void doGetSeason(final String showID, final int seasonNumber) {
-
-
-        AsyncTask<String, Void, ArrayList<Episode>> at = new AsyncTask<String, Void, ArrayList<Episode>>() {
-
+    private void doGetInfoSeason(final Show showInfo, final int seasonNumber){
+        AsyncTask<String, Void, Season> st = new AsyncTask<String, Void, Season>() {
             @Override
-            protected ArrayList<Episode> doInBackground(String... params) {
-                ArrayList<Episode> season = new ArrayList<Episode>();
+            protected Season doInBackground(String... params) {
+                ArrayList<Episode> seasonList = new ArrayList<Episode>();
                 String s=null;
                 JSONArray seasonJSON = null;
                 //richiesta dati episodi della stagione
                 while (seasonJSON == null) {
                     try {
-                        URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + showID + "&season=" + seasonNumber);
+                        URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + params[0] + "&season=" + params[1]);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -161,30 +168,34 @@ public class ShowActivity extends AppCompatActivity {
                 }
 
                 //creazione elemento java da arraylist
-                Season seasonList = new Season();
-                seasonList.source = seasonJSON;
-                for (int i = 0; i< (seasonJSON != null ? seasonJSON.length() : 0); i++) {
-                    try {
-                        JSONObject jo = seasonJSON.getJSONObject(i);
-                        Episode ep = new Episode(jo);
-                        season.add(ep);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
+                Season season = new Season(seasonJSON);
+                season.seasonNumber = Integer.parseInt(params[1]);
+                return season;
             }
 
             @Override
-            protected void onPostExecute(ArrayList<Episode> seasonList) {
-                super.onPostExecute(seasonList);
-
-
-
+            protected void onPostExecute(Season season) {
+                super.onPostExecute(season);
+                synchronized (showInfo.seasonsList){
+                    showInfo.seasonsList.set(season.seasonNumber-1, season);
+                }
             }
         };
-        at.execute();
 
+        st.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, showInfo.id, "" + seasonNumber);
+    }
+
+
+    private void doGetInfo(final Show showInfo) {
+        final ArrayList<Season> list = new ArrayList<Season>(showInfo.seasonNumber-1);
+        int z=1;
+        for(z=1;z<=show.seasonNumber;z++){list.add(new Season());}
+        showInfo.seasonsList = list;
+        int i=0;
+        for(i=1; i<=showInfo.seasonNumber; i++){
+            doGetInfoSeason(showInfo, i);
+        }
+        //Log.d("HUSTLE", "creato java file di show, " + showInfo.seasonsList.get(0) + "  " + showInfo.seasonsList.get(1));
     }
 
 
@@ -192,6 +203,19 @@ public class ShowActivity extends AppCompatActivity {
         // Save the user's current game state
         savedInstanceState.putParcelable("poster", posterBitmap);
         savedInstanceState.putString("show", showJSON.toString());
+        seasonsJSON = new JSONArray();
+        if(show.seasonsList != null) {
+            int i;
+            for (i=0;i<show.seasonsList.size();i++){
+                try{
+                    seasonsJSON.put(show.seasonsList.get(i).source);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(seasonsJSON != null){savedInstanceState.putString("seasons", seasonsJSON.toString());}
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -241,14 +265,17 @@ public class ShowActivity extends AppCompatActivity {
             int tabPosition = args.getInt(TAB_POSITION);
             // TODO: modifica questo fragment in modo da mostrare le info sulla serie TV
             ArrayList<String> items = new ArrayList<String>();
+
             if(tabPosition == 0){
                 for(int i=0 ; i < 20 ; i++){
                     items.add("Info "+i);
                 }
             }
             else {
-                for (int i = 1; i < 20; i++) {
-                    items.add("Puntata " + i);
+                Season currentSeason = (show.seasonsList.get(tabPosition-1));
+
+                for (int i = 0; i < currentSeason.episodeNumber; i++) {
+                    items.add(currentSeason.episodesList.get(i).title);
                 }
             }
 
