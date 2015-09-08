@@ -27,6 +27,8 @@ public class Season {
                 e.printStackTrace();
             }
         }
+        this.episodeNumber =0;
+        this.seasonNumber=0;
         try {
             this.episodeNumber = seasonJSON.length();
             this.seasonNumber = this.episodesList.get(0).season;
@@ -37,6 +39,9 @@ public class Season {
     }
 
     public Season(){
-
+        return;
     }
+
+    public JSONArray toJson(){return this.source;}
+
 }

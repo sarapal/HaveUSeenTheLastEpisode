@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,6 +78,37 @@ public class Show {
     {
         return this.source;
     }
+
+    public JSONArray toSeasonsJSON() {
+        JSONArray seasonsJSON = new JSONArray();
+        if(this.seasonsList != null) {
+            int i;
+            for (i=0;i<this.seasonsList.size();i++){
+                try{
+                    seasonsJSON.put(this.seasonsList.get(i).source);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return seasonsJSON;
+    }
+
+    public void fillSeasonsList(JSONArray seasonsJSON) {
+        try {
+            if (seasonsJSON != null) {
+                int i;
+                for (i = 0; i < seasonsJSON.length(); i++) {
+                    this.seasonsList.set(i, new Season((JSONArray) seasonsJSON.get(i)));
+                }
+            }
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
 
     public boolean addToDB(Context c) {
         Log.d("HUSTLE", "addToDB chiamata");

@@ -50,17 +50,12 @@ public class ShowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster");
-        if (savedInstanceState != null) try {
+        if (savedInstanceState != null) {try {
             showJSON = new JSONObject(savedInstanceState.getString("show"));
-            if (seasonsJSON != null){
-                int i;
-                for (i=0; i<seasonsJSON.length();i++){
-                    show.seasonsList.set(i, new Season((JSONArray) seasonsJSON.get(i)) );
-                }
+            } catch (JSONException e1) {
+            e1.printStackTrace();
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+            show.fillSeasonsList(seasonsJSON);
         }
         if(savedInstanceState == null){
             Bundle b = getIntent().getExtras();
@@ -203,18 +198,8 @@ public class ShowActivity extends AppCompatActivity {
         // Save the user's current game state
         savedInstanceState.putParcelable("poster", posterBitmap);
         savedInstanceState.putString("show", showJSON.toString());
-        seasonsJSON = new JSONArray();
-        if(show.seasonsList != null) {
-            int i;
-            for (i=0;i<show.seasonsList.size();i++){
-                try{
-                    seasonsJSON.put(show.seasonsList.get(i).source);
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
+        seasonsJSON = show.toSeasonsJSON();
+
         if(seasonsJSON != null){savedInstanceState.putString("seasons", seasonsJSON.toString());}
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
@@ -291,7 +276,7 @@ public class ShowActivity extends AppCompatActivity {
     //sottoclasse per l'adapter per i fragment (delle varie tab)
     class SeasonsAdapter extends FragmentStatePagerAdapter {
 
-        private int number_of_tabs=show.seasonNumber;
+        private int number_of_tabs=show.seasonNumber+1;
 
         public SeasonsAdapter(FragmentManager fm) {
             super(fm);
