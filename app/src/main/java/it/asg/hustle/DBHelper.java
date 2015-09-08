@@ -86,6 +86,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String OVERVIEW = "Overview";
     public static final String SERIESNAME = "SeriesName";
     public static final String BANNER = "banner";
+    public static final String POSTER = "poster";
     public static final String FANART = "fanart";
     public static final String SEASONS = "seasons";
 

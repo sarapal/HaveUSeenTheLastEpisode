@@ -2,6 +2,7 @@ package it.asg.hustle;
 
 import android.app.ProgressDialog;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -36,11 +37,14 @@ public class SearchActivity extends AppCompatActivity {
     SearchShowRecyclerAdapter adapter;
     ArrayList<Show> shows;
     android.widget.SearchView searchv;
+    String locale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        locale = Locale.getDefault().getLanguage();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -86,24 +90,54 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private JSONArray searchDB(String tvShowTitle) {
-        /*String query = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE SeriesName='"+tvShowTitle+"';";
-        Cursor c = DBHelper.getInstance(this).getWritableDatabase().rawQuery(query, null);
-        Log.d("HUSTLE", c.toString());*/
-        return null;
+        Log.d("HUSTLE", "Ricerca nel DB locale... " + tvShowTitle);
+        SQLiteDatabase db = DBHelper.getInstance(this).getReadableDatabase();
+        Cursor c = db.query(DBHelper.SERIES_TABLE, null, "SeriesName LIKE ? AND Language=?", new String[]{tvShowTitle, this.locale}, null, null, null);
+        if (c == null || c.getCount() == 0) {
+            Log.d("HUSTLE", "cursor non ha elementi...non ho trovato niente nel DB locale");
+            c.close();
+            return null;
+        }
+        // crea un nuovo JSONArray dove inserire le serie trovate
+        JSONArray ja = new JSONArray();
+        // riporta il cursore all'inizio
+        if (c.moveToFirst()) {
+            // itera sui risultati della query
+            do {
+                JSONObject jo = new JSONObject();
+                try {
+                    jo.put("seriesid", c.getInt(c.getColumnIndex(DBHelper.SERIESID)));
+                    jo.put("language", c.getString(c.getColumnIndex(DBHelper.LANGUAGE)));
+                    jo.put("overview", c.getString(c.getColumnIndex(DBHelper.OVERVIEW)));
+                    jo.put("seriesname", c.getString(c.getColumnIndex(DBHelper.SERIESNAME)));
+                    jo.put("poster", c.getString(c.getColumnIndex(DBHelper.POSTER)));
+                    jo.put("banner", c.getString(c.getColumnIndex(DBHelper.BANNER)));
+                    jo.put("fanart", c.getString(c.getColumnIndex(DBHelper.FANART)));
+                    jo.put("seasons", c.getString(c.getColumnIndex(DBHelper.SEASONS)));
+                    Log.d("HUSTLE", "Ricerca da DB OK, aggiungo serie: " + jo.toString());
+                    ja.put(jo);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } while (c.moveToNext());
+        }
+        c.close();
+        return ja;
     }
 
     private void doSearch(final String tvShowTitle) {
         hideKeyboard();
-        JSONArray ja = searchDB(tvShowTitle);
-        if (ja != null) {
-            handleJson(ja, false);
-            return;
-        }
         // Ogni volta che viene effettuata una nuova ricerca
         // resetta l'ArrayList
         shows = new ArrayList<Show>();
         adapter = new SearchShowRecyclerAdapter(shows, this);
         rw.setAdapter(adapter);
+        // Effettua la ricerca nel DB locale
+        JSONArray ja = searchDB(tvShowTitle);
+        if (ja != null) {
+            handleJson(ja, false);
+            return;
+        }
 
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
         final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);
@@ -126,13 +160,11 @@ public class SearchActivity extends AppCompatActivity {
             protected String doInBackground(Void... params) {
                 URL url = null;
                 String s = null;
-                // Prende la lingua del sistema
-                String lan = Locale.getDefault().getLanguage();
                 try {
                     Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
                             buildUpon().
                             appendQueryParameter("seriesname", tvShowTitle).
-                            appendQueryParameter("language", lan).
+                            appendQueryParameter("language", locale).
                             appendQueryParameter("full", null).
                             build();
                     String u = builtUri.toString();
@@ -182,8 +214,8 @@ public class SearchActivity extends AppCompatActivity {
                 shows.add(s1);
                 adapter.notifyDataSetChanged();
                 if (add) {
-                    Log.d("HUSTLE", "Sto per aggiungere la serie al DB");
-                    //s1.addToDB(this);
+                    //Log.d("HUSTLE", "Sto per aggiungere la serie al DB");
+                    s1.addToDB(this);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
