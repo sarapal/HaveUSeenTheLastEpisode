@@ -16,6 +16,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "series.db";
     private static final int DATABASE_VERSION = 1;
+
     public static final String SERIES_TABLE = "tvseries";
     public static final String EPISODES_TABLE = "episodes";
     public static final String SEEN_EPISODES_TABLE = "seen_episodes";
@@ -80,10 +81,39 @@ public class DBHelper extends SQLiteOpenHelper {
             "  seriesid int(10) NOT NULL\n" +
             ");";
 
+    public static final String SERIESID = "seriesid";
+    public static final String LANGUAGE = "Language";
+    public static final String OVERVIEW = "Overview";
+    public static final String SERIESNAME = "SeriesName";
+    public static final String BANNER = "banner";
+    public static final String FANART = "fanart";
+    public static final String SEASONS = "seasons";
+
+
+    public static final String[] SERIE_ROWS = new String[] {
+            "seriesid", "Actors", "Airs_DayOfWeek", "Airs_Time", "FirstAired", "Genre", "Language", "Network", "Overview",
+            "Rating", "SeriesName", "Status", "banner", "fanart", "lastupdated", "poster", "seasons"
+    };
+
+    public static final String[] EPISODE_ROWS = new String[] {
+            "episodeid", "EpisodeName", "EpisodeNumber", "FirstAired", "Language", "Overview", "Rating", "SeasonNumber",
+            "filename", "lastupdated", "seriesid"
+    };
+
+    public static final String ADD_SERIE_QUERY = "INSERT INTO tvseries (seriesid, Actors, Airs_DayOfWeek, Airs_Time, FirstAired, "+"" +
+            "Genre, Language, Network, Overview, Rating, SeriesName, Status, banner, fanart, lastupdated, poster, seasons) VALUES (" + "" +
+            "\"?\", \"?\",\"?\",\"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\");";
+
+    public static final String ADD_EPISODE_QUERY = "INSERT INTO " + EPISODES_TABLE + " (episodeid, EpisodeName, EpisodeNumber, FirstAired, " +
+            "Language, Overview, Rating, SeasonNumber, filename, lastupdated, seriesid) VALUES (" +
+            "\"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\");";
+
     private static DBHelper instance;
+    private Context context;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -93,7 +123,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_SEEN_EPISODES_TABLE);
     }
 
-    // synchronized significa che più thread possono chiamare questo metodo senza create
+    // synchronized significa che più thread possono chiamare questo metodo senza creare
     // eventi di race condition
     public static synchronized DBHelper getInstance(Context c) {
         if (instance == null) {

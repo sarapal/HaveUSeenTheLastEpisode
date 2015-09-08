@@ -2,6 +2,7 @@ package it.asg.hustle;
 
 import android.app.ProgressDialog;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -84,16 +85,20 @@ public class SearchActivity extends AppCompatActivity {
         searchv.clearFocus();
     }
 
-    private JSONObject searchDB(String tvShowTitle) {
-        String query = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE SeriesName='"+tvShowTitle+"';";
+    private JSONArray searchDB(String tvShowTitle) {
+        /*String query = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE SeriesName='"+tvShowTitle+"';";
         Cursor c = DBHelper.getInstance(this).getWritableDatabase().rawQuery(query, null);
-        Log.d("HUSTLE", c.toString());
+        Log.d("HUSTLE", c.toString());*/
         return null;
     }
 
     private void doSearch(final String tvShowTitle) {
         hideKeyboard();
-        searchDB(tvShowTitle);
+        JSONArray ja = searchDB(tvShowTitle);
+        if (ja != null) {
+            handleJson(ja, false);
+            return;
+        }
         // Ogni volta che viene effettuata una nuova ricerca
         // resetta l'ArrayList
         shows = new ArrayList<Show>();
@@ -124,7 +129,15 @@ public class SearchActivity extends AppCompatActivity {
                 // Prende la lingua del sistema
                 String lan = Locale.getDefault().getLanguage();
                 try {
-                    url = new URL("http://hustle.altervista.org/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan+"&full");
+                    Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
+                            buildUpon().
+                            appendQueryParameter("seriesname", tvShowTitle).
+                            appendQueryParameter("language", lan).
+                            appendQueryParameter("full", null).
+                            build();
+                    String u = builtUri.toString();
+                    Log.d("HUSTLE", "requesting: " + u);
+                    url = new URL(u);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -134,6 +147,7 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                Log.d("HUSTLE", "returned: " + s);
                 return s;
             }
 
@@ -142,7 +156,7 @@ public class SearchActivity extends AppCompatActivity {
                 super.onPostExecute(s);
                 if (s == null)
                     return;
-                Log.d("HUSTLE", s);
+                //Log.d("HUSTLE", s);
                 JSONArray ja = null;
                 try {
                     ja = new JSONArray(s);
@@ -150,24 +164,31 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
-                    try {
-                        JSONObject jo = ja.getJSONObject(i);
-                        Log.d("HUSTLE", "Show: " + jo.toString());
-                        Show s1 = new Show(jo);
-                        shows.add(s1);
-                        adapter.notifyDataSetChanged();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
+                handleJson(ja, true);
                 progDailog.dismiss();
                 //Log.d("HUSTLE", ja.toString());
             }
         };
 
         at.execute();
+    }
+    // add è true se la stagione va aggiunta al DB, falso altrimenti
+    public void handleJson(JSONArray ja, boolean add) {
+        for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
+            try {
+                JSONObject jo = ja.getJSONObject(i);
+                Log.d("HUSTLE", "Show: " + jo.toString());
+                Show s1 = new Show(jo);
+                shows.add(s1);
+                adapter.notifyDataSetChanged();
+                if (add) {
+                    Log.d("HUSTLE", "Sto per aggiungere la serie al DB");
+                    //s1.addToDB(this);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

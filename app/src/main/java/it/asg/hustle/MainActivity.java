@@ -54,10 +54,10 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
-    private Toolbar toolbar;
-    private DrawerLayout myDrawerLayout;    //imposta NavigationDrawer
-    private FloatingActionButton fab;
-    private NavigationView navigationView;
+    private Toolbar toolbar;                // la toolbar
+    private DrawerLayout myDrawerLayout;    // imposta NavigationDrawer
+    private FloatingActionButton fab;       // FloatingActionButton
+    private NavigationView navigationView;  // NavigationView (per il navigation drawer)
 
     private MenuItem SearchAction;
     private boolean isSearchOpened = false;
@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
     de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
     TextView account_name_facebook_tv = null;
 
-    RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;             // RecyclerView: è un tipo di view che ricicla gli elementi
     RecyclerView.LayoutManager mLayoutManager;
-    RecyclerView.Adapter mAdapter;
+    RecyclerView.Adapter mAdapter;          // adapter per RecyclerView
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -288,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
             RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
             recyclerView.setHasFixedSize(true);
-
 
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity() , numOfElements);
             recyclerView.setLayoutManager(gridLayoutManager);

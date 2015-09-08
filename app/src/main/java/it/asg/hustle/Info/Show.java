@@ -1,5 +1,9 @@
 package it.asg.hustle.Info;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -7,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import it.asg.hustle.DBHelper;
 
 /**
  * Created by sara on 8/26/15.
@@ -61,6 +67,26 @@ public class Show {
     public JSONObject toJSON()
     {
         return this.source;
+    }
+
+    public boolean addToDB(Context c) {
+        // prende database
+        SQLiteOpenHelper helper = DBHelper.getInstance(c);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        // crea oggetto per i valori da inserire nella tabella
+        ContentValues cv = new ContentValues();
+        // aggiunge i valori
+        cv.put(DBHelper.SERIESID, this.id);
+        cv.put(DBHelper.LANGUAGE, this.language);
+        cv.put(DBHelper.OVERVIEW, this.overview);
+        cv.put(DBHelper.SERIESNAME, this.title);
+        cv.put(DBHelper.BANNER, this.banner);
+        cv.put(DBHelper.SEASONS, this.seasonNumber);
+
+        if (db.insert(DBHelper.SERIES_TABLE, null, cv) == -1) {
+            return false;
+        }
+        return true;
     }
 
     @Override
