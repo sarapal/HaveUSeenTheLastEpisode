@@ -2,6 +2,7 @@ package it.asg.hustle;
 
 import android.app.ProgressDialog;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -128,7 +129,15 @@ public class SearchActivity extends AppCompatActivity {
                 // Prende la lingua del sistema
                 String lan = Locale.getDefault().getLanguage();
                 try {
-                    url = new URL("http://hustle.altervista.org/getSeries.php?seriesname=" + tvShowTitle + "&language="+lan+"&full");
+                    Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
+                            buildUpon().
+                            appendQueryParameter("seriesname", tvShowTitle).
+                            appendQueryParameter("language", lan).
+                            appendQueryParameter("full", null).
+                            build();
+                    String u = builtUri.toString();
+                    Log.d("HUSTLE", "requesting: " + u);
+                    url = new URL(u);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -138,6 +147,7 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                Log.d("HUSTLE", "returned: " + s);
                 return s;
             }
 
@@ -146,7 +156,7 @@ public class SearchActivity extends AppCompatActivity {
                 super.onPostExecute(s);
                 if (s == null)
                     return;
-                Log.d("HUSTLE", s);
+                //Log.d("HUSTLE", s);
                 JSONArray ja = null;
                 try {
                     ja = new JSONArray(s);
