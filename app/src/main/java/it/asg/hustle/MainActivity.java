@@ -273,8 +273,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             Bundle args = getArguments();
-            /*int tabPosition = args.getInt(TAB_POSITION);
+            int tabPosition = args.getInt(TAB_POSITION);
             Log.d("asg","tabPosition "+tabPosition);
+
+
+            // TODO: in base alla tabPosition mostra le serie
+
+            /*
             ArrayList<String> items = new ArrayList<String>();
             for(int i=0 ; i < 50 ; i++){
                 items.add("TV-Show "+i);
