@@ -90,24 +90,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String FANART = "fanart";
     public static final String SEASONS = "seasons";
 
-
-    public static final String[] SERIE_ROWS = new String[] {
-            "seriesid", "Actors", "Airs_DayOfWeek", "Airs_Time", "FirstAired", "Genre", "Language", "Network", "Overview",
-            "Rating", "SeriesName", "Status", "banner", "fanart", "lastupdated", "poster", "seasons"
-    };
-
-    public static final String[] EPISODE_ROWS = new String[] {
-            "episodeid", "EpisodeName", "EpisodeNumber", "FirstAired", "Language", "Overview", "Rating", "SeasonNumber",
-            "filename", "lastupdated", "seriesid"
-    };
-
-    public static final String ADD_SERIE_QUERY = "INSERT INTO tvseries (seriesid, Actors, Airs_DayOfWeek, Airs_Time, FirstAired, "+"" +
-            "Genre, Language, Network, Overview, Rating, SeriesName, Status, banner, fanart, lastupdated, poster, seasons) VALUES (" + "" +
-            "\"?\", \"?\",\"?\",\"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\");";
-
-    public static final String ADD_EPISODE_QUERY = "INSERT INTO " + EPISODES_TABLE + " (episodeid, EpisodeName, EpisodeNumber, FirstAired, " +
-            "Language, Overview, Rating, SeasonNumber, filename, lastupdated, seriesid) VALUES (" +
-            "\"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\", \"?\");";
+    public static final String EPISODEID = "episodeid";
+    public static final String EPISODENAME = "EpisodeName";
+    public static final String EPISODENUMBER = "EpisodeNumber";
+    public static final String SEASON = "SeasonNumber";
+    public static final String FILENAME = "filename";
 
     private static DBHelper instance;
     private Context context;
