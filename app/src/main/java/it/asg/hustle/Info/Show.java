@@ -43,6 +43,10 @@ public class Show {
                 this.banner = jo.getString("banner");
             }if (jo.has("seasons")) {
                 this.seasonNumber = jo.getInt("seasons");
+                this.seasonsList = new ArrayList<Season>(this.seasonNumber);
+                for(int i=0;i<this.seasonNumber;i++){
+                    this.seasonsList.add(new Season());
+                }
             }
             this.title = jo.getString("seriesname");
             if (jo.has("id")) {

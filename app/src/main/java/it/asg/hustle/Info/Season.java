@@ -38,7 +38,29 @@ public class Season {
         }
     }
 
+    public void fromJson(JSONArray seasonJSON){
+        this.source = source;
+        for (int i = 0; i< (seasonJSON != null ? seasonJSON.length() : 0); i++) {
+            try {
+                JSONObject jo = seasonJSON.getJSONObject(i);
+                this.episodesList.add(new Episode(jo));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        this.episodeNumber =0;
+        this.seasonNumber=0;
+        try {
+            this.episodeNumber = seasonJSON.length();
+            this.seasonNumber = this.episodesList.get(0).season;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public Season(){
+        this.episodesList = new ArrayList<Episode>();
         return;
     }
 

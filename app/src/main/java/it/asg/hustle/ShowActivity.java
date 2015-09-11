@@ -1,5 +1,6 @@
 package it.asg.hustle;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -45,10 +46,15 @@ public class ShowActivity extends AppCompatActivity {
     private JSONArray seasonsJSON = null;
     private Bitmap posterBitmap = null;
     public static Show show;
-
+    private SeasonsAdapter a;
+    private ViewPager viewPager;
+    static private ArrayList<EpisodeRecyclerAdapter> adapterList;
+    private ArrayList<String> info;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        adapterList = new ArrayList<EpisodeRecyclerAdapter>();
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster");
         if (savedInstanceState != null) {try {
             showJSON = new JSONObject(savedInstanceState.getString("show"));
@@ -66,11 +72,23 @@ public class ShowActivity extends AppCompatActivity {
                     showJSON = new JSONObject(s);
                     show = new Show(showJSON);
                     doGetShowPoster(showJSON.getString("fanart"));
+                    doGetInfo(show);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }
+
+        adapterList.add(new EpisodeRecyclerAdapter(new Season()));
+        for(int i=1; i<= show.seasonNumber; i++) {
+            adapterList.add(new EpisodeRecyclerAdapter(show.seasonsList.get(i-1)));
+        }
+        /*
+        Season currentSeason = (show.seasonsList.get(tabPosition-1));
+        for (int i = 0; i < currentSeason.episodeNumber; i++) {
+            items.add(currentSeason.episodesList.get(i).title);
+        }
+*/
         setContentView(R.layout.activity_show);
 
 
@@ -87,10 +105,11 @@ public class ShowActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        SeasonsAdapter a = new SeasonsAdapter(getSupportFragmentManager());
+        a = new SeasonsAdapter(getSupportFragmentManager());
 
-        ViewPager viewPager = (ViewPager)findViewById(R.id.viewpager);
+        viewPager = (ViewPager)findViewById(R.id.viewpager);
         viewPager.setAdapter(a);
+
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
@@ -100,7 +119,6 @@ public class ShowActivity extends AppCompatActivity {
         posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
         if(posterBitmap!=null){posterImageView.setImageBitmap(posterBitmap);}
 
-        if(show.seasonsList==null){doGetInfo(show);}
 
         // TODO: mostra la serie nell'activity
         Log.d("HUSTLE", "Devo mostrare la serie: " + showJSON);
@@ -163,17 +181,16 @@ public class ShowActivity extends AppCompatActivity {
                 }
 
                 //creazione elemento java da arraylist
-                Season season = new Season(seasonJSON);
-                season.seasonNumber = Integer.parseInt(params[1]);
-                return season;
+                int number = Integer.parseInt(params[1]);
+                show.seasonsList.get(number-1).fromJson(seasonJSON);
+                show.seasonsList.get(number-1).seasonNumber = number;
+                return show.seasonsList.get(number-1);
             }
 
             @Override
             protected void onPostExecute(Season season) {
                 super.onPostExecute(season);
-                synchronized (showInfo.seasonsList){
-                    showInfo.seasonsList.set(season.seasonNumber-1, season);
-                }
+                adapterList.get(season.seasonNumber).notifyDataSetChanged();
             }
         };
 
@@ -182,10 +199,8 @@ public class ShowActivity extends AppCompatActivity {
 
 
     private void doGetInfo(final Show showInfo) {
-        final ArrayList<Season> list = new ArrayList<Season>(showInfo.seasonNumber-1);
-        int z=1;
-        for(z=1;z<=show.seasonNumber;z++){list.add(new Season());}
-        showInfo.seasonsList = list;
+        ArrayList<Season> list = showInfo.seasonsList;
+
         int i=0;
         for(i=1; i<=showInfo.seasonNumber; i++){
             doGetInfoSeason(showInfo, i);
@@ -249,25 +264,15 @@ public class ShowActivity extends AppCompatActivity {
             Bundle args = getArguments();
             int tabPosition = args.getInt(TAB_POSITION);
             // TODO: modifica questo fragment in modo da mostrare le info sulla serie TV
-            ArrayList<String> items = new ArrayList<String>();
 
-            if(tabPosition == 0){
-                for(int i=0 ; i < 20 ; i++){
-                    items.add("Info "+i);
-                }
-            }
-            else {
-                Season currentSeason = (show.seasonsList.get(tabPosition-1));
 
-                for (int i = 0; i < currentSeason.episodeNumber; i++) {
-                    items.add(currentSeason.episodesList.get(i).title);
-                }
-            }
+
 
             View v = inflater.inflate(R.layout.fragment_episodes_view, container, false);
             RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setAdapter(new EpisodeRecyclerAdapter(items));
+
+            recyclerView.setAdapter( adapterList.get(tabPosition));
 
             return v;
         }

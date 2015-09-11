@@ -11,16 +11,30 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.asg.hustle.Info.Episode;
+import it.asg.hustle.Info.Season;
+
 /**
  * Created by sara on 8/26/15.
  */
 public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecyclerAdapter.ViewHolder> {
 
-    private List<String> mItems;
+    //private List<String> mItems;
+    private ArrayList<Episode> episodes;
 
-    EpisodeRecyclerAdapter(List<String> items) {
-        mItems = items;
+    //EpisodeRecyclerAdapter(List<String> items) {
+    //    mItems = items;
+    //}
+    EpisodeRecyclerAdapter(Season season) {
+        if (season.episodesList != null) {
+            episodes = season.episodesList;
+        }
+        else{
+            episodes = new ArrayList<Episode>();
+        }
+
     }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -31,7 +45,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
-        String item = mItems.get(i);
+        String item = episodes.get(i).title;
         viewHolder.mTextView.setText(item);
 
         viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +59,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return episodes.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
