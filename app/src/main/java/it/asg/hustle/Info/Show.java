@@ -24,6 +24,8 @@ public class Show {
     public String overview;
     public String language;
     public String banner;
+    public String poster;
+    public String fanart;
     public Bitmap bmp;
     public int seasonNumber;
     public JSONObject source;
@@ -39,9 +41,16 @@ public class Show {
         Log.d("HUSTLE", "Chiamato costruttore show con parametro: " + jo.toString());
 
         try {
-            if (jo.has("poster")) {
+            if (jo.has("banner")) {
                 this.banner = jo.getString("banner");
-            }if (jo.has("seasons")) {
+            }
+            if (jo.has("poster")) {
+                this.poster = jo.getString("poster");
+            }
+            if (jo.has("fanart")) {
+                this.fanart = jo.getString("fanart");
+            }
+            if (jo.has("seasons")) {
                 this.seasonNumber = jo.getInt("seasons");
                 this.seasonsList = new ArrayList<Season>(this.seasonNumber);
                 for(int i=0;i<this.seasonNumber;i++){
@@ -106,6 +115,7 @@ public class Show {
 
 
     public boolean addToDB(Context c) {
+        Log.d("HUSTLE", "addToDB chiamata");
         // prende database
         SQLiteOpenHelper helper = DBHelper.getInstance(c);
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -117,11 +127,15 @@ public class Show {
         cv.put(DBHelper.OVERVIEW, this.overview);
         cv.put(DBHelper.SERIESNAME, this.title);
         cv.put(DBHelper.BANNER, this.banner);
+        cv.put(DBHelper.POSTER, this.poster);
+        cv.put(DBHelper.FANART, this.fanart);
         cv.put(DBHelper.SEASONS, this.seasonNumber);
 
         if (db.insert(DBHelper.SERIES_TABLE, null, cv) == -1) {
+            Log.d("HUSTLE", "Non sono riuscito a inserire la serie nel DB");
             return false;
         }
+        Log.d("HUSTLE", "Serie inserita correttamente");
         return true;
     }
 

@@ -1,10 +1,16 @@
 package it.asg.hustle.Info;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.asg.hustle.DBHelper;
 
 /**
  * Created by andrea on 9/7/15.
@@ -64,6 +70,32 @@ public class Episode{
     public JSONObject toJSON()
     {
         return this.source;
+    }
+
+    /* gbyolo, 10/9/2015 */
+    public boolean addToDB(Context c) {
+        Log.d("HUSTLE", "addToDB episodio chiamata");
+        // prende database
+        SQLiteOpenHelper helper = DBHelper.getInstance(c);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        // crea oggetto per i valori da inserire nella tabella
+        ContentValues cv = new ContentValues();
+        // aggiunge i valori
+        cv.put(DBHelper.EPISODEID, this.episodeId);
+        cv.put(DBHelper.EPISODENUMBER, this.episodeNumber);
+        cv.put(DBHelper.LANGUAGE, this.language);
+        cv.put(DBHelper.OVERVIEW, this.overview);
+        cv.put(DBHelper.SERIESID, this.seriesID);
+        cv.put(DBHelper.FILENAME, this.bmpPath);
+        cv.put(DBHelper.EPISODENAME, this.title);
+        cv.put(DBHelper.SEASON, this.season);
+
+        if (db.insert(DBHelper.EPISODES_TABLE, null, cv) == -1) {
+            Log.d("HUSTLE", "Non sono riuscito a inserire l'episodio nel DB");
+            return false;
+        }
+        Log.d("HUSTLE", "Episodio inserito correttamente");
+        return true;
     }
 
     @Override
