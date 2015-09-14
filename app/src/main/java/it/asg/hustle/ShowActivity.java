@@ -1,10 +1,14 @@
 package it.asg.hustle;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,9 +23,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +54,8 @@ public class ShowActivity extends AppCompatActivity {
     public static Show show;
     private SeasonsAdapter a;
     private ViewPager viewPager;
+    private Toolbar toolbar;
+    private CollapsingToolbarLayout collapsingToolbar;
     static private ArrayList<EpisodeRecyclerAdapter> adapterList;
     private ArrayList<String> info;
     @Override
@@ -81,24 +89,18 @@ public class ShowActivity extends AppCompatActivity {
 
         adapterList.add(new EpisodeRecyclerAdapter(new Season()));
         for(int i=1; i<= show.seasonNumber; i++) {
-            adapterList.add(new EpisodeRecyclerAdapter(show.seasonsList.get(i-1)));
+            adapterList.add(new EpisodeRecyclerAdapter(show.seasonsList.get(i - 1)));
+
         }
-        /*
-        Season currentSeason = (show.seasonsList.get(tabPosition-1));
-        for (int i = 0; i < currentSeason.episodeNumber; i++) {
-            items.add(currentSeason.episodesList.get(i).title);
-        }
-*/
         setContentView(R.layout.activity_show);
 
 
-
         // get toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         try {
             collapsingToolbar.setTitle(showJSON.getString("seriesname"));
         } catch (JSONException e) {
@@ -119,11 +121,18 @@ public class ShowActivity extends AppCompatActivity {
         posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
         if(posterBitmap!=null){posterImageView.setImageBitmap(posterBitmap);}
 
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
+            Log.d("HUSTLE", "landscape mode!");
+
+        }
+
 
         // TODO: mostra la serie nell'activity
 
         Log.d("HUSTLE", "Devo mostrare la serie: " + showJSON);
     }
+
 
     private void doGetShowPoster(String imageUrl) {
 
@@ -226,6 +235,7 @@ public class ShowActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_show, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
