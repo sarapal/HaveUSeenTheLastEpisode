@@ -152,7 +152,6 @@ public class ShowActivity extends AppCompatActivity {
             }
         };
         at.execute(imageUrl);
-
     }
 
     private void doGetInfoSeason(final Show showInfo, final int seasonNumber){

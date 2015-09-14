@@ -97,6 +97,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 super.onPostExecute(bitmap);
                 viewHolder.mImageView.setImageBitmap(bitmap);
                 item.bmp = bitmap;
+                viewHolder.mTextView.setHeight(bitmap.getHeight());
                 progressDialog.dismiss();
             }
         };
