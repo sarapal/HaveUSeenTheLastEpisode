@@ -2,26 +2,30 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="200dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:fitsSystemWindows="true">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:id="@+id/episode_image"
-                app:layout_collapseMode="parallax"/>
+                app:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -33,6 +37,30 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:baselineAligned="false"
+        android:measureWithLargestChild="false"
+        android:fitsSystemWindows="true">
+
+
+        <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/recyclerview"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/searchView"
+            android:paddingBottom="50dp"
+            android:fitsSystemWindows="true">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+    <!--
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,11 +71,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingTop="24dp">
-        <!-- qui le info sull'episodio -->
+
 
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.NestedScrollView> -->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

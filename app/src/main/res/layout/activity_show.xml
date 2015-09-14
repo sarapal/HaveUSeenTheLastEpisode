@@ -25,7 +25,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/prova"
                 android:id = "@+id/show_activity_poster"
                 app:layout_collapseMode="parallax"
                 android:fitsSystemWindows="true"/>
@@ -64,22 +63,6 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     </LinearLayout>
-    <!--
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="24dp">
-
-        </LinearLayout>
-
-    </android.support.v4.widget.NestedScrollView>
-    -->
 
 <!--    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_done"
