@@ -3,12 +3,19 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:gravity="center_horizontal">
+    android:layout_height="56dp">
+    <!-- android:gravity="center_horizontal" -->
 
     <TextView
         android:id="@+id/list_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ep_img"
+        android:layout_weight="0.56"
+        android:layout_gravity="left" />
 
 </LinearLayout>

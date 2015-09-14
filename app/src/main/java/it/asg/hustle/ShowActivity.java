@@ -121,6 +121,7 @@ public class ShowActivity extends AppCompatActivity {
 
 
         // TODO: mostra la serie nell'activity
+
         Log.d("HUSTLE", "Devo mostrare la serie: " + showJSON);
     }
 
