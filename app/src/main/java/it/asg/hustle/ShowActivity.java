@@ -270,11 +270,13 @@ public class ShowActivity extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            // TODO: barra di notifica deve colorarsi con immagine poster! deve!
             Bundle args = getArguments();
             int tabPosition = args.getInt(TAB_POSITION);
-            // TODO: modifica questo fragment in modo da mostrare le info sulla serie TV
 
+            if (tabPosition == 0) {
+                Log.d("HUSTLE", "Questo è il fragment con le info");
+                // TODO: modifica questo fragment in modo da mostrare le info sulla serie TV
+            }
 
 
 
