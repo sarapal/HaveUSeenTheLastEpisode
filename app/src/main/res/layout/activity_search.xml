@@ -2,13 +2,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
@@ -19,16 +21,17 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="fill_parent"
                 android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"/>
             <!-- android:src="@drawable/prova" -->
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"/>
+                app:layout_collapseMode="pin" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -40,13 +43,15 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:baselineAligned="false"
-        android:measureWithLargestChild="false">
+        android:measureWithLargestChild="false"
+        android:fitsSystemWindows="true">
 
         <SearchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/searchView"
-            android:queryHint="@string/search_activity_hint" />
+            android:queryHint="@string/search_activity_hint"
+            android:fitsSystemWindows="true"/>
 
 
 
@@ -57,7 +62,8 @@
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:layout_alignBottom="@+id/searchView"
-            android:paddingBottom="50dp">
+            android:paddingBottom="50dp"
+            android:fitsSystemWindows="true">
 
         </android.support.v7.widget.RecyclerView>
 
