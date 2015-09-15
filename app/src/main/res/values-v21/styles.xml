@@ -10,7 +10,11 @@
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 
+    <!-- CardView theme -->
+    <style name="CardStyle" parent="CardView.Dark">
+        <item name="android:backgroundTint">@color/cardview_background</item>
     </style>
 
 </resources>
