@@ -1,8 +1,18 @@
 package it.asg.hustle;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import it.asg.hustle.Info.Episode;
+import it.asg.hustle.Info.Show;
 
 /**
  * Created by gbyolo on 9/7/15.
@@ -118,6 +128,133 @@ public class DBHelper extends SQLiteOpenHelper {
             instance = new DBHelper(c);
         }
         return instance;
+    }
+
+    public static synchronized JSONArray getSeriesByNameFromDB(String title, String lan) {
+        Log.d("HUSTLE", "Ricerca serie con nome nel DB locale... " + title);
+        if (instance == null) {
+            return null;
+        }
+        SQLiteDatabase db = instance.getReadableDatabase();
+        Cursor c = db.query(DBHelper.SERIES_TABLE, null, "SeriesName LIKE ? AND Language=?", new String[]{title, lan}, null, null, null);
+        if (c == null || c.getCount() == 0) {
+            Log.d("HUSTLE", "cursor non ha elementi...non ho trovato niente nel DB locale");
+            c.close();
+            return null;
+        }
+        // crea un nuovo JSONArray dove inserire le serie trovate
+        JSONArray ja = new JSONArray();
+        // riporta il cursore all'inizio
+        if (c.moveToFirst()) {
+            // itera sui risultati della query
+            do {
+                JSONObject jo = new JSONObject();
+                try {
+                    jo.put("seriesid", c.getInt(c.getColumnIndex(DBHelper.SERIESID)));
+                    jo.put("language", c.getString(c.getColumnIndex(DBHelper.LANGUAGE)));
+                    jo.put("overview", c.getString(c.getColumnIndex(DBHelper.OVERVIEW)));
+                    jo.put("seriesname", c.getString(c.getColumnIndex(DBHelper.SERIESNAME)));
+                    jo.put("poster", c.getString(c.getColumnIndex(DBHelper.POSTER)));
+                    jo.put("banner", c.getString(c.getColumnIndex(DBHelper.BANNER)));
+                    jo.put("fanart", c.getString(c.getColumnIndex(DBHelper.FANART)));
+                    jo.put("seasons", c.getString(c.getColumnIndex(DBHelper.SEASONS)));
+                    Log.d("HUSTLE", "Ricerca da DB OK, aggiungo nell'array la serie: " + jo.toString());
+                    ja.put(jo);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } while (c.moveToNext());
+        }
+        c.close();
+        return ja;
+    }
+
+    public static synchronized JSONObject getSerieByIDFromDB(String id, String lan) {
+        JSONObject jo = new JSONObject();
+        if (instance == null) {
+            return null;
+        }
+        SQLiteDatabase db = instance.getReadableDatabase();
+        Cursor c = db.query(DBHelper.SERIES_TABLE, null, "seriesid=? AND Language=?", new String[]{id, lan}, null, null, null);
+        if (c == null || c.getCount() == 0) {
+            Log.d("HUSTLE", "cursor non ha elementi...non ho trovato niente nel DB locale");
+            c.close();
+            return null;
+        }
+        // riporta il cursore all'inizio
+        if (c.moveToFirst()) {
+            try {
+                jo.put("seriesid", c.getInt(c.getColumnIndex(DBHelper.SERIESID)));
+                jo.put("language", c.getString(c.getColumnIndex(DBHelper.LANGUAGE)));
+                jo.put("overview", c.getString(c.getColumnIndex(DBHelper.OVERVIEW)));
+                jo.put("seriesname", c.getString(c.getColumnIndex(DBHelper.SERIESNAME)));
+                jo.put("poster", c.getString(c.getColumnIndex(DBHelper.POSTER)));
+                jo.put("banner", c.getString(c.getColumnIndex(DBHelper.BANNER)));
+                jo.put("fanart", c.getString(c.getColumnIndex(DBHelper.FANART)));
+                jo.put("seasons", c.getString(c.getColumnIndex(DBHelper.SEASONS)));
+                Log.d("HUSTLE", "Ricerca da DB OK, aggiungo nell'array la serie: " + jo.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        c.close();
+
+        return jo;
+    }
+
+    public static synchronized boolean addSerieToDB(Show s) {
+        Log.d("HUSTLE", "addSerieToDB chiamata");
+        // prende database
+        if (instance == null) {
+            return false;
+        }
+        SQLiteDatabase db = instance.getWritableDatabase();
+        // crea oggetto per i valori da inserire nella tabella
+        ContentValues cv = new ContentValues();
+        // aggiunge i valori
+        cv.put(DBHelper.SERIESID, s.id);
+        cv.put(DBHelper.LANGUAGE, s.language);
+        cv.put(DBHelper.OVERVIEW, s.overview);
+        cv.put(DBHelper.SERIESNAME, s.title);
+        cv.put(DBHelper.BANNER, s.banner);
+        cv.put(DBHelper.POSTER, s.poster);
+        cv.put(DBHelper.FANART, s.fanart);
+        cv.put(DBHelper.SEASONS, s.seasonNumber);
+
+        if (db.insert(DBHelper.SERIES_TABLE, null, cv) == -1) {
+            Log.d("HUSTLE", "Non sono riuscito a inserire la serie nel DB");
+            return false;
+        }
+        Log.d("HUSTLE", "Serie inserita correttamente");
+        return true;
+
+    }
+
+    public static synchronized boolean addEpisodeToDB(Episode e) {
+        Log.d("HUSTLE", "addEpisodeToDB episodio chiamata");
+        // prende database
+        if (instance == null) {
+            return false;
+        }
+        SQLiteDatabase db = instance.getWritableDatabase();
+        // crea oggetto per i valori da inserire nella tabella
+        ContentValues cv = new ContentValues();
+        // aggiunge i valori
+        cv.put(DBHelper.EPISODEID, e.episodeId);
+        cv.put(DBHelper.EPISODENUMBER, e.episodeNumber);
+        cv.put(DBHelper.LANGUAGE, e.language);
+        cv.put(DBHelper.OVERVIEW, e.overview);
+        cv.put(DBHelper.SERIESID, e.seriesID);
+        cv.put(DBHelper.FILENAME, e.bmpPath);
+        cv.put(DBHelper.EPISODENAME, e.title);
+        cv.put(DBHelper.SEASON, e.season);
+
+        if (db.insert(DBHelper.EPISODES_TABLE, null, cv) == -1) {
+            Log.d("HUSTLE", "Non sono riuscito a inserire l'episodio nel DB");
+            return false;
+        }
+        Log.d("HUSTLE", "Episodio inserito correttamente");
+        return true;
     }
 
     @Override

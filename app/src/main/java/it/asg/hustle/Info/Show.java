@@ -113,32 +113,6 @@ public class Show {
         }
     }
 
-
-    public boolean addToDB(Context c) {
-        Log.d("HUSTLE", "addToDB chiamata");
-        // prende database
-        SQLiteOpenHelper helper = DBHelper.getInstance(c);
-        SQLiteDatabase db = helper.getWritableDatabase();
-        // crea oggetto per i valori da inserire nella tabella
-        ContentValues cv = new ContentValues();
-        // aggiunge i valori
-        cv.put(DBHelper.SERIESID, this.id);
-        cv.put(DBHelper.LANGUAGE, this.language);
-        cv.put(DBHelper.OVERVIEW, this.overview);
-        cv.put(DBHelper.SERIESNAME, this.title);
-        cv.put(DBHelper.BANNER, this.banner);
-        cv.put(DBHelper.POSTER, this.poster);
-        cv.put(DBHelper.FANART, this.fanart);
-        cv.put(DBHelper.SEASONS, this.seasonNumber);
-
-        if (db.insert(DBHelper.SERIES_TABLE, null, cv) == -1) {
-            Log.d("HUSTLE", "Non sono riuscito a inserire la serie nel DB");
-            return false;
-        }
-        Log.d("HUSTLE", "Serie inserita correttamente");
-        return true;
-    }
-
     @Override
     public String toString() {
         return "Show{" +
