@@ -89,7 +89,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 ep.bmp = bitmap;
                 viewHolder.mTextView.setHeight(ep.bmp.getHeight());
                 viewHolder.cb.setHeight(ep.bmp.getHeight());
-                //viewHolder.cb.setWidth(ep.bmp.getWidth());
+
             }
         };
 
@@ -108,8 +108,9 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             viewHolder.mTextView.setHeight(ep.bmp.getHeight());
             viewHolder.epImg.setImageBitmap(ep.bmp);
             viewHolder.cb.setHeight(ep.bmp.getHeight());
-            //viewHolder.cb.setWidth(ep.bmp.getWidth());
         }
+        // mette check o uncheck per l'episodio a seconda se nell'EpisodeActivity è stato o no premuto il FAB
+        viewHolder.cb.setChecked(ep.checked);
 
         viewHolder.epImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,14 +141,13 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         viewHolder.cb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if( ((CheckBox)v).isChecked() )  {
-                    Log.d("HUSTLE","check (In EpisodeRecyclerAdapter)");
-                    // TODO  invia dati al db al check
+                Log.d("HUSTLE","check (In EpisodeRecyclerAdapter)");
+                // TODO  invia dati al db al check
 
-                    // TODO salva stato del checkbox
-                  //  SharedPreferences settings = Context.getSharedPreferences(PREFRENCES_NAME, 0);
-                    //settings.edit().putBoolean("check",true).commit();
-                }
+                // TODO salva stato del checkbox
+                ep.checked = !ep.checked;
+                Log.d("HUSTLE","status checkbox (EpisodeRecyclerAdapter): "+ep.checked.toString());
+
 
             }
         });

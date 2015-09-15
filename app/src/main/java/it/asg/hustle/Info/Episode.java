@@ -26,6 +26,7 @@ public class Episode{
     public String bmpPath;
     public Bitmap bmp;
     public JSONObject source;
+    public Boolean checked = false;
 
     public Episode(String title)
     {
@@ -41,7 +42,7 @@ public class Episode{
             }
             this.title = jo.getString("episodename");
             if (jo.has("episodeid")) {
-                this.episodeId = ""+jo.getLong("episodeid");
+                this.episodeId = "" + jo.getLong("episodeid");
             }
             if (jo.has("seriesid")) {
                 this.seriesID = "" + jo.getLong("seriesid");
