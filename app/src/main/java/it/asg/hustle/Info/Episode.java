@@ -50,6 +50,9 @@ public class Episode{
             if (jo.has("seasonnumber")) {
                 this.season = jo.getInt("seasonnumber");
             }
+            if (jo.has("seen")) {
+                this.checked = jo.getBoolean("seen");
+            }
             if (jo.has("episodenumber")) {
                 this.episodeNumber = jo.getInt("episodenumber");
             }
