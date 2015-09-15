@@ -7,12 +7,12 @@
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        card_view:theme="@style/CardStyle"
         android:id="@+id/cardview"
         android:layout_gravity="left"
         android:layout_width="match_parent"
         android:layout_height="102dp"
-        card_view:cardCornerRadius="4dp"
-        style="@style/CardView.Dark">
+        card_view:cardCornerRadius="4dp">
 
         <GridLayout
             android:layout_width="match_parent"
