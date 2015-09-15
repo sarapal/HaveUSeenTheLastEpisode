@@ -76,32 +76,6 @@ public class Episode{
         return this.source;
     }
 
-    /* gbyolo, 10/9/2015 */
-    public boolean addToDB(Context c) {
-        Log.d("HUSTLE", "addToDB episodio chiamata");
-        // prende database
-        SQLiteOpenHelper helper = DBHelper.getInstance(c);
-        SQLiteDatabase db = helper.getWritableDatabase();
-        // crea oggetto per i valori da inserire nella tabella
-        ContentValues cv = new ContentValues();
-        // aggiunge i valori
-        cv.put(DBHelper.EPISODEID, this.episodeId);
-        cv.put(DBHelper.EPISODENUMBER, this.episodeNumber);
-        cv.put(DBHelper.LANGUAGE, this.language);
-        cv.put(DBHelper.OVERVIEW, this.overview);
-        cv.put(DBHelper.SERIESID, this.seriesID);
-        cv.put(DBHelper.FILENAME, this.bmpPath);
-        cv.put(DBHelper.EPISODENAME, this.title);
-        cv.put(DBHelper.SEASON, this.season);
-
-        if (db.insert(DBHelper.EPISODES_TABLE, null, cv) == -1) {
-            Log.d("HUSTLE", "Non sono riuscito a inserire l'episodio nel DB");
-            return false;
-        }
-        Log.d("HUSTLE", "Episodio inserito correttamente");
-        return true;
-    }
-
     @Override
     public String toString() {
         return "Episode{" +

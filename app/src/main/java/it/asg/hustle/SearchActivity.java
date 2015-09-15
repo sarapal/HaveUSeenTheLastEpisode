@@ -91,42 +91,6 @@ public class SearchActivity extends AppCompatActivity {
         searchv.clearFocus();
     }
 
-    private JSONArray searchDB(String tvShowTitle) {
-        Log.d("HUSTLE", "Ricerca nel DB locale... " + tvShowTitle);
-        SQLiteDatabase db = DBHelper.getInstance(this).getReadableDatabase();
-        Cursor c = db.query(DBHelper.SERIES_TABLE, null, "SeriesName LIKE ? AND Language=?", new String[]{tvShowTitle, this.locale}, null, null, null);
-        if (c == null || c.getCount() == 0) {
-            Log.d("HUSTLE", "cursor non ha elementi...non ho trovato niente nel DB locale");
-            c.close();
-            return null;
-        }
-        // crea un nuovo JSONArray dove inserire le serie trovate
-        JSONArray ja = new JSONArray();
-        // riporta il cursore all'inizio
-        if (c.moveToFirst()) {
-            // itera sui risultati della query
-            do {
-                JSONObject jo = new JSONObject();
-                try {
-                    jo.put("seriesid", c.getInt(c.getColumnIndex(DBHelper.SERIESID)));
-                    jo.put("language", c.getString(c.getColumnIndex(DBHelper.LANGUAGE)));
-                    jo.put("overview", c.getString(c.getColumnIndex(DBHelper.OVERVIEW)));
-                    jo.put("seriesname", c.getString(c.getColumnIndex(DBHelper.SERIESNAME)));
-                    jo.put("poster", c.getString(c.getColumnIndex(DBHelper.POSTER)));
-                    jo.put("banner", c.getString(c.getColumnIndex(DBHelper.BANNER)));
-                    jo.put("fanart", c.getString(c.getColumnIndex(DBHelper.FANART)));
-                    jo.put("seasons", c.getString(c.getColumnIndex(DBHelper.SEASONS)));
-                    Log.d("HUSTLE", "Ricerca da DB OK, aggiungo serie: " + jo.toString());
-                    ja.put(jo);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } while (c.moveToNext());
-        }
-        c.close();
-        return ja;
-    }
-
     private void doSearch(final String tvShowTitle) {
         hideKeyboard();
         // Ogni volta che viene effettuata una nuova ricerca
@@ -135,7 +99,7 @@ public class SearchActivity extends AppCompatActivity {
         adapter = new SearchShowRecyclerAdapter(shows, this);
         rw.setAdapter(adapter);
         // Effettua la ricerca nel DB locale
-        JSONArray ja = searchDB(tvShowTitle);
+        JSONArray ja = DBHelper.getSeriesByNameFromDB(tvShowTitle, this.locale);
         if (ja != null) {
             handleJson(ja, false);
             return;
@@ -217,7 +181,7 @@ public class SearchActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 if (add) {
                     //Log.d("HUSTLE", "Sto per aggiungere la serie al DB");
-                    s1.addToDB(this);
+                    DBHelper.addSerieToDB(s1);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         // apre o crea il db
         helper = new DBHelper(this);
         db = helper.getWritableDatabase();
+        DBHelper.getInstance(this);
         Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
 
         // imposto ActionBar sulla Toolbar
