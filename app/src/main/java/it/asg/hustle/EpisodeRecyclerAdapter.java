@@ -93,7 +93,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             }
         };
 
-        // Se l'immagine della serie non è stata scaricata
+        // Se l'immagine dell'episodio non è stata scaricata
         if (ep.bmp == null) {
             Log.d("HUSTLE", "Downloading image: " + ep.bmpPath);
             // La scarica su un thread separato, ma solo se l'URL è diverso
