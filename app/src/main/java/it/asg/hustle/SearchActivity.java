@@ -64,6 +64,7 @@ public class SearchActivity extends AppCompatActivity {
         searchv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                hideKeyboard();
                 doSearch(searchv.getQuery().toString());
                 return false;
             }
@@ -79,6 +80,8 @@ public class SearchActivity extends AppCompatActivity {
         if (b != null) {
             tvShowTitle = b.getString("SearchTitle");
             searchv.setQuery(tvShowTitle, true);
+        } else {
+            searchv.requestFocus();
         }
         Log.d("HUSTLE", "SearchActivity onCreate() completed");
 
@@ -191,12 +194,12 @@ public class SearchActivity extends AppCompatActivity {
                 JSONArray ja = null;
                 try {
                     ja = new JSONArray(s);
-                    ja.length();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 handleJson(ja, true);
                 progDailog.dismiss();
+                hideKeyboard();
                 //Log.d("HUSTLE", ja.toString());
             }
         };
