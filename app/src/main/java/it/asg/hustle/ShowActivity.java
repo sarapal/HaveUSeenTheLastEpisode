@@ -54,6 +54,7 @@ public class ShowActivity extends AppCompatActivity {
     private JSONObject showJSON = null;
     private JSONArray seasonsJSON = null;
     private Bitmap posterBitmap = null;
+    private TextView card_description;
     public static Show show;
     private SeasonsAdapter a;
     private ViewPager viewPager;
@@ -286,9 +287,9 @@ public class ShowActivity extends AppCompatActivity {
 
             if (tabPosition == 0){
                 v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
-                //recyclerView.setAdapter(new InfoAdapter(show));
-                TextView tv = (TextView) v.findViewById(R.id.card_description_text);
-                tv.setText(show.overview);
+                TextView card_description = (TextView) v.findViewById(R.id.card_description_text);
+                card_description.setText(show.overview);
+                Log.d("HUSTLE", "overview: " + show.overview);
 
             }
             else {
