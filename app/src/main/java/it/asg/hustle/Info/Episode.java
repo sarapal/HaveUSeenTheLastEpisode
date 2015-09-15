@@ -26,6 +26,7 @@ public class Episode{
     public String bmpPath;
     public Bitmap bmp;
     public JSONObject source;
+    public Boolean checked = false;
 
     public Episode(String title)
     {
