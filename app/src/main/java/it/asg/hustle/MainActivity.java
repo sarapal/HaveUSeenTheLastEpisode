@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -30,20 +31,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.util.Log;
-import android.view.DragEvent;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,10 +48,17 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 
-import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -84,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;          // adapter per RecyclerView
 
+    private boolean logged;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +99,21 @@ public class MainActivity extends AppCompatActivity {
         db = helper.getWritableDatabase();
         DBHelper.getInstance(this);
         Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
+
+        // Se l'utente è loggato tramite facebook, vede se è loggato sul server esterno
+        // Se non è loggato sul server esterno, lo registra
+        String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
+        String name = getSharedPreferences("name_facebook", Context.MODE_PRIVATE).getString("name_facebook", null);
+
+        boolean logged = getSharedPreferences("logged", Context.MODE_PRIVATE).getBoolean("logged", false);
+        if (!logged) {
+            if (id != null) {
+                Log.d("HUSTLE", "Non sei registrato sul server, registrazione in corso per: id " + id + " e nome: " + name);
+                logIn(id, name);
+            }
+        } else {
+            Log.d("HUSTLE", "Sei già loggato sul server, non effettuo registrazione");
+        }
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -158,6 +176,70 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("HUSTLE", "profilePictureInvisible: " + profilePictureInvisible);
         updateCircleProfile();
         updateFriendList();
+    }
+
+    public void logIn(String id, String name) {
+        // AsyncTask per prendere info su una Serie TV in base
+        // al nome. Potrebbe ritornare più elementi in un JSONArray
+
+        AsyncTask<String, Void, String> at = new AsyncTask<String, Void, String>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                String id = params[0];
+                String name = params[1];
+
+                URL url = null;
+                String s = null;
+                try {
+                    String Data = "id="+id+"&name="+name;
+                    url = new URL("http://hustle.altervista.org/signup.php");
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestMethod("POST");
+                    con.setDoOutput(true);
+                    con.getOutputStream().write(Data.getBytes("UTF-8"));
+
+                    InputStream in = new BufferedInputStream(con.getInputStream());
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                    s = br.readLine();
+                    Log.d("HUSTLE", "Ecco che ha risposto il server mentre mi loggo: " + s);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.d("HUSTLE", "returned: " + s);
+                return s;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Log.d("HUSTLE", "postExecute");
+                try {
+                    JSONObject jo = new JSONObject(s);
+                    if (jo.getBoolean("logged")) {
+                        Log.d("HUSTLE", "Ti sei loggato sul server");
+                        logged = true;
+                    } else {
+                        Log.d("HUSTLE", "Non sei loggato sul server");
+                        logged = false;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                SharedPreferences o = getSharedPreferences("logged", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = o.edit();
+                editor.putBoolean("logged", logged);
+                editor.commit();
+            }
+        };
+
+        at.execute(id, name);
     }
 
     @Override
