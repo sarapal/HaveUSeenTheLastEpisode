@@ -1,6 +1,8 @@
 package it.asg.hustle;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -62,15 +64,21 @@ public class ShowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //allocazione della lista di adapter. ogni adapter è di una stagione. il primo è per le info
         adapterList = new ArrayList<EpisodeRecyclerAdapter>();
-        if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster");
+
+        //caso in cui l'activity è stata stoppata o messa in pausa, ricrea i dati dai savedInstanceState
+        if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster
         if (savedInstanceState != null) {try {
+            //ricrea gli oggetti java show stagioni e episodi
             showJSON = new JSONObject(savedInstanceState.getString("show"));
             } catch (JSONException e1) {
             e1.printStackTrace();
             }
             show.fillSeasonsList(seasonsJSON);
         }
+
+        //caso in cui l'activity viene generata dalla ricerca
         if(savedInstanceState == null){
             Bundle b = getIntent().getExtras();
 
@@ -87,6 +95,7 @@ public class ShowActivity extends AppCompatActivity {
             }
         }
 
+        //il primo adapter è per le info
         adapterList.add(new EpisodeRecyclerAdapter(new Season()));
         for(int i=1; i<= show.seasonNumber; i++) {
             adapterList.add(new EpisodeRecyclerAdapter(show.seasonsList.get(i - 1)));
@@ -282,9 +291,13 @@ public class ShowActivity extends AppCompatActivity {
             View v = inflater.inflate(R.layout.fragment_episodes_view, container, false);
             RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            if (tabPosition == 0){
 
-            recyclerView.setAdapter( adapterList.get(tabPosition));
-
+                recyclerView.setAdapter(new InfoAdapter(show));
+            }
+            else {
+                recyclerView.setAdapter(adapterList.get(tabPosition));
+            }
             return v;
         }
     }
