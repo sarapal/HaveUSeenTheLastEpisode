@@ -32,5 +32,6 @@
 
     <string name="searching">Searching...</string>
     <string name="loading_image">Loading image...</string>
+    <string name="description_text_title">Overview</string>
 
 </resources>
