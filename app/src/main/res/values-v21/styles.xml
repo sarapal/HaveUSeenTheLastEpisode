@@ -15,6 +15,7 @@
     <!-- CardView theme -->
     <style name="CardStyle" parent="CardView.Dark">
         <item name="android:backgroundTint">@color/cardview_background</item>
+        <item name="android:background">@color/cardview_background</item>
     </style>
 
 </resources>
