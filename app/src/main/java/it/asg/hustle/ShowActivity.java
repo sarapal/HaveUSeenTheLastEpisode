@@ -46,6 +46,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import it.asg.hustle.Info.Episode;
+import it.asg.hustle.Info.Friend;
 import it.asg.hustle.Info.Season;
 import it.asg.hustle.Info.Show;
 
@@ -61,6 +62,8 @@ public class ShowActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbar;
     static private ArrayList<EpisodeRecyclerAdapter> adapterList;
+    static private FriendsAdapter adapter_friends;
+    private ArrayList<Friend> friends;
     private ArrayList<String> info;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +71,17 @@ public class ShowActivity extends AppCompatActivity {
 
         //allocazione della lista di adapter. ogni adapter è di una stagione. il primo è per le info
         adapterList = new ArrayList<EpisodeRecyclerAdapter>();
+        friends = new ArrayList<Friend>();
+        Bitmap friend_prova = BitmapFactory.decodeResource(getResources(), R.drawable.com_facebook_profile_picture_blank_square);
+        friends.add(new Friend("1",friend_prova, "andrea"));
+        friends.add(new Friend("1",friend_prova, "giorgio"));
+        friends.add(new Friend("1",friend_prova, "sara"));
+        friends.add(new Friend("1",friend_prova, "valentina"));
+        friends.add(new Friend("1",friend_prova, "gesù"));
+        friends.add(new Friend("1",friend_prova, "gegiù"));
+        friends.add(new Friend("1",friend_prova, "mamma"));
 
+        adapter_friends = new FriendsAdapter(friends);
         //caso in cui l'activity è stata stoppata o messa in pausa, ricrea i dati dai savedInstanceState
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster
         if (savedInstanceState != null) {try {
@@ -289,8 +302,9 @@ public class ShowActivity extends AppCompatActivity {
                 v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
                 TextView card_description = (TextView) v.findViewById(R.id.card_description_text);
                 card_description.setText(show.overview);
-                Log.d("HUSTLE", "overview: " + show.overview);
-
+                RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview_friends_card);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                recyclerView.setAdapter(adapter_friends);
             }
             else {
                 v = inflater.inflate(R.layout.fragment_episodes_view, container, false);
