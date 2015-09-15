@@ -11,4 +11,7 @@
         <color name="pressed">#EF5350</color>
         <color name="checked">#EF5350</color>
 
+        <!-- <color name="cardview"></color> -->
+
+
 </resources>
