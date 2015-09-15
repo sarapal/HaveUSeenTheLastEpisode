@@ -52,8 +52,13 @@ public class EpisodeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // TODO aggiornare stato del checkbox al click del FAB
+        // aggiornare stato del checkbox al click del FAB
         fabCheck = (FloatingActionButton) findViewById(R.id.fab_check);
+        if (ep.checked){
+            fabCheck.setImageResource(R.drawable.ic_close);
+        }else{
+            fabCheck.setImageResource(R.drawable.ic_done);
+        }
         fabCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
