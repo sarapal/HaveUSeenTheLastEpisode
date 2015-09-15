@@ -1,33 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardview"
+        android:layout_gravity="left"
+        android:layout_width="match_parent"
+        android:layout_height="102dp"
+        card_view:cardCornerRadius="4dp"
+        style="@style/CardView.Dark">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_row="0"
+                android:id="@+id/ep_img"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:id="@+id/list_item"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_column="1"
+                android:layout_row="0"
+                android:layout_gravity="center|fill_horizontal"
+                android:gravity="center"
+                android:textColor="@color/text_primary" />
+
+
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:gravity="center_vertical"
+                android:id="@+id/checkEp"
+                android:layout_row="0"
+                android:layout_column="2" />
+
+
+        </GridLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+</LinearLayout>
+
+<!--
+            PROVA
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="16dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
     android:weightSum="1">
 
-    <!-- android:gravity="center_horizontal" -->
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ep_img"
-        android:layout_weight="0.56"
-        android:layout_gravity="left" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ep_img"
 
-    <TextView
-        android:id="@+id/list_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@+id/ep_img"
-        android:layout_toRightOf="@+id/ep_img"
-        style="@style/AppTheme"
-        android:textStyle="bold|italic"
-        android:typeface="serif"
-        android:gravity="center_vertical|center_horizontal" />
-        <!--
-        android:gravity="center_vertical|center_horizontal"
-        android:text="ciaoooooooooo"
-        -->
+            android:gravity="left" />
+        <TextView
+            android:id="@+id/list_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AppTheme"
+            android:textStyle="bold|italic"
+            android:typeface="serif"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_toEndOf="@+id/ep_img"
+            android:layout_toRightOf="@+id/ep_img"
+            />
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/checkEp"
+            android:gravity="center_vertical|right"
+            android:layout_toEndOf="@+id/list_item"
+            android:layout_toRightOf="@+id/list_item"
+            android:onClick="onCheckEpisode"/>
+
+
 </RelativeLayout>
+
+
+
+
+
+style="@style/CardView.Dark"
+
+
+-->

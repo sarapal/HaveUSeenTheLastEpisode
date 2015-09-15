@@ -2,6 +2,7 @@ package it.asg.hustle;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -11,7 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -32,9 +35,11 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     private ImageView posterImageView;
     private ArrayList<Episode> episodes;
 
+
     //EpisodeRecyclerAdapter(List<String> items) {
     //    mItems = items;
     //}
+
     EpisodeRecyclerAdapter(Season season) {
         if (season.episodesList != null) {
             episodes = season.episodesList;
@@ -83,6 +88,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 viewHolder.epImg.setImageBitmap(bitmap);
                 ep.bmp = bitmap;
                 viewHolder.mTextView.setHeight(ep.bmp.getHeight());
+                viewHolder.cb.setHeight(ep.bmp.getHeight());
+                //viewHolder.cb.setWidth(ep.bmp.getWidth());
             }
         };
 
@@ -100,6 +107,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             // Se l'immagine della serie è già stata salvata, riusa quella
             viewHolder.mTextView.setHeight(ep.bmp.getHeight());
             viewHolder.epImg.setImageBitmap(ep.bmp);
+            viewHolder.cb.setHeight(ep.bmp.getHeight());
+            //viewHolder.cb.setWidth(ep.bmp.getWidth());
         }
 
         viewHolder.epImg.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +135,22 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 context.startActivity(i);
             }
         });
+
+        // TODO checkbox episodi
+        viewHolder.cb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( ((CheckBox)v).isChecked() )  {
+                    Log.d("HUSTLE","check (In EpisodeRecyclerAdapter)");
+                    // TODO  invia dati al db al check
+
+                    // TODO salva stato del checkbox
+                  //  SharedPreferences settings = Context.getSharedPreferences(PREFRENCES_NAME, 0);
+                    //settings.edit().putBoolean("check",true).commit();
+                }
+
+            }
+        });
     }
 
     @Override
@@ -137,11 +162,14 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
         private final TextView mTextView;
         private final ImageView epImg;
+        private final CheckBox cb;
+
 
         ViewHolder(View v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.list_item);
             epImg = (ImageView) v.findViewById(R.id.ep_img);
+            cb= (CheckBox) v.findViewById(R.id.checkEp);
         }
 
     }
