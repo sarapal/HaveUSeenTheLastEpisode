@@ -48,7 +48,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -149,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         account_name_facebook_tv = (TextView) findViewById(R.id.account_name_facebook);
         //Log.d("HUSTLE", "profilePictureInvisible: " + profilePictureInvisible);
         updateCircleProfile();
+        updateFriendList();
     }
 
     @Override
@@ -366,14 +374,38 @@ public class MainActivity extends AppCompatActivity {
         updateCircleProfile();
     }
 
+    void updateFriendList(){
+        SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
+        String id = options.getString("id_facebook", null);
+        if(id != null){
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/me/friends",
+                    null,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            try {
+                                Log.d("HUSTLE","amici: " + response.getJSONObject().getJSONArray("data").toString());
+                                SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = options.edit();
+                                editor.putString("friend_list", response.getJSONObject().getJSONArray("data").toString());
+                                editor.commit();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+            ).executeAsync();
+        }
+    }
+
     void updateCircleProfile() {
         SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
         String id = options.getString("id_facebook", null);
 
         String fbId = profilePictureInvisible.getProfileId();
         Log.d("HUSTLE", "Sto per aggiornare facebook, profileID: " + profilePictureInvisible.getProfileId() + ", id delle preferenze: " + id);
-
-        Log.d("HUSTLE", "SETTING id facebook: " + id);
         profilePictureInvisible.setProfileId(id);
 
         Log.d("HUSTLE", "Updating circle profile");

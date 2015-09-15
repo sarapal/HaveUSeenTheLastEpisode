@@ -87,13 +87,19 @@ public class FacebookActivity extends AppCompatActivity {
                     Log.d("HUSTLE", "Setting id_facebook e name to NULL");
                     SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = options.edit();
-                    editor.putString("id_facebook" ,null);
+                    editor.putString("id_facebook", null);
                     editor.commit();
 
                     options = getSharedPreferences("name_facebook", Context.MODE_PRIVATE);
                     editor = options.edit();
                     editor.putString("name_facebook" ,null);
                     editor.commit();
+
+                    options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
+                    editor = options.edit();
+                    editor.putString("friend_list", null);
+                    editor.commit();
+
                     share.setVisibility(View.INVISIBLE);
                     //details.setVisibility(View.INVISIBLE);
                     profile.setProfileId(null);
@@ -122,6 +128,7 @@ public class FacebookActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
+                Toast.makeText(FacebookActivity.this, getResources().getString(R.string.facebook_login_failed).toString(), Toast.LENGTH_SHORT).show();
 
             }
 

@@ -108,7 +108,6 @@ public class ShowActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         try {
             collapsingToolbar.setTitle(showJSON.getString("seriesname"));
@@ -116,8 +115,8 @@ public class ShowActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        //adapter per stagioni e info
         a = new SeasonsAdapter(getSupportFragmentManager());
-
         viewPager = (ViewPager)findViewById(R.id.viewpager);
         viewPager.setAdapter(a);
 
@@ -133,18 +132,12 @@ public class ShowActivity extends AppCompatActivity {
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
             Log.d("HUSTLE", "landscape mode!");
-
         }
-
-
         // TODO: mostra la serie nell'activity
-
-        Log.d("HUSTLE", "Devo mostrare la serie: " + showJSON);
     }
 
 
     private void doGetShowPoster(String imageUrl) {
-
 
         AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
 
