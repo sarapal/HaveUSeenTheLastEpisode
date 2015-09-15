@@ -140,14 +140,13 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         viewHolder.cb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if( ((CheckBox)v).isChecked() )  {
-                    Log.d("HUSTLE","check (In EpisodeRecyclerAdapter)");
-                    // TODO  invia dati al db al check
+                Log.d("HUSTLE","check (In EpisodeRecyclerAdapter)");
+                // TODO  invia dati al db al check
 
-                    // TODO salva stato del checkbox
-                  //  SharedPreferences settings = Context.getSharedPreferences(PREFRENCES_NAME, 0);
-                    //settings.edit().putBoolean("check",true).commit();
-                }
+                // TODO salva stato del checkbox
+                ep.checked = !ep.checked;
+                Log.d("HUSTLE","status checkbox (EpisodeRecyclerAdapter): "+ep.checked.toString());
+
 
             }
         });

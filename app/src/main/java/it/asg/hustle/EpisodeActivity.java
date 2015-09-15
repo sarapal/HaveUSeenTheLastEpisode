@@ -59,7 +59,14 @@ public class EpisodeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d("HUSTLE", "FAB (in EpisodeActivity) was pressed");
                 //  TODO aggiornare db con il check dell'episodio selezionato
-
+                fabCheck.setImageResource(R.drawable.ic_done);
+                ep.checked = !ep.checked;
+                if (ep.checked){
+                    fabCheck.setImageResource(R.drawable.ic_close);
+                }else{
+                    fabCheck.setImageResource(R.drawable.ic_done);
+                }
+                Log.d("HUSTLE","status checkbox (EpisodeActivity): "+ep.checked.toString());
 
             }
 
