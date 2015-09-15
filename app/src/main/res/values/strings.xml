@@ -33,5 +33,6 @@
     <string name="searching">Searching...</string>
     <string name="loading_image">Loading image...</string>
     <string name="description_text_title">Overview</string>
+    <string name="card_friends_title">Friends are watching the show</string>
 
 </resources>

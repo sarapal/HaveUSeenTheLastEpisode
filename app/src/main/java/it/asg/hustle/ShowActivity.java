@@ -29,6 +29,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -281,15 +282,19 @@ public class ShowActivity extends AppCompatActivity {
             }
 
 
+            View v;
 
-            View v = inflater.inflate(R.layout.fragment_episodes_view, container, false);
-            RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             if (tabPosition == 0){
+                v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
+                //recyclerView.setAdapter(new InfoAdapter(show));
+                TextView tv = (TextView) v.findViewById(R.id.card_description_text);
+                tv.setText(show.overview);
 
-                recyclerView.setAdapter(new InfoAdapter(show));
             }
             else {
+                v = inflater.inflate(R.layout.fragment_episodes_view, container, false);
+                RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 recyclerView.setAdapter(adapterList.get(tabPosition));
             }
             return v;
