@@ -1,9 +1,5 @@
 package it.asg.hustle.Info;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -12,8 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import it.asg.hustle.DBHelper;
 
 /**
  * Created by sara on 8/26/15.
