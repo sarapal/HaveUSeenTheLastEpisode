@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,8 +46,14 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final Show item = shows.get(i);
-        Log.d("HUSTLE", "AGGIUNGO ALLA LISTA: "+ item.toString());
+        final int width = getDisplayWidthPX();
+
+        viewHolder.mImageView.setMaxWidth(width/2);
+        viewHolder.mTextView.setMaxWidth(width/2);
+
+        //Log.d("HUSTLE", "AGGIUNGO ALLA LISTA: "+ item.toString());
         Log.d("HUSTLE", "La lingua è " + item.language);
+
         viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
         viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +126,17 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             viewHolder.mImageView.setImageBitmap(item.bmp);
         }
 
+    }
+
+    public int getDisplayWidthPX(){
+        //prende la larghezza in pixel dello schermo
+        WindowManager wm = (WindowManager) c.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int widthPX = size.x;
+
+        return widthPX;
     }
 
     @Override
