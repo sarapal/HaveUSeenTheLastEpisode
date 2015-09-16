@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:layout_margin="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
@@ -12,14 +12,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/poster"
         android:layout_weight="0.56"
-        android:layout_gravity="left" />
-
+        android:layout_gravity="left"
+        android:adjustViewBounds="true"/>
+    <!-- TODO metti questa textview centrata verticalmente -->
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_gravity="right"
+        android:layout_gravity="center_vertical|right"
         android:layout_toEndOf="@+id/poster"
         android:layout_toRightOf="@+id/poster"
         style="@style/AppTheme"
