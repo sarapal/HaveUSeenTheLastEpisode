@@ -1,6 +1,8 @@
 package it.asg.hustle;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -104,9 +106,9 @@ public class ShowActivity extends AppCompatActivity {
         }
 
         //il primo adapter è per le info
-        adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), new Season()));
+        adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), ShowActivity.this, new Season()));
         for(int i=1; i<= show.seasonNumber; i++) {
-            adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), show.seasonsList.get(i - 1)));
+            adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), ShowActivity.this, show.seasonsList.get(i - 1)));
 
         }
         setContentView(R.layout.activity_show);
@@ -144,7 +146,35 @@ public class ShowActivity extends AppCompatActivity {
         // TODO: mostra la serie nell'activity
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("HUSTLE", "onActivityResult di ShowActivity");
+        // TODO: EpisodeActivity non ritorna mai con RESULT_OK...
+        if (requestCode == EpisodeRecyclerAdapter.EP_CHANGED){
+            if (resultCode == Activity.RESULT_OK){
+                Bundle b = data.getExtras();
+                Boolean status = b.getBoolean("status");
+                int ep_num = b.getInt("episode_num");
+                int season = b.getInt("season");
 
+                Log.d("HUSTLE", "Episodio n " + ep_num + " stagione " + season + " stato " + status);
+
+                Episode e = adapterList.get(season).episodes.get(ep_num);
+                e.checked = status;
+                adapterList.get(season).notifyDataSetChanged();
+                try {
+                    e.source.put("seen",status);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                Log.d("HUSTLE", "result: "+resultCode+" OK è " + Activity.RESULT_OK);
+            }
+        } else {
+            Log.d("HUSTLE", ""+requestCode);
+        }
+    }
     private void doGetShowPoster(String imageUrl) {
 
         AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {

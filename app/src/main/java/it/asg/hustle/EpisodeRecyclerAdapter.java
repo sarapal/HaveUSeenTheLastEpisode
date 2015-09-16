@@ -1,16 +1,17 @@
 package it.asg.hustle;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.Intent;;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,11 +40,13 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     //private List<String> mItems;
     private Bitmap posterBitmap = null;
     private ImageView posterImageView;
-    private ArrayList<Episode> episodes;
+    public ArrayList<Episode> episodes;     // TODO: rimettila privata e quindi fai metodo GETTER e cambia lina 159 di ShowActivity
 
     private Context context = null;
+    private Activity activity = null;
 
     private Display display;
+    public static final int EP_CHANGED = 1;
 
 
     //EpisodeRecyclerAdapter(List<String> items) {
@@ -52,6 +55,17 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
     public EpisodeRecyclerAdapter(Context c, Season season) {
         this.context = c;
+        if (season.episodesList != null) {
+            episodes = season.episodesList;
+        }
+        else{
+            episodes = new ArrayList<Episode>();
+        }
+    }
+
+    public EpisodeRecyclerAdapter(Context c, Activity a, Season season) {
+        this.context = c;
+        this.activity = a;
         if (season.episodesList != null) {
             episodes = season.episodesList;
         }
@@ -162,7 +176,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 // Invia dati al server esterno e cambia l'oggetto ep sulla base di come è impostata la cb
                 boolean newState = viewHolder.cb.isChecked();
                 Log.d("HUSTLE", "Nuovo stato per episodio: " + newState);
-                if (!UpdateEpisodeState.changeState(context, ep, viewHolder.cb, newState)) {
+                if (!UpdateEpisodeState.changeState(context, ep, viewHolder.cb, newState, null)) {
                     // Qui posso cambiare lo stato della cb
                     viewHolder.cb.setChecked(!newState);
                     // avvisa l'utente che non è possibile cambiare lo stato dell'episodio
@@ -183,7 +197,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 b.putParcelable("picture", ep.bmp);
                 b.putString("episode", ep.source.toString());
                 i.putExtras(b);
-                context.startActivity(i);
+                activity.startActivityForResult(i, EP_CHANGED);
             }
         });
         // Se clicchi sul testo dell'episodio apre EpisodeActivity
@@ -196,7 +210,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 b.putParcelable("picture", ep.bmp);
                 b.putString("episode", ep.source.toString());
                 i.putExtras(b);
-                context.startActivity(i);
+                activity.startActivityForResult(i, EP_CHANGED);
             }
         });
 
@@ -225,7 +239,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             int dimPX = getDisplayDimensionsPX(display);
 
             mTextView.setWidth(dimPX/2);
-            epImg.setMaxWidth(20);
+            //epImg.setMaxWidth(20);
             //cb.setWidth(dimPX / 4);
 
         }

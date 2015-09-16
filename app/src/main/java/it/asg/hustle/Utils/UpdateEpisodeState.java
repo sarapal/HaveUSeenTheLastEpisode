@@ -3,6 +3,7 @@ package it.asg.hustle.Utils;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.widget.CheckBox;
 
@@ -19,12 +20,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import it.asg.hustle.Info.Episode;
+import it.asg.hustle.R;
 
 /**
  * Created by gbyolo on 9/16/15.
  */
 public class UpdateEpisodeState {
-    public static synchronized boolean changeState(Context c, final Episode ep, final CheckBox cb, final boolean state) {
+    public static synchronized boolean changeState(Context c, final Episode ep, final CheckBox cb, final boolean state,final FloatingActionButton fab) {
 
         final String episodeid = ep.episodeId;
         final String seen = "" + state;
@@ -83,6 +85,14 @@ public class UpdateEpisodeState {
                         Log.d("HUSTLE", "Stato episodio cambiato");
                         ep.checked = !ep.checked;
                         ep.source.put("seen", ep.checked);
+                        if (fab != null){
+                            if (ep.checked){
+                                fab.setImageResource(R.drawable.ic_close);
+
+                            }else{
+                                fab.setImageResource(R.drawable.ic_done);
+                            }
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
