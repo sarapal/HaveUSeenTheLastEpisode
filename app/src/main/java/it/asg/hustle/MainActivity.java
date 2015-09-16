@@ -418,16 +418,13 @@ public class MainActivity extends AppCompatActivity {
         Point size = new Point();
         d.getSize(size);
         int widthPX = size.x;
-        //int heightPX = size.y;
-        int widthDPI = pxToDp(widthPX);
-        //int heightDPI = pxToDp(heightPX);
+        int widthDP = pxToDp(widthPX);
 
-        Log.d("asg", "widthDPI vale: " +widthDPI);
+
         int wPX = (int) getResources().getDimension(R.dimen.grid_item_RelativeLayout_width);
         int wDP = pxToDp(wPX);
-        Log.d("asg","W vale: "+wDP);
-        int num = (int) Math.floor(widthDPI/wDP);
-        Log.d("asg", "widthDPI/num vale: " + num);
+        int num = (int) Math.floor(widthDP/wDP);
+
         return num;
     }
 

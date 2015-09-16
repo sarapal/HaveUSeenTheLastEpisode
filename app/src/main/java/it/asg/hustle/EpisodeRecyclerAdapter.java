@@ -5,13 +5,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -38,6 +42,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     private ArrayList<Episode> episodes;
 
     private Context context = null;
+
+    private Display display;
 
 
     //EpisodeRecyclerAdapter(List<String> items) {
@@ -73,9 +79,18 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         Bitmap b = episodes.get(i).bmp;
-        String item = episodes.get(i).title;
+        final String item = episodes.get(i).title;
+
+        //disposizione elementi dell'episodio in base alla dimensione dello schermo
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        display = wm.getDefaultDisplay();
+        int dimPX = getDisplayDimensionsPX(display);
+
+        viewHolder.epImg.setMaxWidth(dimPX/4);
+        viewHolder.mTextView.setWidth(dimPX/2);
+        viewHolder.cb.setWidth(dimPX/4);
 
         // Imposta la TextView con indice episodio: titolo episodio
         viewHolder.mTextView.setText((i+1)+": "+item);
@@ -106,11 +121,13 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 viewHolder.epImg.setImageBitmap(bitmap);
                 // salva l'oggetto BitMap nell'oggetto Episode
                 ep.bmp = bitmap;
+                // Imposta la TextView con indice episodio: titolo episodio
+                viewHolder.mTextView.setText((i+1)+": "+item);
                 // Imposta l'altezza della TextView con il titolo dell'episodio alla stessa altezza
                 // dell'immagine (cosi il testo viene centrato verticalmente)
-                viewHolder.mTextView.setHeight(ep.bmp.getHeight());
+                //viewHolder.mTextView.setHeight(viewHolder.epImg.getHeight());
                 // Lo fa anche per la checkbox
-                viewHolder.cb.setHeight(ep.bmp.getHeight());
+                //viewHolder.cb.setHeight(viewHolder.epImg.getHeight());
 
             }
         };
@@ -127,9 +144,9 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 at.execute(ep.bmpPath);
         } else {
             // Se l'immagine dell'episodio è già stata salvata, riusa quella
-            viewHolder.mTextView.setHeight(ep.bmp.getHeight());
             viewHolder.epImg.setImageBitmap(ep.bmp);
-            viewHolder.cb.setHeight(ep.bmp.getHeight());
+            //viewHolder.mTextView.setHeight(viewHolder.epImg.getHeight());
+            //viewHolder.cb.setHeight(viewHolder.epImg.getHeight());
         }
         // mette check o uncheck per l'episodio a seconda del valore che ha l'oggetto Episode
         // se i dati erano scaricati dal server quando l'user era loggato, ogni episodio
@@ -160,8 +177,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         viewHolder.epImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Context context= v.getContext();
-                Intent i = new Intent(context,EpisodeActivity.class);
+                Context context = v.getContext();
+                Intent i = new Intent(context, EpisodeActivity.class);
                 Bundle b = new Bundle();
                 b.putParcelable("picture", ep.bmp);
                 b.putString("episode", ep.source.toString());
@@ -173,8 +190,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Context context= v.getContext();
-                Intent i = new Intent(context,EpisodeActivity.class);
+                Context context = v.getContext();
+                Intent i = new Intent(context, EpisodeActivity.class);
                 Bundle b = new Bundle();
                 b.putParcelable("picture", ep.bmp);
                 b.putString("episode", ep.source.toString());
@@ -182,6 +199,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 context.startActivity(i);
             }
         });
+
     }
 
     @Override
@@ -201,8 +219,26 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             mTextView = (TextView) v.findViewById(R.id.list_item);
             epImg = (ImageView) v.findViewById(R.id.ep_img);
             cb= (CheckBox) v.findViewById(R.id.checkEp);
-        }
 
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            display = wm.getDefaultDisplay();
+            int dimPX = getDisplayDimensionsPX(display);
+
+            mTextView.setWidth(dimPX/2);
+            epImg.setMaxWidth(20);
+            cb.setWidth(dimPX / 4);
+
+        }
     }
+
+
+    public int getDisplayDimensionsPX(Display d){
+        Point size = new Point();
+        d.getSize(size);
+        int widthPX = size.x;
+
+        return widthPX;
+    }
+
 }
 
