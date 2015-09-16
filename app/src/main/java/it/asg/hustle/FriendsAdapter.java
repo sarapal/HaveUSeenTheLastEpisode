@@ -23,16 +23,15 @@ public class FriendsAdapter extends RecyclerView
 
     public static class FriendHolder extends RecyclerView.ViewHolder{
         TextView friend_name;
-        ImageView friend_photo;
+        com.facebook.login.widget.ProfilePictureView friend_photo;
 
         public FriendHolder(View itemView) {
             super(itemView);
             friend_name = (TextView) itemView.findViewById(R.id.friend_name);
-            friend_photo = (ImageView) itemView.findViewById(R.id.friend_photo);
+            friend_photo = (com.facebook.login.widget.ProfilePictureView) itemView.findViewById(R.id.friend_id_picture);
+            friend_photo.setProfileId(null);
         }
-
     }
-
 
     public FriendsAdapter(ArrayList<Friend> myDataset) {
         friends = myDataset;
@@ -51,7 +50,7 @@ public class FriendsAdapter extends RecyclerView
     @Override
     public void onBindViewHolder(FriendHolder holder, int position) {
         holder.friend_name.setText(friends.get(position).getName());
-        holder.friend_photo.setImageBitmap(friends.get(position).getImage());
+        holder.friend_photo.setProfileId(friends.get(position).getId());
     }
 
 
