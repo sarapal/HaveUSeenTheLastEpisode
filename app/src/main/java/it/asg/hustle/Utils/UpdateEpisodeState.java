@@ -76,7 +76,9 @@ public class UpdateEpisodeState {
                     JSONObject jo = new JSONObject(s);
                     if (jo.getBoolean("error")) {
                         Log.d("HUSTLE", "Errore nel cambiare stato episodio");
-                        cb.setChecked(!state);
+                        if (cb != null) {
+                            cb.setChecked(!state);
+                        }
                     } else {
                         Log.d("HUSTLE", "Stato episodio cambiato");
                         ep.checked = !ep.checked;
