@@ -9,13 +9,17 @@
         <item name="android:windowBackground">@color/background</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <!-- CardView theme -->
-    <style name="CardStyle" parent="CardView.Dark">
-        <item name="android:backgroundTint">@color/cardview_background</item>
+    <style name="CardStyleEp" parent="CardView.Dark">
         <item name="android:background">@color/cardview_background</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
     </style>
+    <style name="CardStyleInfo" parent="CardView.Dark">
+        <item name="android:background">@color/info_cv_background</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+    </style>
+
 
 </resources>

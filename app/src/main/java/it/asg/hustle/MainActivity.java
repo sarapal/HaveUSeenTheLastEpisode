@@ -66,6 +66,9 @@ import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Season;
 import it.asg.hustle.Info.Show;
 
+import it.asg.hustle.Utils.DBHelper;
+import it.asg.hustle.Utils.MD5;
+
 
 public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;                // la toolbar
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;          // adapter per RecyclerView
 
-    private boolean logged;
+    private boolean logged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,20 +109,7 @@ public class MainActivity extends AppCompatActivity {
         DBHelper.getInstance(this);
         Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
 
-        // Se l'utente è loggato tramite facebook, vede se è loggato sul server esterno
-        // Se non è loggato sul server esterno, lo registra
-        String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
-        String name = getSharedPreferences("name_facebook", Context.MODE_PRIVATE).getString("name_facebook", null);
-
-        boolean logged = getSharedPreferences("logged", Context.MODE_PRIVATE).getBoolean("logged", false);
-        if (!logged) {
-            if (id != null) {
-                Log.d("HUSTLE", "Non sei registrato sul server, registrazione in corso per: id " + id + " e nome: " + name);
-                logIn(id, name);
-            }
-        } else {
-            Log.d("HUSTLE", "Sei già loggato sul server, non effettuo registrazione");
-        }
+        updateLogInServer();
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -184,10 +174,34 @@ public class MainActivity extends AppCompatActivity {
         updateCircleProfile();
     }
 
-    public void logIn(String id, String name) {
-        // AsyncTask per prendere info su una Serie TV in base
-        // al nome. Potrebbe ritornare più elementi in un JSONArray
+    public void updateLogInServer() {
+        // Se l'utente è loggato tramite facebook, vede se è loggato sul server esterno
+        // Se non è loggato sul server esterno, lo registra
+        String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
+        String name = getSharedPreferences("name_facebook", Context.MODE_PRIVATE).getString("name_facebook", null);
 
+        if (id == null || name == null) {
+            Log.d("HUSTLE", "Non sei loggato su FB, quindi non puoi essere loggato sul server");
+            logged = false;
+            SharedPreferences o = getSharedPreferences("logged", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = o.edit();
+            editor.putBoolean("logged", logged);
+            editor.commit();
+        }
+
+        logged = getSharedPreferences("logged", Context.MODE_PRIVATE).getBoolean("logged", false);
+        if (!logged) {
+            if (id != null) {
+                Log.d("HUSTLE", "Non sei registrato sul server, registrazione in corso per: id " + id + " e nome: " + name);
+                logIn(id, name);
+            }
+        } else {
+            Log.d("HUSTLE", "Sei già loggato sul server, non effettuo registrazione");
+        }
+    }
+
+    public void logIn(String id, String name) {
+        // AsyncTask per effettuare logIn sul server
         AsyncTask<String, Void, String> at = new AsyncTask<String, Void, String>() {
             @Override
             protected void onPreExecute() {
@@ -201,13 +215,15 @@ public class MainActivity extends AppCompatActivity {
 
                 URL url = null;
                 String s = null;
+                String auth = MD5.hash(id+name);
                 try {
-                    String Data = "id="+id+"&name="+name;
+                    String data = "id="+id+"&name="+name+"&auth="+auth;
+                    Log.d("HUSTLE", "Invio richiesta di registrazione: "+data);
                     url = new URL("http://hustle.altervista.org/signup.php");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("POST");
                     con.setDoOutput(true);
-                    con.getOutputStream().write(Data.getBytes("UTF-8"));
+                    con.getOutputStream().write(data.getBytes("UTF-8"));
 
                     InputStream in = new BufferedInputStream(con.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -225,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                Log.d("HUSTLE", "postExecute");
                 try {
                     JSONObject jo = new JSONObject(s);
                     if (jo.getBoolean("logged")) {
@@ -408,17 +423,13 @@ public class MainActivity extends AppCompatActivity {
         Point size = new Point();
         d.getSize(size);
         int widthPX = size.x;
-        //int heightPX = size.y;
-        int widthDPI = pxToDp(widthPX);
-        //int heightDPI = pxToDp(heightPX);
+        int widthDP = pxToDp(widthPX);
 
 
-        Log.d("asg", "widthDPI vale: " +widthDPI);
         int wPX = (int) getResources().getDimension(R.dimen.grid_item_RelativeLayout_width);
         int wDP = pxToDp(wPX);
-        Log.d("asg","W vale: "+wDP);
-        int num = (int) Math.floor(widthDPI/wDP);
-        Log.d("asg", "widthDPI/num vale: " + num);
+        int num = (int) Math.floor(widthDP/wDP);
+
         return num;
     }
 
@@ -461,6 +472,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateCircleProfile();
+        updateLogInServer();
     }
 
     void updateFriendList(){

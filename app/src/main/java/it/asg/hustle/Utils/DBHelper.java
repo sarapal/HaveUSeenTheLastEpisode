@@ -1,4 +1,4 @@
-package it.asg.hustle;
+package it.asg.hustle.Utils;
 
 import android.content.ContentValues;
 import android.content.Context;

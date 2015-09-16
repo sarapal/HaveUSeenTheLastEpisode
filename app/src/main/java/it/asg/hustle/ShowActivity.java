@@ -1,16 +1,10 @@
 package it.asg.hustle;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -107,9 +100,9 @@ public class ShowActivity extends AppCompatActivity {
         }
 
         //il primo adapter è per le info
-        adapterList.add(new EpisodeRecyclerAdapter(new Season()));
+        adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), new Season()));
         for(int i=1; i<= show.seasonNumber; i++) {
-            adapterList.add(new EpisodeRecyclerAdapter(show.seasonsList.get(i - 1)));
+            adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), show.seasonsList.get(i - 1)));
 
         }
         setContentView(R.layout.activity_show);
@@ -154,7 +147,7 @@ public class ShowActivity extends AppCompatActivity {
 
             @Override
             protected Bitmap doInBackground(String... params) {
-                Bitmap bm = null;
+                Bitmap bm;
                 InputStream in = null;
                 try {
                     in = new java.net.URL(params[0]).openStream();
@@ -183,10 +176,17 @@ public class ShowActivity extends AppCompatActivity {
                 ArrayList<Episode> seasonList = new ArrayList<Episode>();
                 String s=null;
                 JSONArray seasonJSON = null;
+                // Se l'utente è loggato tramite facebook e sul server esterno, aggiunge il suo id alla richiesta
+                // in modo che la risposta del server conterrà gli episodi già visti (campo "seen" del json object)
+                String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
+                boolean logged = getSharedPreferences("logged", Context.MODE_PRIVATE).getBoolean("logged", false);
+                String x = "";
+                if (id != null && logged)
+                    x = "&user_id="+id;
                 //richiesta dati episodi della stagione
                 while (seasonJSON == null) {
                     try {
-                        URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + params[0] + "&season=" + params[1]);
+                        URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + params[0] + "&season=" + params[1] + x);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -221,9 +221,7 @@ public class ShowActivity extends AppCompatActivity {
 
 
     private void doGetInfo(final Show showInfo) {
-        ArrayList<Season> list = showInfo.seasonsList;
-
-        int i=0;
+        int i;
         for(i=1; i<=showInfo.seasonNumber; i++){
             doGetInfoSeason(showInfo, i);
         }
@@ -337,7 +335,7 @@ public class ShowActivity extends AppCompatActivity {
             if (position == 0) {
                 return getResources().getString(R.string.tab_show_info);
             }
-            int i=1;
+            int i;
                 // break;
             for (i=1; i<=number_of_tabs; i++) {
                 if (position == i) {
