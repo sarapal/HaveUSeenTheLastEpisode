@@ -90,7 +90,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
         viewHolder.epImg.setMaxWidth(dimPX/4);
         viewHolder.mTextView.setWidth(dimPX/2);
-        viewHolder.cb.setWidth(dimPX/4);
+        //viewHolder.cb.setWidth(dimPX/4);
 
         // Imposta la TextView con indice episodio: titolo episodio
         viewHolder.mTextView.setText((i+1)+": "+item);
@@ -226,7 +226,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
             mTextView.setWidth(dimPX/2);
             epImg.setMaxWidth(20);
-            cb.setWidth(dimPX / 4);
+            //cb.setWidth(dimPX / 4);
 
         }
     }
