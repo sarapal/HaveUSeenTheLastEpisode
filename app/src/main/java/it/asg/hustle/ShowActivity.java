@@ -72,15 +72,11 @@ public class ShowActivity extends AppCompatActivity {
         //allocazione della lista di adapter. ogni adapter è di una stagione. il primo è per le info
         adapterList = new ArrayList<EpisodeRecyclerAdapter>();
         friends = new ArrayList<Friend>();
-        Bitmap friend_prova = BitmapFactory.decodeResource(getResources(), R.drawable.com_facebook_profile_picture_blank_square);
-        friends.add(new Friend("1",friend_prova, "andrea"));
-        friends.add(new Friend("1",friend_prova, "giorgio"));
-        friends.add(new Friend("1",friend_prova, "sara"));
-        friends.add(new Friend("1",friend_prova, "valentina"));
-        friends.add(new Friend("1",friend_prova, "gesù"));
-        friends.add(new Friend("1",friend_prova, "gegiù"));
-        friends.add(new Friend("1",friend_prova, "mamma"));
-
+        friends.add(new Friend("10206320363559257", "sara"));
+        friends.add(new Friend("859181404195526", "valentina"));
+        friends.add(new Friend("10205469410757008", "gesù"));
+        friends.add(new Friend("10205469510757018", "gegiù"));
+        friends.add(new Friend("10203469410757077", "mamma"));
         adapter_friends = new FriendsAdapter(friends);
         //caso in cui l'activity è stata stoppata o messa in pausa, ricrea i dati dai savedInstanceState
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster

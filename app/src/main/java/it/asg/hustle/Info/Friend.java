@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
  * Created by andrea on 15/09/15.
  */
 public class Friend {
-    public Bitmap profile_photo = null;
     public String name = null;
     public String id = null;
 
@@ -15,8 +14,8 @@ public class Friend {
         return;
     }
 
-    public Friend(String id_in, Bitmap bmp, String name_in){
-        profile_photo = bmp;
+    public Friend(String id_in, String name_in){
+
         name = name_in;
         id = id_in;
     }
@@ -25,14 +24,9 @@ public class Friend {
         return this.name;
     }
 
-    public Bitmap getImage(){
-        return this.profile_photo;
-    }
 
     public String getId(){
         return this.id;
     }
-
-//TODO: funzione che accetta l'url della foto e con async task scarica la foto
 
 }

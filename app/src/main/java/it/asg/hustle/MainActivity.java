@@ -48,6 +48,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +60,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+
+import it.asg.hustle.Info.Episode;
+import it.asg.hustle.Info.Season;
+import it.asg.hustle.Info.Show;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -176,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         account_name_facebook_tv = (TextView) findViewById(R.id.account_name_facebook);
         //Log.d("HUSTLE", "profilePictureInvisible: " + profilePictureInvisible);
         updateCircleProfile();
-        updateFriendList();
     }
 
     public void logIn(String id, String name) {
@@ -475,6 +480,11 @@ public class MainActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = options.edit();
                                 editor.putString("friend_list", response.getJSONObject().getJSONArray("data").toString());
                                 editor.commit();
+                                JSONArray friend_list = response.getJSONObject().getJSONArray("data");
+                                for (int i= 0; i < friend_list.length(); i++){
+                                    String id = friend_list.getJSONObject(i).getString("id");
+                                    downloadFriendPhotos(id);
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -483,6 +493,42 @@ public class MainActivity extends AppCompatActivity {
             ).executeAsync();
         }
     }
+
+    void downloadFriendPhotos(final String id){
+
+        AsyncTask<String, Void, Bitmap> profile_photo_downloader = new AsyncTask<String, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(String... params) {
+
+                String id = params[0];
+                //richiesta dati episodi della stagione
+                try {
+                    URL url = new URL("");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    InputStream in = new BufferedInputStream(conn.getInputStream());
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                    br.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //creazione array dalla risposta
+                try {
+                    new JSONArray().get(0);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+                @Override
+                protected void onPostExecute(Bitmap bmp) {
+                    super.onPostExecute(bmp);
+
+                }
+        };
+
+        profile_photo_downloader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, id);
+        }
+
 
     void updateCircleProfile() {
         SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
