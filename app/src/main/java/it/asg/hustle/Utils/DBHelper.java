@@ -141,7 +141,8 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
         SQLiteDatabase db = instance.getReadableDatabase();
-        Cursor c = db.query(DBHelper.SERIES_TABLE, null, "SeriesName LIKE ? AND Language=?", new String[]{title, lan}, null, null, null);
+        // i due % indicano qualsiasi altro carattere (così se scrivo grey's lui trova grey's anatomy!)
+        Cursor c = db.query(DBHelper.SERIES_TABLE, null, "SeriesName LIKE ? AND Language=?", new String[]{"%"+title+"%", lan}, null, null, null);
         if (c == null || c.getCount() == 0) {
             Log.d("HUSTLE", "cursor non ha elementi...non ho trovato niente nel DB locale");
             c.close();
@@ -174,13 +175,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return ja;
     }
 
-    public static synchronized JSONObject getSerieByIDFromDB(String id, String lan) {
+    public static synchronized JSONObject getSerieByIDFromDB(String id) {
         JSONObject jo = new JSONObject();
         if (instance == null) {
             return null;
         }
         SQLiteDatabase db = instance.getReadableDatabase();
-        Cursor c = db.query(DBHelper.SERIES_TABLE, null, "seriesid=? AND Language=?", new String[]{id, lan}, null, null, null);
+        Cursor c = db.query(DBHelper.SERIES_TABLE, null, "seriesid=?", new String[]{id}, null, null, null);
         if (c == null || c.getCount() == 0) {
             Log.d("HUSTLE", "cursor non ha elementi...non ho trovato niente nel DB locale");
             c.close();

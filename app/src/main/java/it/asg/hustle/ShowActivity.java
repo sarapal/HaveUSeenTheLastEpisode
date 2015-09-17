@@ -283,7 +283,13 @@ public class ShowActivity extends AppCompatActivity {
                     DBHelper.addSeasonDB(show.seasonsList.get(season.seasonNumber - 1));
                 } else {
                     Log.d("HUSTLE", "Devo aggiornare la serie dal server");
-                    DBHelper.updateSeasonDB(show.seasonsList.get(season.seasonNumber - 1));
+                    if (DBHelper.getSeasonFromDB(show, season.seasonNumber) == null) {
+                        Log.d("HUSTLE", "Non c'è, la aggiungo");
+                        DBHelper.addSeasonDB(season);
+                    } else {
+                        Log.d("HUSTLE", "c'è già, la aggiorno");
+                        DBHelper.updateSeasonDB(show.seasonsList.get(season.seasonNumber - 1));
+                    }
                 }
             }
         };
