@@ -1,8 +1,10 @@
 package it.asg.hustle;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,11 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.asg.hustle.Info.Episode;
+import it.asg.hustle.Utils.UpdateEpisodeState;
 
 public class EpisodeActivity extends AppCompatActivity {
     private String LOG_TAG = "ActivityFacebook";
@@ -33,7 +37,7 @@ public class EpisodeActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         Bundle b = getIntent().getExtras();
@@ -63,21 +67,25 @@ public class EpisodeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("HUSTLE", "FAB (in EpisodeActivity) was pressed");
-                //  TODO aggiornare db con il check dell'episodio selezionato
-                fabCheck.setImageResource(R.drawable.ic_done);
-                ep.checked = !ep.checked;
-                if (ep.checked){
-                    fabCheck.setImageResource(R.drawable.ic_close);
-                }else{
-                    fabCheck.setImageResource(R.drawable.ic_done);
+                if(!UpdateEpisodeState.changeState(getApplicationContext(),ep,null,!ep.checked,fabCheck)){
+                    Toast.makeText(getApplicationContext(),"Impossibile selezionare l'elemento. Effettuare il login",Toast.LENGTH_LONG).show();
                 }
-                Log.d("HUSTLE","status checkbox (EpisodeActivity): "+ep.checked.toString());
-
             }
 
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = getIntent();
+        i.putExtra("status",ep.checked);
+        i.putExtra("episode_num",ep.episodeNumber);
+        i.putExtra("season",ep.season);
 
+        //Log.d("HUSTLE", "back! " + ep.checked);
+        setResult(Activity.RESULT_OK, i);
+        finish();
+        super.onBackPressed();
     }
 
     @Override

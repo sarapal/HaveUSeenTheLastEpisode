@@ -1,6 +1,8 @@
 package it.asg.hustle;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -95,14 +97,13 @@ public class ShowActivity extends AppCompatActivity {
         }
 
         //il primo adapter è per le info
-        adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), new Season()));
+        adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), ShowActivity.this, new Season()));
         for(int i=1; i<= show.seasonNumber; i++) {
-            adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), show.seasonsList.get(i - 1)));
+            adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), ShowActivity.this, show.seasonsList.get(i - 1)));
 
         }
 
         setContentView(R.layout.activity_show);
-
 
         // get toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -139,11 +140,43 @@ public class ShowActivity extends AppCompatActivity {
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
             Log.d("HUSTLE", "landscape mode!");
         }
-
-
+        // TODO: mostra la serie nell'activity
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("HUSTLE", "onActivityResult di ShowActivity");
+        if (requestCode == EpisodeRecyclerAdapter.EP_CHANGED){
+            if (resultCode == Activity.RESULT_OK){
 
+                Bundle b = data.getExtras();
+                Boolean status = b.getBoolean("status");
+                int ep_num = b.getInt("episode_num");
+                int season = b.getInt("season");
+
+                Log.d("HUSTLE", "Episodio n " + ep_num + " stagione " + season + " stato " + status);
+
+                EpisodeRecyclerAdapter era = adapterList.get(season);
+                // prende l'episodio
+                Episode e = era.getEpisodes().get(ep_num-1);
+                // gli cambia stato
+                e.checked = status;
+                // Avvisa l'adapter che i dati sono cambiati
+                era.notifyDataSetChanged();
+                // Ora cambia anche il json dell'episodio (per essere consistenti)
+                try {
+                    e.source.put("seen",status);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                Log.d("HUSTLE", "result: "+resultCode+" OK è " + Activity.RESULT_OK);
+            }
+        } else {
+            Log.d("HUSTLE", ""+requestCode);
+        }
+    }
     private void doGetShowPoster(String imageUrl) {
 
         AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {

@@ -48,12 +48,13 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
         final Show item = shows.get(i);
         final int width = getDisplayWidthPX();
 
-        viewHolder.mImageView.setMaxWidth(width/2);
-        viewHolder.mTextView.setMaxWidth(width/2);
+        viewHolder.mImageView.setMaxWidth((2 * width) / 3);
+        //viewHolder.mTextView.setMaxWidth(width/2);
 
         //Log.d("HUSTLE", "AGGIUNGO ALLA LISTA: "+ item.toString());
         Log.d("HUSTLE", "La lingua è " + item.language);
 
+        viewHolder.mTextView.setWidth(width / 3);
         viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
         viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,8 +106,10 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 viewHolder.mImageView.setImageBitmap(bitmap);
+
                 item.bmp = bitmap;
-                viewHolder.mTextView.setHeight(bitmap.getHeight());
+                //viewHolder.mTextView.setHeight(viewHolder.mImageView.getHeight());
+                viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
                 progressDialog.dismiss();
             }
         };
@@ -153,6 +156,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             super(v);
             mTextView = (TextView) v.findViewById(R.id.title);
             mImageView = (ImageView) v.findViewById(R.id.poster);
+
         }
 
     }

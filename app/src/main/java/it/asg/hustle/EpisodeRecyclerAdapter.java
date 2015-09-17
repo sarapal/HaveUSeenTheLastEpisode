@@ -1,15 +1,14 @@
 package it.asg.hustle;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.Intent;;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -18,14 +17,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Season;
@@ -36,22 +33,29 @@ import it.asg.hustle.Utils.UpdateEpisodeState;
  */
 public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecyclerAdapter.ViewHolder> {
 
-    //private List<String> mItems;
     private Bitmap posterBitmap = null;
     private ImageView posterImageView;
     private ArrayList<Episode> episodes;
 
     private Context context = null;
+    private Activity activity = null;
 
     private Display display;
-
-
-    //EpisodeRecyclerAdapter(List<String> items) {
-    //    mItems = items;
-    //}
+    public static final int EP_CHANGED = 1;
 
     public EpisodeRecyclerAdapter(Context c, Season season) {
         this.context = c;
+        if (season.episodesList != null) {
+            episodes = season.episodesList;
+        }
+        else{
+            episodes = new ArrayList<Episode>();
+        }
+    }
+
+    public EpisodeRecyclerAdapter(Context c, Activity a, Season season) {
+        this.context = c;
+        this.activity = a;
         if (season.episodesList != null) {
             episodes = season.episodesList;
         }
@@ -68,6 +72,10 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             episodes = new ArrayList<Episode>();
         }
 
+    }
+
+    public ArrayList<Episode> getEpisodes() {
+        return this.episodes;
     }
 
     @Override
@@ -162,7 +170,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 // Invia dati al server esterno e cambia l'oggetto ep sulla base di come è impostata la cb
                 boolean newState = viewHolder.cb.isChecked();
                 Log.d("HUSTLE", "Nuovo stato per episodio: " + newState);
-                if (!UpdateEpisodeState.changeState(context, ep, viewHolder.cb, newState)) {
+                if (!UpdateEpisodeState.changeState(context, ep, viewHolder.cb, newState, null)) {
                     // Qui posso cambiare lo stato della cb
                     viewHolder.cb.setChecked(!newState);
                     // avvisa l'utente che non è possibile cambiare lo stato dell'episodio
@@ -183,7 +191,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 b.putParcelable("picture", ep.bmp);
                 b.putString("episode", ep.source.toString());
                 i.putExtras(b);
-                context.startActivity(i);
+                activity.startActivityForResult(i, EP_CHANGED);
             }
         });
         // Se clicchi sul testo dell'episodio apre EpisodeActivity
@@ -196,7 +204,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 b.putParcelable("picture", ep.bmp);
                 b.putString("episode", ep.source.toString());
                 i.putExtras(b);
-                context.startActivity(i);
+                activity.startActivityForResult(i, EP_CHANGED);
             }
         });
 
@@ -225,7 +233,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             int dimPX = getDisplayDimensionsPX(display);
 
             mTextView.setWidth(dimPX/2);
-            epImg.setMaxWidth(20);
+            //epImg.setMaxWidth(20);
             //cb.setWidth(dimPX / 4);
 
         }
