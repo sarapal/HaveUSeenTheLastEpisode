@@ -2,20 +2,37 @@ package it.asg.hustle;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import it.asg.hustle.Info.Show;
 
 /**
- * Created by Edwin on 28/02/2015.
+ * Created by sara on 17/09/2015.
  */
 public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
@@ -24,46 +41,6 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     public GridAdapter() {
         super();
         mItems = new ArrayList<GridItem>();
-        GridItem i1 = new GridItem();
-        i1.setName("Show1");
-        i1.setThumbnail(R.drawable.unknown1);
-        i1.setShow(new Show("item1"));
-        mItems.add(i1);
-
-        GridItem i2 = new GridItem();
-        i2.setName("Show2");
-        i2.setThumbnail(R.drawable.unknown1);
-        mItems.add(i2);
-
-        GridItem i3 = new GridItem();
-        i3.setName("Show3");
-        i3.setThumbnail(R.drawable.unknown1);
-        mItems.add(i3);
-
-        GridItem i4 = new GridItem();
-        i4.setName("Show4");
-        i4.setThumbnail(R.drawable.unknown1);
-        mItems.add(i4);
-
-        GridItem i5 = new GridItem();
-        i5.setName("Show5");
-        i5.setThumbnail(R.drawable.unknown1);
-        mItems.add(i5);
-
-        GridItem i6 = new GridItem();
-        i6.setName("Show6");
-        i6.setThumbnail(R.drawable.unknown1);
-        mItems.add(i6);
-
-        GridItem i7 = new GridItem();
-        i7.setName("Show7");
-        i7.setThumbnail(R.drawable.unknown1);
-        mItems.add(i7);
-
-        GridItem i8 = new GridItem();
-        i8.setName("Show8");
-        i8.setThumbnail(R.drawable.unknown1);
-        mItems.add(i8);
     }
 
     @Override
@@ -77,18 +54,61 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final GridItem item = mItems.get(i);
-        viewHolder.tvspecies.setText(item.getName());
-        viewHolder.imgThumbnail.setImageResource(item.getThumbnail());
+        viewHolder.title.setText(item.getName());
+        //viewHolder.imgThumbnail.setImageBitmap(item.getThumbnail());
 
-        viewHolder.imgThumbnail.setOnClickListener(new View.OnClickListener() {
+        // AsyncTask per scaricare l'immagine dell'episodio
+        AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
+
+            @Override
+            protected Bitmap doInBackground(String... params) {
+                Bitmap bm = null;
+                InputStream in = null;
+                try {
+                    in = new java.net.URL(params[0]).openStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                bm = BitmapFactory.decodeStream(in);
+                return bm;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                super.onPostExecute(bitmap);
+                // Imposta l'immagine nella ImageView
+                viewHolder.thumbnail.setImageBitmap(bitmap);
+                // salva l'oggetto BitMap nell'oggetto Episode
+                item.setThumbnail(bitmap);
+
+            }
+        };
+
+        // Se l'immagine dell'episodio non è stata scaricata
+        if (item.getThumbnail() == null) {
+            Log.d("HUSTLE", "Downloading image: " + item.getShow().poster);
+            // La scarica su un thread separato, ma solo se l'URL è diverso
+            // da quello qui sotto (che significa che l'episodio non ha banner)
+            if (item.getShow().poster == null) {
+                return;
+            }
+            if (!item.getShow().poster.equals("http://thetvdb.com/banners/"))
+                at.execute(item.getShow().poster);
+        } else {
+            // Se l'immagine dell'episodio è già stata salvata, riusa quella
+            viewHolder.thumbnail.setImageBitmap(item.getThumbnail());
+            //viewHolder.mTextView.setHeight(viewHolder.epImg.getHeight());
+            //viewHolder.cb.setHeight(viewHolder.epImg.getHeight());
+        }
+
+        viewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Context context= v.getContext();
+                Context context = v.getContext();
                 Intent intent = new Intent(context, ShowActivity.class);
-                // TODO: add the show to the intent
-                // Show s = item. ....
-                // intent.putExtra("show", ... );
+                intent.putExtra("show", item.getShow().source.toString());
                 context.startActivity(intent);
+
             }
         });
     }
@@ -100,13 +120,13 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder{
 
-        public ImageView imgThumbnail;
-        public TextView tvspecies;
+        public ImageView thumbnail;
+        public TextView title;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            imgThumbnail = (ImageView)itemView.findViewById(R.id.img_thumbnail);
-            tvspecies = (TextView)itemView.findViewById(R.id.tv_species);
+            thumbnail = (ImageView)itemView.findViewById(R.id.thumbnail);
+            title = (TextView)itemView.findViewById(R.id.title);
         }
     }
 }

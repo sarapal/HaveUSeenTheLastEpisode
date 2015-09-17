@@ -20,23 +20,22 @@
             android:layout_height="@dimen/grid_item_RelativeLayout_height">
 
             <ImageView
-                android:id="@+id/img_thumbnail"
+                android:id="@+id/thumbnail"
                 android:layout_width="@dimen/grid_item_ImageView_width"
                 android:layout_height="@dimen/grid_item_RelativeLayout_height"
-                android:scaleType="fitXY"
-                android:layout_above="@+id/tv_species" />
+                android:scaleType="centerCrop"
+                android:layout_above="@+id/title" />
             <TextView
-                android:id="@+id/tv_species"
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/grid_item_TextView_height"
                 android:paddingLeft="5dp"
                 android:paddingRight="2dp"
                 android:layout_gravity="bottom"
                 android:gravity="center_vertical"
-                android:background="#ff444444"
+                android:background="#B3444444"
                 android:textColor="#fff"
                 android:textSize="15dp"
-                android:text="Test"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />

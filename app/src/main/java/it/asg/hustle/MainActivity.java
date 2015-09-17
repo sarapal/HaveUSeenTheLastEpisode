@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;             // RecyclerView: è un tipo di view che ricicla gli elementi
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;          // adapter per RecyclerView
+
+    GridAdapter gridAdapter ;
 
     private boolean logged = false;
 
@@ -370,8 +373,16 @@ public class MainActivity extends AppCompatActivity {
     // sottoclasse per gestire i fragment della pagina inziale
     public static class TvShowFragment extends Fragment {
         private static final String TAB_POSITION = "tab_position";
+        GridAdapter gridAdapter;
+        RecyclerView recyclerView;
 
         public TvShowFragment() {
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            recyclerView.invalidate();
         }
 
         public static TvShowFragment newInstance(int tabPosition) {
@@ -389,34 +400,88 @@ public class MainActivity extends AppCompatActivity {
             int tabPosition = args.getInt(TAB_POSITION);
             Log.d("asg","tabPosition "+tabPosition);
 
-
-            // TODO: in base alla tabPosition mostra le serie
-
-            /*
-            ArrayList<String> items = new ArrayList<String>();
-            for(int i=0 ; i < 50 ; i++){
-                items.add("TV-Show "+i);
-            } */
-
-            /*View v = inflater.inflate(R.layout.fragment_list_view, container, false);
-            RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setAdapter(new ShowRecyclerAdapter(items)); */
-
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
-            RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
+            recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
             recyclerView.setHasFixedSize(true);
 
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity() , numOfElements);
             recyclerView.setLayoutManager(gridLayoutManager);
 
-            it.asg.hustle.GridAdapter newAdapter = new GridAdapter();
-            recyclerView.setAdapter(newAdapter);
+            //prendi id per vedere le serie (nella prima schermata) che quell'utente segue
+            SharedPreferences options = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
+            String id = options.getString("id_facebook", null);
 
-            //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            //recyclerView.setAdapter(new ShowRecyclerAdapter(items));
+            gridAdapter = new GridAdapter();
+            recyclerView.setAdapter(gridAdapter);
+
+            if (tabPosition == 0){
+                downloadMySeries(id);
+            }
+
+
             return v;
+        }
 
+        public void downloadMySeries(final String id) {
+            AsyncTask<String,Void,JSONArray> at = new AsyncTask<String, Void, JSONArray>() {
+                @Override
+                protected JSONArray doInBackground(String... params) {
+                    URL url = null;
+                    String s = null;
+                    try {
+                        Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
+                                buildUpon().
+                                appendQueryParameter("user_id", id).
+                                build();
+                        String u = builtUri.toString();
+                        Log.d("HUSTLE", "requesting: " + u);
+                        url = new URL(u);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        s = br.readLine();
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("HUSTLE", "returned: " + s);
+                    JSONArray ja = null;
+                    try {
+                        ja = new JSONArray(s);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return ja;
+                }
+
+                @Override
+                protected void onPostExecute(JSONArray jsonArray) {
+                    super.onPostExecute(jsonArray);
+
+                    for(int i=0;i<jsonArray.length();i++){
+                        try {
+                            GridItem g = new GridItem();
+                            JSONObject jo = jsonArray.getJSONObject(i);
+                            Show s = new Show(jo);
+
+                            g.setShow(s);
+                            g.setName(s.title);
+                            g.setThumbnail(s.bmp);
+
+                            gridAdapter.mItems.add(g);
+                            gridAdapter.notifyDataSetChanged();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            };
+            if (id != null) {
+                at.execute(id);
+            }
         }
     }
 

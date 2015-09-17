@@ -1,10 +1,12 @@
 package it.asg.hustle;
 
+import android.graphics.Bitmap;
+
 import it.asg.hustle.Info.Show;
 
 public class GridItem {
     private String mName;
-    private int mThumbnail;
+    private Bitmap mThumbnail;
     private Show mShow;
 
     public String getName() {
@@ -24,11 +26,11 @@ public class GridItem {
         return this.mShow;
     }
 
-    public int getThumbnail() {
+    public Bitmap getThumbnail() {
         return mThumbnail;
     }
 
-    public void setThumbnail(int thumbnail) {
+    public void setThumbnail(Bitmap thumbnail) {
         this.mThumbnail = thumbnail;
     }
 }
