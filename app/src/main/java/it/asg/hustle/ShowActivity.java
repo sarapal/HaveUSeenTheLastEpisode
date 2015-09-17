@@ -461,6 +461,7 @@ public class ShowActivity extends AppCompatActivity {
                 recyclerView.setAdapter(adapterList.get(tabPosition));
             }
             return v;
+
         }
     }
 
