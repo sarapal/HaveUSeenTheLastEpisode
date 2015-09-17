@@ -117,7 +117,7 @@
                         card_view:cardCornerRadius="4dp">
 
                         <TextView
-                            android:id="@+id/info_text"
+                            android:id="@+id/id_serie_info"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="&quot;ciao&quot;"

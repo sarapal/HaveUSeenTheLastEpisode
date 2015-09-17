@@ -103,6 +103,12 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
         // Imposta la TextView con indice episodio: titolo episodio
         viewHolder.mTextView.setText((i+1)+": "+item);
+        if (episodes.get(i).watchingFriends.size() != 0) {
+            viewHolder.numberFriends.setText(episodes.get(i).watchingFriends.size() + "");
+        }
+        else{
+            viewHolder.numberFriends.setText("");
+        }
 
         final Episode ep = episodes.get(i);
         // Prende l'url dell'immagine dell'episodio
@@ -132,6 +138,12 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 ep.bmp = bitmap;
                 // Imposta la TextView con indice episodio: titolo episodio
                 viewHolder.mTextView.setText((i+1)+": "+item);
+                if (episodes.get(i).watchingFriends.size() != 0) {
+                    viewHolder.numberFriends.setText(episodes.get(i).watchingFriends.size() + "");
+                }
+                else{
+                    viewHolder.numberFriends.setText("");
+                }
                 // Imposta l'altezza della TextView con il titolo dell'episodio alla stessa altezza
                 // dell'immagine (cosi il testo viene centrato verticalmente)
                 //viewHolder.mTextView.setHeight(viewHolder.epImg.getHeight());
@@ -150,7 +162,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 return;
             }
             if (!ep.bmpPath.equals("http://thetvdb.com/banners/"))
-                at.execute(ep.bmpPath);
+                at.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,ep.bmpPath);
         } else {
             // Se l'immagine dell'episodio è già stata salvata, riusa quella
             viewHolder.epImg.setImageBitmap(ep.bmp);
@@ -190,7 +202,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 Intent i = new Intent(context, EpisodeActivity.class);
                 Bundle b = new Bundle();
                 b.putParcelable("picture", ep.bmp);
-                b.putString("episode", ep.source.toString());
+                b.putString("episode", (ep.toJSON()).toString());
                 i.putExtras(b);
                 activity.startActivityForResult(i, EP_CHANGED);
             }
@@ -234,6 +246,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView mTextView;
+        private final TextView numberFriends;
         private final ImageView epImg;
         private final CheckBox cb;
         private final CardView cardView;
@@ -242,6 +255,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         ViewHolder(View v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.list_item);
+            numberFriends = (TextView) v.findViewById(R.id.friends_number_episode);
             epImg = (ImageView) v.findViewById(R.id.ep_img);
             cb= (CheckBox) v.findViewById(R.id.checkEp);
             cardView = (CardView) v.findViewById(R.id.cardview);

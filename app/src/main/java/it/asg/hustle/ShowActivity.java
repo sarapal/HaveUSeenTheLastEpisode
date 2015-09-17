@@ -107,6 +107,7 @@ public class ShowActivity extends AppCompatActivity {
 
         }
 
+
         setContentView(R.layout.activity_show);
 
         // get toolbar
@@ -352,7 +353,10 @@ public class ShowActivity extends AppCompatActivity {
                     try {
                         JSONObject friendEpisode = episodesFriend.getJSONObject(i);
                         Episode episode = new Episode(friendEpisode);
-                        show.seasonsList.get(episode.season-1).episodesList.get(episode.episodeNumber-1).watchingFriends.add(friend);
+                        Episode original = show.seasonsList.get(episode.season-1).episodesList.get(episode.episodeNumber - 1);
+                        if (!original.watchingFriends.contains(friend) && episode.checked){
+                            original.watchingFriends.add(friend);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -364,6 +368,9 @@ public class ShowActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void n) {
                 super.onPostExecute(n);
+                for (int i = 0; i<adapterList.size(); i++) {
+                    adapterList.get(i).notifyDataSetChanged();
+                }
 
 
                 //TODO: invalidate dellìadapter episodi
@@ -440,6 +447,8 @@ public class ShowActivity extends AppCompatActivity {
             if (tabPosition == 0){
                 v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
                 TextView card_description = (TextView) v.findViewById(R.id.card_description_text);
+                TextView card_series_id = (TextView) v.findViewById(R.id.id_serie_info);
+                card_series_id.setText(show.id);
                 card_description.setText(show.overview);
                 RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview_friends_card);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -529,23 +538,24 @@ public class ShowActivity extends AppCompatActivity {
                 for (int i= 0; i < all_friends.size(); i++){
                     actual = all_friends.get(i);
                     user_id = actual.id;
-                    while(s == null) {
-                        try {
-                            URL url = new URL("http://hustle.altervista.org/getSeries_bis.php?user_id_short=" + user_id + "&seriesid_short=" + series_id);
-                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                            InputStream in = new BufferedInputStream(conn.getInputStream());
-                            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                            s = br.readLine();
-                            Log.d("HUSTLE", "utente " + actual.name + " segue la serie");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
+                    try {
+                        URL url = new URL("http://hustle.altervista.org/getSeries_bis.php?user_id_short=" + user_id + "&seriesid_short=" + series_id);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        s = br.readLine();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+
 
                     //creazione array dalla risposta
                     try {
                         friendshowsJSON= new JSONArray(s);
                         if(friendshowsJSON.length() >= 1){
+                            Log.d("HUSTLE", "utente " + actual.name + " segue la serie");
                             show_friends.add(actual);
                         }
 
@@ -565,7 +575,7 @@ public class ShowActivity extends AppCompatActivity {
                 super.onPostExecute(show_friends);
 
                 adapter_friends.notifyDataSetChanged();
-                doGetInfoFriendAll(friends_list_adapter, show.title);
+                doGetInfoFriendAll(show_friends, show.title);
 
             }
         };

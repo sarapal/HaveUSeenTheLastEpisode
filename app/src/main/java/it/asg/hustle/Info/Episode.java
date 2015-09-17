@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,7 +74,12 @@ public class Episode{
             if (jo.has("overview")) {
                 this.overview =jo.getString("overview");
             }
-
+            if (jo.has("watchingFriends")) {
+                JSONArray friendsJSON = jo.getJSONArray("watchingFriends");
+                for (int i=0; i< friendsJSON.length(); i++){
+                    this.watchingFriends.add(new Friend((JSONObject)  friendsJSON.get(i)));
+                }
+            }
             if (jo.has("language")) {
                 Log.d("HUSTLE", "Episode in creazione con lingua: " + jo.getString("language"));
                 this.language = new String(jo.getString("language"));
@@ -89,7 +95,19 @@ public class Episode{
 
     public JSONObject toJSON()
     {
-        //TODO:salvare gli amici che guardano la serie
+        JSONArray array = new JSONArray();
+        for (int i = 0; i< this.watchingFriends.size(); i++){
+            try {
+                array.put(i,this.watchingFriends.get(i).toJSON());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            this.source.put("watchingFriends", array);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return this.source;
     }
 

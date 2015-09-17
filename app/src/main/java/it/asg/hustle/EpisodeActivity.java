@@ -9,6 +9,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -21,13 +23,17 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import it.asg.hustle.Info.Episode;
+import it.asg.hustle.Info.Friend;
 import it.asg.hustle.Utils.UpdateEpisodeState;
 
 public class EpisodeActivity extends AppCompatActivity {
     private String LOG_TAG = "ActivityFacebook";
     private Episode ep ;
     private FloatingActionButton fabCheck;
+    private ArrayList<Friend> friends = null;
 
 
     @Override
@@ -73,6 +79,11 @@ public class EpisodeActivity extends AppCompatActivity {
             }
 
         });
+
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview_friends_card_episode);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setAdapter(new FriendsAdapter(ep.watchingFriends));
     }
 
     @Override

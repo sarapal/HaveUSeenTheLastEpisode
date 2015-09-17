@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -24,17 +25,19 @@ public class Show {
     public int seasonNumber;
     public JSONObject source;
     public ArrayList<Season> seasonsList;
+    public ArrayList<Friend> friends = null;
 
 
     public Show(String title)
     {
+        this.friends = new ArrayList<Friend>();
         this.seasonsList = new ArrayList<Season>();
         this.title = title;
     }
 
     public Show(JSONObject jo) {
         Log.d("HUSTLE", "Chiamato costruttore show con parametro: " + jo.toString());
-
+        this.friends = new ArrayList<Friend>();
         try {
             if (jo.has("banner")) {
                 this.banner = jo.getString("banner");
@@ -58,6 +61,13 @@ public class Show {
             } else if (jo.has("seriesid")) {
                 this.id = "" + jo.getLong("seriesid");
             }
+
+            if (jo.has("friends")) {
+                JSONArray friendsJSON = jo.getJSONArray("friends");
+                for (int i=0; i< friendsJSON.length(); i++){
+                    this.friends.add(new Friend((JSONObject) friendsJSON.get(i)));
+                }
+            }
             if (jo.has("overview")) {
                 this.overview =jo.getString("overview");
             }
@@ -75,6 +85,19 @@ public class Show {
 
     public JSONObject toJSON()
     {
+        JSONArray array = new JSONArray();
+        for (int i = 0; i< this.friends.size(); i++){
+            try {
+                array.put(i,this.friends.get(i).toJSON());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            this.source.put("friends", array);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return this.source;
     }
 

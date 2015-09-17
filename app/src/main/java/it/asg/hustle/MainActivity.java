@@ -474,6 +474,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         updateCircleProfile();
         updateLogInServer();
+        updateFriendList();
     }
 
     void updateFriendList(){
