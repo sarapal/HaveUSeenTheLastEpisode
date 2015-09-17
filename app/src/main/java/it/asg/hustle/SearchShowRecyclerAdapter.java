@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
@@ -49,13 +50,24 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
         final int width = getDisplayWidthPX();
 
         viewHolder.mImageView.setMaxWidth((2 * width) / 3);
-        //viewHolder.mTextView.setMaxWidth(width/2);
-
-        //Log.d("HUSTLE", "AGGIUNGO ALLA LISTA: "+ item.toString());
-        Log.d("HUSTLE", "La lingua è " + item.language);
 
         viewHolder.mTextView.setWidth(width / 3);
         viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
+
+        //Log.d("HUSTLE", "AGGIUNGO ALLA LISTA: "+ item.toString());
+        //Log.d("HUSTLE", "La lingua è " + item.language);
+
+        // onClick sulla cardview
+        viewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent i = new Intent(context, ShowActivity.class);
+                i.putExtra("show", item.source.toString());
+                context.startActivity(i);
+            }
+        });
+/*
         viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +85,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 i.putExtra("show", item.source.toString());
                 context.startActivity(i);
             }
-        });
+        });*/
 
         final ProgressDialog progressDialog = new ProgressDialog(c);
         final String msg_loading = c.getResources().getString(R.string.loading_image);
@@ -106,7 +118,6 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             protected void onPostExecute(Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 viewHolder.mImageView.setImageBitmap(bitmap);
-
                 item.bmp = bitmap;
                 //viewHolder.mTextView.setHeight(viewHolder.mImageView.getHeight());
                 viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
@@ -151,11 +162,13 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
 
         private final TextView mTextView;
         private final ImageView mImageView;
+        private final CardView mCardView;
 
         ViewHolder(View v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.title);
             mImageView = (ImageView) v.findViewById(R.id.poster);
+            mCardView = (CardView) v.findViewById(R.id.cardview);
 
         }
 

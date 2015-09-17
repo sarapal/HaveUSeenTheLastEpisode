@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
@@ -181,6 +182,20 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             }
         });
 
+        // Cliccando sulla cardview, apre EpisodeActivity
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent i = new Intent(context, EpisodeActivity.class);
+                Bundle b = new Bundle();
+                b.putParcelable("picture", ep.bmp);
+                b.putString("episode", ep.source.toString());
+                i.putExtras(b);
+                activity.startActivityForResult(i, EP_CHANGED);
+            }
+        });
+/*
         // Se clicchi sull'img dell'episodio apre EpisodeActivity
         viewHolder.epImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +222,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 activity.startActivityForResult(i, EP_CHANGED);
             }
         });
+*/
 
     }
 
@@ -220,6 +236,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         private final TextView mTextView;
         private final ImageView epImg;
         private final CheckBox cb;
+        private final CardView cardView;
 
 
         ViewHolder(View v) {
@@ -227,6 +244,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             mTextView = (TextView) v.findViewById(R.id.list_item);
             epImg = (ImageView) v.findViewById(R.id.ep_img);
             cb= (CheckBox) v.findViewById(R.id.checkEp);
+            cardView = (CardView) v.findViewById(R.id.cardview);
 
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             display = wm.getDefaultDisplay();
