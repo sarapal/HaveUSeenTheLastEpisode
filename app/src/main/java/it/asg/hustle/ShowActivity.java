@@ -79,6 +79,7 @@ public class ShowActivity extends AppCompatActivity {
             show.fillSeasonsList(seasonsJSON);
         }
 
+
         //caso in cui l'activity viene generata dalla ricerca
         if(savedInstanceState == null){
             Bundle b = getIntent().getExtras();
