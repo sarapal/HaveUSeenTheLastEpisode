@@ -109,7 +109,6 @@ public class ShowActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_show);
 
-
         // get toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -146,9 +145,9 @@ public class ShowActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("HUSTLE", "onActivityResult di ShowActivity");
-        // TODO: EpisodeActivity non ritorna mai con RESULT_OK...
         if (requestCode == EpisodeRecyclerAdapter.EP_CHANGED){
             if (resultCode == Activity.RESULT_OK){
+
                 Bundle b = data.getExtras();
                 Boolean status = b.getBoolean("status");
                 int ep_num = b.getInt("episode_num");
@@ -156,9 +155,14 @@ public class ShowActivity extends AppCompatActivity {
 
                 Log.d("HUSTLE", "Episodio n " + ep_num + " stagione " + season + " stato " + status);
 
-                Episode e = adapterList.get(season).episodes.get(ep_num);
+                EpisodeRecyclerAdapter era = adapterList.get(season);
+                // prende l'episodio
+                Episode e = era.getEpisodes().get(ep_num-1);
+                // gli cambia stato
                 e.checked = status;
-                adapterList.get(season).notifyDataSetChanged();
+                // Avvisa l'adapter che i dati sono cambiati
+                era.notifyDataSetChanged();
+                // Ora cambia anche il json dell'episodio (per essere consistenti)
                 try {
                     e.source.put("seen",status);
                 } catch (JSONException e1) {

@@ -77,15 +77,15 @@ public class EpisodeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Intent i = getIntent();
         i.putExtra("status",ep.checked);
         i.putExtra("episode_num",ep.episodeNumber);
         i.putExtra("season",ep.season);
 
-        Log.d("HUSTLE", "back! " + ep.checked);
+        //Log.d("HUSTLE", "back! " + ep.checked);
         setResult(Activity.RESULT_OK, i);
         finish();
+        super.onBackPressed();
     }
 
     @Override

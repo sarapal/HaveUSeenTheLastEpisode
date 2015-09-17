@@ -89,13 +89,16 @@ public class Episode{
     public String toString() {
         return "Episode{" +
                 "title='" + title + '\'' +
-                ", episode id='" + episodeId + '\'' +
-                ", episode #='" + episodeNumber + '\'' +
-                ", season #='" + season + '\'' +
-                ", series id='" + seriesID + '\'' +
+                ", season=" + season +
+                ", episodeNumber=" + episodeNumber +
+                ", episodeId='" + episodeId + '\'' +
+                ", seriesID='" + seriesID + '\'' +
                 ", overview='" + overview + '\'' +
                 ", language='" + language + '\'' +
-                ", bmp path='" + bmpPath + '\'' +
+                ", bmpPath='" + bmpPath + '\'' +
+                ", bmp=" + bmp +
+                ", source=" + source +
+                ", checked=" + checked +
                 '}';
     }
 }

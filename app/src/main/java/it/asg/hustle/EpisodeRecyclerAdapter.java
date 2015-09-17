@@ -8,10 +8,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +17,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Season;
@@ -37,21 +33,15 @@ import it.asg.hustle.Utils.UpdateEpisodeState;
  */
 public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecyclerAdapter.ViewHolder> {
 
-    //private List<String> mItems;
     private Bitmap posterBitmap = null;
     private ImageView posterImageView;
-    public ArrayList<Episode> episodes;     // TODO: rimettila privata e quindi fai metodo GETTER e cambia lina 159 di ShowActivity
+    private ArrayList<Episode> episodes;
 
     private Context context = null;
     private Activity activity = null;
 
     private Display display;
     public static final int EP_CHANGED = 1;
-
-
-    //EpisodeRecyclerAdapter(List<String> items) {
-    //    mItems = items;
-    //}
 
     public EpisodeRecyclerAdapter(Context c, Season season) {
         this.context = c;
@@ -82,6 +72,10 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             episodes = new ArrayList<Episode>();
         }
 
+    }
+
+    public ArrayList<Episode> getEpisodes() {
+        return this.episodes;
     }
 
     @Override
