@@ -12,7 +12,6 @@ public class Friend {
     public String name = null;
     public String id = null;
 
-
     public Friend(){
         return;
     }

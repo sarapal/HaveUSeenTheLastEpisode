@@ -28,6 +28,7 @@ public class Show {
 
     public Show(String title)
     {
+        this.seasonsList = new ArrayList<Season>();
         this.title = title;
     }
 

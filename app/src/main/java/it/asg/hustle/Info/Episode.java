@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import it.asg.hustle.Utils.MD5;
 
@@ -36,20 +37,24 @@ public class Episode{
     public Bitmap bmp;
     public JSONObject source;
     public Boolean checked = false;
+    public ArrayList<Friend> watchingFriends = null;
 
     public Episode(String title)
     {
+        this.watchingFriends =new ArrayList<Friend>();
         this.title = title;
     }
 
     public Episode(JSONObject jo) {
         Log.d("HUSTLE", "Chiamato costruttore episode con parametro: " + jo.toString());
-
+        this.watchingFriends =new ArrayList<Friend>();
         try {
             if (jo.has("filename")) {
                 this.bmpPath = jo.getString("filename");
             }
-            this.title = jo.getString("episodename");
+            if (jo.has("episodename")) {
+                this.title = jo.getString("episodename");
+            }
             if (jo.has("episodeid")) {
                 this.episodeId = "" + jo.getLong("episodeid");
             }
@@ -69,19 +74,22 @@ public class Episode{
                 this.overview =jo.getString("overview");
             }
 
-            Log.d("HUSTLE", "Episode in creazione con lingua: " + jo.getString("language"));
-            this.language = new String(jo.getString("language"));
+            if (jo.has("language")) {
+                Log.d("HUSTLE", "Episode in creazione con lingua: " + jo.getString("language"));
+                this.language = new String(jo.getString("language"));
+            }
 
             this.source = jo;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         this.bmp = null;
-        Log.d("HUSTLE", "Episode creato con lingua: " + this.language);
+        Log.d("HUSTLE", "Episode creato ");
     }
 
     public JSONObject toJSON()
     {
+        //TODO:salvare gli amici che guardano la serie
         return this.source;
     }
 

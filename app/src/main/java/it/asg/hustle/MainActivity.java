@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         account_name_facebook_tv = (TextView) findViewById(R.id.account_name_facebook);
         //Log.d("HUSTLE", "profilePictureInvisible: " + profilePictureInvisible);
         updateCircleProfile();
+        updateFriendList();
     }
 
     public void updateLogInServer() {

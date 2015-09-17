@@ -181,6 +181,8 @@ public class ShowActivity extends AppCompatActivity {
             Log.d("HUSTLE", ""+requestCode);
         }
     }
+
+
     private void doGetShowPoster(String imageUrl) {
 
         AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
@@ -307,6 +309,71 @@ public class ShowActivity extends AppCompatActivity {
     }
 
 
+    private void doGetInfoFriendAll(ArrayList<Friend> friends, String series_id){
+        Friend actual=null;
+        for (int i=0; i<friends.size();i++){
+            actual = friends.get(i);
+            doGetInfoFriend(actual);
+        }
+    }
+
+    private void doGetInfoFriend(final Friend friend){
+        final String friend_id = friend.id;
+        AsyncTask<String, Void, Void> friend_asynctask = new AsyncTask<String, Void, Void>() {
+            @Override
+            protected Void doInBackground(String... params) {
+                String series_id = show.id;
+                int series_number = show.seasonNumber;
+                String s = null;
+                JSONArray episodesFriend = null;
+                Show friendShow = new Show(show.title);
+                while(s == null) {
+                    //richiesta dati episodi dell'amico
+                    try {
+                        URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        s = br.readLine();
+                        Log.d("HUSTLE", "puntate viste da " + friend.name + ": " + s);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //creazione array dalla risposta
+                try {
+                    episodesFriend = new JSONArray(s);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                for (int i = 0; i < episodesFriend.length(); i++){
+                    try {
+                        JSONObject friendEpisode = episodesFriend.getJSONObject(i);
+                        Episode episode = new Episode(friendEpisode);
+                        show.seasonsList.get(episode.season-1).episodesList.get(episode.episodeNumber-1).watchingFriends.add(friend);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void n) {
+                super.onPostExecute(n);
+
+
+                //TODO: invalidate dellìadapter episodi
+            }
+        };
+        friend_asynctask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+
+
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
         savedInstanceState.putParcelable("poster", posterBitmap);
@@ -429,6 +496,7 @@ public class ShowActivity extends AppCompatActivity {
     ArrayList<Friend> getFriendList(){
         SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
         String friend_list_json_string = options.getString("friend_list", null);
+        Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
         ArrayList<Friend> return_list = new ArrayList<Friend>();
         if(friend_list_json_string != null){
             try {
@@ -443,7 +511,7 @@ public class ShowActivity extends AppCompatActivity {
         return return_list;
     }
 
-    void downloadFriendShows(ArrayList<Friend> all_friends, ArrayList<Friend> friends_list_adapter, final String series_id){
+    void downloadFriendShows(ArrayList<Friend> all_friends, final ArrayList<Friend> friends_list_adapter, final String series_id){
 //async task, prende come parametro la lista amici totale e la lista amici vuota
 
 
@@ -461,15 +529,17 @@ public class ShowActivity extends AppCompatActivity {
                 for (int i= 0; i < all_friends.size(); i++){
                     actual = all_friends.get(i);
                     user_id = actual.id;
-
-                    try {
-                        URL url = new URL("http://hustle.altervista.org/getSeries_bis.php?user_id_short=" + user_id + "&seriesid_short=" + series_id);
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                        InputStream in = new BufferedInputStream(conn.getInputStream());
-                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                        s = br.readLine();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    while(s == null) {
+                        try {
+                            URL url = new URL("http://hustle.altervista.org/getSeries_bis.php?user_id_short=" + user_id + "&seriesid_short=" + series_id);
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            InputStream in = new BufferedInputStream(conn.getInputStream());
+                            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                            s = br.readLine();
+                            Log.d("HUSTLE", "utente " + actual.name + " segue la serie");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     //creazione array dalla risposta
@@ -495,6 +565,7 @@ public class ShowActivity extends AppCompatActivity {
                 super.onPostExecute(show_friends);
 
                 adapter_friends.notifyDataSetChanged();
+                doGetInfoFriendAll(friends_list_adapter, show.title);
 
             }
         };
