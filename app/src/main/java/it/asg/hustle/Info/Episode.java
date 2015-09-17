@@ -69,7 +69,7 @@ public class Episode{
                 this.overview =jo.getString("overview");
             }
 
-            Log.d("HUSTLE", "Show in creazione con lingua: " + jo.getString("language"));
+            Log.d("HUSTLE", "Episode in creazione con lingua: " + jo.getString("language"));
             this.language = new String(jo.getString("language"));
 
             this.source = jo;
@@ -77,7 +77,7 @@ public class Episode{
             e.printStackTrace();
         }
         this.bmp = null;
-        Log.d("HUSTLE", "Show creato con lingua: " + this.language);
+        Log.d("HUSTLE", "Episode creato con lingua: " + this.language);
     }
 
     public JSONObject toJSON()

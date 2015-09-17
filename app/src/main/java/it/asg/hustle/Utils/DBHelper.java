@@ -11,7 +11,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import it.asg.hustle.Info.Episode;
+import it.asg.hustle.Info.Season;
 import it.asg.hustle.Info.Show;
 
 /**
@@ -39,7 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
             "  EpisodeNumber int(10) DEFAULT NULL,\n" +
             "  FirstAired varchar(45) DEFAULT NULL,\n" +
             "  GuestStars text,\n" +
-            "  IMDB_ID varchar(25) NOT NULL,\n" +
+            "  IMDB_ID varchar(25) DEFAULT NULL,\n" +
             "  Language varchar(2) DEFAULT NULL,\n" +
             "  Overview text,\n" +
             "  ProductionCode varchar(45) DEFAULT NULL,\n" +
@@ -54,7 +57,8 @@ public class DBHelper extends SQLiteOpenHelper {
             "  seriesid int(10) DEFAULT NULL,\n" +
             "  thumb_added datetime DEFAULT NULL,\n" +
             "  thumb_height smallint(5) DEFAULT NULL,\n" +
-            "  thumb_width smallint(5) DEFAULT NULL\n" +
+            "  thumb_width smallint(5) DEFAULT NULL,\n" +
+            "  seen boolean DEFAULT false\n" +
             ");";
 
     private static final String CREATE_SERIES_TABLE = "CREATE TABLE IF NOT EXISTS `tvseries` (\n" +
@@ -105,6 +109,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String EPISODENUMBER = "EpisodeNumber";
     public static final String SEASON = "SeasonNumber";
     public static final String FILENAME = "filename";
+    public static final String SEEN = "seen";
 
     private static DBHelper instance;
     private Context context;
@@ -228,6 +233,112 @@ public class DBHelper extends SQLiteOpenHelper {
         Log.d("HUSTLE", "Serie inserita correttamente");
         return true;
 
+    }
+
+    public static synchronized JSONArray getSeasonFromDB(Show s, int seasonNumber) {
+        // se nessun DB è stato aperto
+        if (instance == null)
+            return null;
+        JSONArray ja = new JSONArray();
+
+        SQLiteDatabase db = instance.getReadableDatabase();
+        Cursor c = db.query(DBHelper.EPISODES_TABLE, null, "seriesid=? AND SeasonNumber=?", new String[]{s.id, ""+seasonNumber}, null, null, null);
+        if (c == null || c.getCount() == 0) {
+            Log.d("HUSTLE", "cursor non ha elementi...non ho trovato niente nel DB locale");
+            c.close();
+            return null;
+        }
+        if (c.moveToFirst()) {
+            // itera sui risultati della query
+            do {
+                JSONObject jo = new JSONObject();
+                try {
+                    int seen = c.getInt(c.getColumnIndex(DBHelper.SEEN));
+                    boolean checked = (seen == 0) ? false : true;
+
+                    jo.put("episodeid", c.getInt(c.getColumnIndex(DBHelper.EPISODEID)));
+                    jo.put("seriesid", c.getString(c.getColumnIndex(DBHelper.SERIESID)));
+                    jo.put("seasonnumber", c.getString(c.getColumnIndex(DBHelper.SEASON)));
+                    jo.put("seen", checked);
+                    jo.put("language", c.getString(c.getColumnIndex(DBHelper.LANGUAGE)));
+                    jo.put("episodename", c.getString(c.getColumnIndex(DBHelper.EPISODENAME)));
+                    jo.put("episodenumber", c.getString(c.getColumnIndex(DBHelper.EPISODENUMBER)));
+                    jo.put("overview", c.getString(c.getColumnIndex(DBHelper.OVERVIEW)));
+                    jo.put("filename", c.getString(c.getColumnIndex(DBHelper.FILENAME)));
+                    Log.d("HUSTLE", "Ricerca da DB OK, aggiungo nell'array l'episodio: " + jo.toString());
+                    ja.put(jo);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return ja;
+    }
+
+    public static synchronized boolean addSeasonDB(Season season) {
+        if (instance == null)
+            return false;
+
+        SQLiteDatabase db = instance.getWritableDatabase();
+        ArrayList<Episode> episodes = season.episodesList;
+
+        ContentValues cv;
+        // Cicla su tutti gli episodi
+        for (Episode e : episodes) {
+            cv = new ContentValues();
+            cv.put(DBHelper.EPISODEID, e.episodeId);
+            cv.put(DBHelper.SERIESID, e.seriesID);
+            cv.put(DBHelper.SEASON, e.season);
+            cv.put(DBHelper.SEEN, e.checked);
+            cv.put(DBHelper.EPISODENUMBER, e.episodeNumber);
+            cv.put(DBHelper.EPISODENAME, e.title);
+            cv.put(DBHelper.OVERVIEW, e.overview);
+            cv.put(DBHelper.LANGUAGE, e.language);
+            cv.put(DBHelper.FILENAME, e.bmpPath);
+
+            if (db.insert(DBHelper.EPISODES_TABLE, null, cv) == -1) {
+                Log.d("HUSTLE", "Non sono riuscito a inserire l'episodio nel DB");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static synchronized boolean updateSeasonDB(Season season) {
+        if (instance == null)
+            return false;
+
+        SQLiteDatabase db = instance.getWritableDatabase();
+        ArrayList<Episode> episodes = season.episodesList;
+
+        ContentValues cv;
+        // Cicla su tutti gli episodi
+        for (Episode e : episodes) {
+            if (!DBHelper.updateEpisode(e.episodeId, e.checked)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static synchronized boolean updateEpisode(String episodeid, boolean state) {
+        if (instance == null)
+            return false;
+
+        SQLiteDatabase db = instance.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(DBHelper.SEEN, state);
+
+        // Ritorna il numero di righe cambiate
+        if (db.update(DBHelper.EPISODES_TABLE, cv, "episodeid=?", new String[]{episodeid}) == 1) {
+            return true;
+        }
+
+        return false;
     }
 
     public static synchronized boolean addEpisodeToDB(Episode e) {

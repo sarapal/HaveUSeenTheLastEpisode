@@ -83,8 +83,13 @@ public class UpdateEpisodeState {
                         }
                     } else {
                         Log.d("HUSTLE", "Stato episodio cambiato");
+                        // Aggiorno la variabile dell'episodio
                         ep.checked = !ep.checked;
+                        // Aggiorno il JSON
                         ep.source.put("seen", ep.checked);
+                        // Aggiorno il DB
+                        DBHelper.updateEpisode(ep.episodeId, ep.checked);
+                        // Aggiorno il fab se diverso da null
                         if (fab != null){
                             if (ep.checked){
                                 fab.setImageResource(R.drawable.ic_close);

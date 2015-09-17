@@ -45,6 +45,8 @@ import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Friend;
 import it.asg.hustle.Info.Season;
 import it.asg.hustle.Info.Show;
+import it.asg.hustle.Utils.CheckConnection;
+import it.asg.hustle.Utils.DBHelper;
 
 public class ShowActivity extends AppCompatActivity {
     private ImageView posterImageView;
@@ -61,6 +63,7 @@ public class ShowActivity extends AppCompatActivity {
     static private FriendsAdapter adapter_friends;
     private ArrayList<Friend> show_friends = null;
     private ArrayList<Friend> all_friends = null;
+    private boolean updateFromServer = false;
 
     private ArrayList<String> info;
     @Override
@@ -207,6 +210,33 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     private void doGetInfoSeason(final Show showInfo, final int seasonNumber){
+        /* TODO: prende serie dal DB. Funziona già tutto, ma bisogna implementare
+            che se l'utente poi fa il login su facebook si deve chiedere se si vogliono
+            tenere i dati locali o quelli del server esterno
+        */
+        final String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
+        String name = getSharedPreferences("name_facebook", Context.MODE_PRIVATE).getString("name_facebook", null);
+        final boolean logged = getSharedPreferences("logged", Context.MODE_PRIVATE).getBoolean("logged", false);
+
+        // se c'è connessione a internet
+        if (CheckConnection.isConnected(this)) {
+            // se l'utente è loggato
+            if (id != null && name != null && logged) {
+                // prendi i dati dal server esterno e aggiorna il DB
+                updateFromServer = true;
+            }
+        }
+        // Se non c'è necessità di aggiornare dal server, prendi i dati dal DB locale se ci sono
+        if (!updateFromServer) {
+            JSONArray season = DBHelper.getSeasonFromDB(showInfo, seasonNumber);
+            if (season != null) {
+                Log.d("HUSTLE", "Trovata la stagione nel DB");
+                show.seasonsList.get(seasonNumber - 1).fromJson(season);
+                show.seasonsList.get(seasonNumber - 1).seasonNumber = seasonNumber;
+                return;
+            }
+        }
+
         AsyncTask<String, Void, Season> st = new AsyncTask<String, Void, Season>() {
             @Override
             protected Season doInBackground(String... params) {
@@ -215,8 +245,6 @@ public class ShowActivity extends AppCompatActivity {
                 JSONArray seasonJSON = null;
                 // Se l'utente è loggato tramite facebook e sul server esterno, aggiunge il suo id alla richiesta
                 // in modo che la risposta del server conterrà gli episodi già visti (campo "seen" del json object)
-                String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
-                boolean logged = getSharedPreferences("logged", Context.MODE_PRIVATE).getBoolean("logged", false);
                 String x = "";
                 if (id != null && logged)
                     x = "&user_id="+id;
@@ -243,6 +271,7 @@ public class ShowActivity extends AppCompatActivity {
                 int number = Integer.parseInt(params[1]);
                 show.seasonsList.get(number-1).fromJson(seasonJSON);
                 show.seasonsList.get(number-1).seasonNumber = number;
+
                 return show.seasonsList.get(number-1);
             }
 
@@ -250,6 +279,16 @@ public class ShowActivity extends AppCompatActivity {
             protected void onPostExecute(Season season) {
                 super.onPostExecute(season);
                 adapterList.get(season.seasonNumber).notifyDataSetChanged();
+
+                // se updateFromServer è false, significa che la stagione non si trova
+                // nel DB e devo aggiungerla
+                if (!updateFromServer) {
+                    Log.d("HUSTLE", "Aggiungo la stagione al DB");
+                    DBHelper.addSeasonDB(show.seasonsList.get(season.seasonNumber - 1));
+                } else {
+                    Log.d("HUSTLE", "Devo aggiornare la serie dal server");
+                    DBHelper.updateSeasonDB(show.seasonsList.get(season.seasonNumber - 1));
+                }
             }
         };
 
