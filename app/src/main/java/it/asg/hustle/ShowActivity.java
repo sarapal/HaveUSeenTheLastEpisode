@@ -1,6 +1,7 @@
 package it.asg.hustle;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -56,21 +57,15 @@ public class ShowActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbar;
     static private ArrayList<EpisodeRecyclerAdapter> adapterList;
     static private FriendsAdapter adapter_friends;
-    private ArrayList<Friend> friends;
+    private ArrayList<Friend> show_friends = null;
+    private ArrayList<Friend> all_friends = null;
+
     private ArrayList<String> info;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //allocazione della lista di adapter. ogni adapter è di una stagione. il primo è per le info
         adapterList = new ArrayList<EpisodeRecyclerAdapter>();
-        friends = new ArrayList<Friend>();
-        friends.add(new Friend("10206320363559257", "sara"));
-        friends.add(new Friend("859181404195526", "valentina"));
-        friends.add(new Friend("10205469410757008", "gesù"));
-        friends.add(new Friend("10205469510757018", "gegiù"));
-        friends.add(new Friend("10203469410757077", "mamma"));
-        adapter_friends = new FriendsAdapter(friends);
+
         //caso in cui l'activity è stata stoppata o messa in pausa, ricrea i dati dai savedInstanceState
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster
         if (savedInstanceState != null) {try {
@@ -105,6 +100,7 @@ public class ShowActivity extends AppCompatActivity {
             adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), show.seasonsList.get(i - 1)));
 
         }
+
         setContentView(R.layout.activity_show);
 
 
@@ -118,6 +114,12 @@ public class ShowActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        //scarico la lista amici che vedono la serie
+        show_friends = new ArrayList<Friend>();
+        adapter_friends = new FriendsAdapter(show_friends);
+        all_friends = getFriendList();
+        downloadFriendShows(all_friends, show_friends, show.id);
 
         //adapter per stagioni e info
         a = new SeasonsAdapter(getSupportFragmentManager());
@@ -137,7 +139,8 @@ public class ShowActivity extends AppCompatActivity {
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
             Log.d("HUSTLE", "landscape mode!");
         }
-        // TODO: mostra la serie nell'activity
+
+
     }
 
 
@@ -348,6 +351,81 @@ public class ShowActivity extends AppCompatActivity {
     }
 
 
+    ArrayList<Friend> getFriendList(){
+        SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
+        String friend_list_json_string = options.getString("friend_list", null);
+        ArrayList<Friend> return_list = new ArrayList<Friend>();
+        if(friend_list_json_string != null){
+            try {
+                JSONArray friend_list_json = new JSONArray(friend_list_json_string);
+                for (int i= 0; i< friend_list_json.length(); i++) {
+                    return_list.add(new Friend(friend_list_json.getJSONObject(i)));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return return_list;
+    }
+
+    void downloadFriendShows(ArrayList<Friend> all_friends, ArrayList<Friend> friends_list_adapter, final String series_id){
+//async task, prende come parametro la lista amici totale e la lista amici vuota
+
+
+        AsyncTask<ArrayList<Friend>, Void, ArrayList<Friend>> friend_shows_download = new AsyncTask<ArrayList<Friend>, Void, ArrayList<Friend>>() {
+            @Override
+            protected ArrayList<Friend> doInBackground(ArrayList<Friend> ...params) {
+                String s=null;
+                JSONArray friendshowsJSON = null;
+                ArrayList<Friend> all_friends = params[0];
+                ArrayList<Friend> show_friends = params[1];
+                Friend actual = null;
+                String user_id = null;
+
+
+                for (int i= 0; i < all_friends.size(); i++){
+                    actual = all_friends.get(i);
+                    user_id = actual.id;
+
+                    try {
+                        URL url = new URL("http://hustle.altervista.org/getSeries_bis.php?user_id_short=" + user_id + "&seriesid_short=" + series_id);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        s = br.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    //creazione array dalla risposta
+                    try {
+                        friendshowsJSON= new JSONArray(s);
+                        if(friendshowsJSON.length() >= 1){
+                            show_friends.add(actual);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                return show_friends;
+
+            }
+
+
+            @Override
+            protected void onPostExecute(ArrayList<Friend> show_friends) {
+                super.onPostExecute(show_friends);
+
+                adapter_friends.notifyDataSetChanged();
+
+            }
+        };
+
+        friend_shows_download.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, all_friends, friends_list_adapter);
+    }
 
 
 }

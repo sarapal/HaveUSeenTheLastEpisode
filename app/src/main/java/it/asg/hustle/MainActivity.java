@@ -507,6 +507,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void downloadFriendPhotos(final String id){
+        //non viene usata questa funzione, sdk di facebook mette a disposizione il widget che fa gia tutto
 
         AsyncTask<String, Void, Bitmap> profile_photo_downloader = new AsyncTask<String, Void, Bitmap>() {
             @Override
