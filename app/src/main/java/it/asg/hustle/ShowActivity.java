@@ -210,10 +210,6 @@ public class ShowActivity extends AppCompatActivity {
     }
 
     private void doGetInfoSeason(final Show showInfo, final int seasonNumber){
-        /* TODO: prende serie dal DB. Funziona già tutto, ma bisogna implementare
-            che se l'utente poi fa il login su facebook si deve chiedere se si vogliono
-            tenere i dati locali o quelli del server esterno
-        */
         final String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
         String name = getSharedPreferences("name_facebook", Context.MODE_PRIVATE).getString("name_facebook", null);
         final boolean logged = getSharedPreferences("logged", Context.MODE_PRIVATE).getBoolean("logged", false);
