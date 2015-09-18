@@ -9,7 +9,7 @@
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="100dp"
         android:layout_width="200sp"
         android:layout_height="200sp"/>
 
@@ -26,6 +26,7 @@
         android:text="Share"
         android:layout_gravity="center"
         android:layout_width="200sp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="#4caf50"/>
 
 </LinearLayout>
