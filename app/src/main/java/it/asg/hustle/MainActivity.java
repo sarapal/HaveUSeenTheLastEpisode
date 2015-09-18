@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+
+
         //prendo DrawerLayout
         myDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -286,8 +288,7 @@ public class MainActivity extends AppCompatActivity {
                 updateCircleProfile();
                 myDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
-            case R.id.action_settings:
-                return true;
+
             case R.id.action_search:
                 handleMenuSearch();
                 return true;
@@ -648,4 +649,5 @@ public class MainActivity extends AppCompatActivity {
         int dp = (int) ((px/displayMetrics.density)+0.5);
         return dp;
     }
+
 }
