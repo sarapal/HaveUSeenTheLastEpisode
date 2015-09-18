@@ -121,21 +121,28 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             protected Bitmap doInBackground(String... params) {
                 Bitmap bm = null;
                 InputStream in = null;
+                /*Bitmap b = BitmapHelper.getFromPreferences(context, "ep_" + ep.episodeId + "_poster");
+                if (b != null) {
+                    return b;
+                }*/
                 try {
                     in = new java.net.URL(params[0]).openStream();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 bm = BitmapFactory.decodeStream(in);
-
-                // Salva la bitmap nelle preferenze
-                BitmapHelper.saveToPreferences(context, bm, ep.episodeId +"_banner");
-
+                /*final Bitmap finalBm = bm;
+                (new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BitmapHelper.saveToPreferences(context, finalBm, "ep_" + ep.episodeId + "_poster");
+                    }
+                })).run();*/
                 return bm;
             }
 
             @Override
-            protected void onPostExecute(Bitmap bitmap) {
+            protected void onPostExecute(final Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 // Imposta l'immagine nella ImageView
                 viewHolder.epImg.setImageBitmap(bitmap);
@@ -162,15 +169,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 return;
             }
             if (!ep.bmpPath.equals("http://thetvdb.com/banners/")) {
-                Bitmap bmp = BitmapHelper.getFromPreferences(context, ep.episodeId + "_banner");
-                if (bmp == null) {
-                    Log.d("HUSTLE", "Downloading image: " + ep.bmpPath);
-                    at.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ep.bmpPath);
-                } else {
-                    Log.d("HUSTLE", "Prendo l'immagine dell'episodio dalle preferenze");
-                    ep.bmp = bmp;
-                    viewHolder.epImg.setImageBitmap(bmp);
-                }
+                at.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ep.bmpPath);
             }
         } else {
             // Se l'immagine dell'episodio è già stata salvata, riusa quella

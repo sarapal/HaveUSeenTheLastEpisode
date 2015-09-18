@@ -375,6 +375,7 @@ public class MainActivity extends AppCompatActivity {
         private static final String TAB_POSITION = "tab_position";
         GridAdapter gridAdapter;
         RecyclerView recyclerView;
+        private static String series = null;
 
         public TvShowFragment() {
         }
@@ -382,7 +383,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onResume() {
             super.onResume();
-            recyclerView.invalidate();
+            Bundle args = getArguments();
+            int tabPosition = args.getInt(TAB_POSITION);
+
+            if (tabPosition == 0) {
+                Log.d("HUSTLE", "onResume fragment delle mie serie TV");
+                downloadMySeries(false);
+            }
         }
 
         public static TvShowFragment newInstance(int tabPosition) {
@@ -408,21 +415,20 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(gridLayoutManager);
 
             //prendi id per vedere le serie (nella prima schermata) che quell'utente segue
-            SharedPreferences options = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
-            String id = options.getString("id_facebook", null);
+            String id = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
 
             gridAdapter = new GridAdapter(getActivity());
             recyclerView.setAdapter(gridAdapter);
 
             if (tabPosition == 0){
-                downloadMySeries(id);
+                downloadMySeries(true);
             }
-
 
             return v;
         }
 
-        public void downloadMySeries(final String id) {
+        public void downloadMySeries(final boolean oncreate) {
+            final String id = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
             AsyncTask<String,Void,JSONArray> at = new AsyncTask<String, Void, JSONArray>() {
                 @Override
                 protected JSONArray doInBackground(String... params) {
@@ -459,6 +465,14 @@ public class MainActivity extends AppCompatActivity {
                 protected void onPostExecute(JSONArray jsonArray) {
                     super.onPostExecute(jsonArray);
 
+                    if (jsonArray.toString().equals(TvShowFragment.series) && !oncreate) {
+                        Log.d("HUSTLE", "Le serie sono uguali a prima");
+                        gridAdapter.notifyDataSetChanged();
+                        return;
+                    }
+
+                    gridAdapter.reset();
+                    ArrayList<GridItem> prova = new ArrayList<GridItem>();
                     for(int i=0;i<jsonArray.length();i++){
                         try {
                             GridItem g = new GridItem();
@@ -475,9 +489,11 @@ public class MainActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
                     }
+
+                    TvShowFragment.series = jsonArray.toString();
+                    Log.d("HUSTLE", "series: " + TvShowFragment.series);
+
                 }
             };
             if (id != null) {
@@ -563,7 +579,7 @@ public class MainActivity extends AppCompatActivity {
                                 JSONArray friend_list = response.getJSONObject().getJSONArray("data");
                                 for (int i= 0; i < friend_list.length(); i++){
                                     String id = friend_list.getJSONObject(i).getString("id");
-                                    downloadFriendPhotos(id);
+                                    //downloadFriendPhotos(id);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

@@ -29,6 +29,10 @@ public class BitmapHelper {
         return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
+    public static String getBase64Bitmap(Context c, String id) {
+        return c.getSharedPreferences(BitmapHelper.BMP_PREFERENCE, Context.MODE_PRIVATE).getString(id, null);
+    }
+
     // Salva la bitmap nelle preferenze
     public static void saveToPreferences(Context c, Bitmap bmp, String id) {
         SharedPreferences o = c.getSharedPreferences(BitmapHelper.BMP_PREFERENCE, Context.MODE_PRIVATE);

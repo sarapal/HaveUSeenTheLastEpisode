@@ -54,37 +54,52 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
         return viewHolder;
     }
 
+    public void reset() {
+        this.mItems = new ArrayList<GridItem>();
+    }
+
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final GridItem item = mItems.get(i);
         viewHolder.title.setText(item.getName());
-        //viewHolder.imgThumbnail.setImageBitmap(item.getThumbnail());
 
         // AsyncTask per scaricare l'immagine dell'episodio
-        AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
+        final AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
 
             @Override
             protected Bitmap doInBackground(String... params) {
                 Bitmap bm = null;
                 InputStream in = null;
+
+                Bitmap b = BitmapHelper.getFromPreferences(ctx, item.getShow().id + "_poster");
+                if (b != null) {
+                    return b;
+                }
                 try {
                     in = new java.net.URL(params[0]).openStream();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 bm = BitmapFactory.decodeStream(in);
-                // Salva la bitmap nelle shared preferences
-                //BitmapHelper.saveToPreferences(ctx, bm, item.getShow().id + "_poster");
+                BitmapHelper.saveToPreferences(ctx, bm, item.getShow().id + "_poster");
+                Log.d("HUSTLE", "Immagine salvata");
                 return bm;
             }
 
             @Override
-            protected void onPostExecute(Bitmap bitmap) {
+            protected void onPostExecute(final Bitmap bitmap) {
                 super.onPostExecute(bitmap);
                 // Imposta l'immagine nella ImageView
                 viewHolder.thumbnail.setImageBitmap(bitmap);
                 // salva l'oggetto BitMap nell'oggetto Episode
                 item.setThumbnail(bitmap);
+                // Salva l'immagine nelle preferenze ma in un thread separato
+                /*(new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BitmapHelper.saveToPreferences(ctx, bitmap, item.getShow().id + "_poster");
+                    }
+                })).run();*/
             }
         };
 
@@ -95,17 +110,10 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             if (item.getShow().poster == null) {
                 return;
             }
-            //Bitmap b = BitmapHelper.getFromPreferences(ctx,item.getShow().id+"_poster");
-            //if (b != null) {
-            //    Log.d("HUSTLE", "Prendo poster dalle preferenze");
-            //    item.setThumbnail(b);
-            //    viewHolder.thumbnail.setImageBitmap(b);
-            //} else {
-                if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
-                    Log.d("HUSTLE", "Downloading image: " + item.getShow().poster);
-                    at.execute(item.getShow().poster);
-                }
-            //}
+            if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
+                Log.d("HUSTLE", "Eseguo l'asynctask");
+                at.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, item.getShow().poster);
+            }
         } else {
             // Se l'immagine dell'episodio è già stata salvata, riusa quella
             viewHolder.thumbnail.setImageBitmap(item.getThumbnail());
