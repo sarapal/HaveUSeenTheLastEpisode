@@ -88,12 +88,23 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             protected Bitmap doInBackground(String... params) {
                 Bitmap bm = null;
                 InputStream in = null;
+                /*Bitmap b = BitmapHelper.getFromPreferences(c, item.id+"_banner");
+                if (b != null) {
+                    return b;
+                }*/
                 try {
                     in = new java.net.URL(params[0]).openStream();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 bm = BitmapFactory.decodeStream(in);
+                /*final Bitmap finalBm = bm;
+                (new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BitmapHelper.saveToPreferences(c, finalBm, item.id + "_banner");
+                    }
+                })).run();*/
                 return bm;
             }
 
@@ -104,9 +115,6 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 item.bmp = bitmap;
                 viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
                 progressDialog.dismiss();
-
-                // Salva la bitmap nelle shared preferences
-                BitmapHelper.saveToPreferences(c, item.bmp, item.id+"_banner");
             }
         };
 
@@ -119,17 +127,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             }
             // Se l'url è come questo qui sotto, signfica che la serie non ha banner
             if (!item.banner.equals("http://thetvdb.com/banners/")) {
-                // La prende dalle preferenze
-                Bitmap b = BitmapHelper.getFromPreferences(c, item.id+"_banner");
-                if (b == null) {
-                    Log.d("HUSTLE", "Bitmap non è nelle preferenze, la scarico");
-                    Log.d("HUSTLE", "Downlading image: " + item.banner);
-                    at.execute(item.banner);
-                } else {
-                    Log.d("HUSTLE", "Prendo la Bitmap dalle preferenze");
-                    item.bmp = b;
-                    viewHolder.mImageView.setImageBitmap(item.bmp);
-                }
+                at.execute(item.banner);
             }
         } else {
             // Se l'immagine della serie è già stata salvata, riusa quella
