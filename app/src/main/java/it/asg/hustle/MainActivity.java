@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;          // adapter per RecyclerView
 
+    private ViewPager viewPager ;
     GridAdapter gridAdapter ;
 
     private boolean logged = false;
@@ -142,6 +143,21 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intentactivityfacebook);
 
                 }
+                else if (menuItem.getTitle().equals(getResources().getString(R.string.nav_item_tvshow)) == true) {
+                    // stai cliccando sul tasto che riporta alle tue serie tv
+                    viewPager.setCurrentItem(0);
+                }
+                else if (menuItem.getTitle().equals(getResources().getString(R.string.nav_item_contactus)) == true) {
+                    // intent per mandare email
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("text/html");
+                    i.putExtra(Intent.EXTRA_EMAIL, new String[]{"hustle.asg@gmail.com"});
+                    i.putExtra(Intent.EXTRA_SUBJECT, "[HUSTLE - contact]");
+                    //i.putExtra(Intent.EXTRA_TEXT, "(body)");
+
+                    startActivity(Intent.createChooser(i, "Send Email"));
+
+                }
                 return true;
 
             }
@@ -166,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         TvShowAdapter adapter = new TvShowAdapter(getSupportFragmentManager());
         // Prende il ViewPager e imposta come adapter il TvShowAdapter: in base alla tab
         // selezionata, mostra il fragment relativo
-        ViewPager viewPager = (ViewPager)findViewById(R.id.viewpager);
+        viewPager = (ViewPager)findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
         // Prende il TabLayout e imposta il ViewPager
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
