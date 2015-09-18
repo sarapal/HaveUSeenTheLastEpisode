@@ -3,6 +3,7 @@ package it.asg.hustle;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -23,6 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import it.asg.hustle.Info.Show;
+import it.asg.hustle.Utils.BitmapHelper;
 
 /**
  * Created by sara on 8/26/15.
@@ -67,25 +69,6 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 context.startActivity(i);
             }
         });
-/*
-        viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent i = new Intent(context, ShowActivity.class);
-                i.putExtra("show", item.source.toString());
-                context.startActivity(i);
-            }
-        });
-        viewHolder.mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent i = new Intent(context,ShowActivity.class);
-                i.putExtra("show", item.source.toString());
-                context.startActivity(i);
-            }
-        });*/
 
         final ProgressDialog progressDialog = new ProgressDialog(c);
         final String msg_loading = c.getResources().getString(R.string.loading_image);
@@ -119,22 +102,35 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 super.onPostExecute(bitmap);
                 viewHolder.mImageView.setImageBitmap(bitmap);
                 item.bmp = bitmap;
-                //viewHolder.mTextView.setHeight(viewHolder.mImageView.getHeight());
                 viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
                 progressDialog.dismiss();
+
+                // Salva la bitmap nelle shared preferences
+                BitmapHelper.saveToPreferences(c, item.bmp, item.id+"_banner");
             }
         };
 
         // Se l'immagine della serie non è stata scaricata
         if (item.bmp == null) {
-            Log.d("HUSTLE", "Downloading image: " + item.banner);
             // La scarica su un thread separato, ma solo se l'URL è diverso
             // da quello qui sotto (che significa che la serie tv non ha banner)
             if (item.banner == null) {
                 return;
             }
-            if (!item.banner.equals("http://thetvdb.com/banners/"))
-                at.execute(item.banner);
+            // Se l'url è come questo qui sotto, signfica che la serie non ha banner
+            if (!item.banner.equals("http://thetvdb.com/banners/")) {
+                // La prende dalle preferenze
+                Bitmap b = BitmapHelper.getFromPreferences(c, item.id+"_banner");
+                if (b == null) {
+                    Log.d("HUSTLE", "Bitmap non è nelle preferenze, la scarico");
+                    Log.d("HUSTLE", "Downlading image: " + item.banner);
+                    at.execute(item.banner);
+                } else {
+                    Log.d("HUSTLE", "Prendo la Bitmap dalle preferenze");
+                    item.bmp = b;
+                    viewHolder.mImageView.setImageBitmap(item.bmp);
+                }
+            }
         } else {
             // Se l'immagine della serie è già stata salvata, riusa quella
             viewHolder.mImageView.setImageBitmap(item.bmp);

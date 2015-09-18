@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Season;
+import it.asg.hustle.Utils.BitmapHelper;
 import it.asg.hustle.Utils.UpdateEpisodeState;
 
 /**
@@ -126,6 +127,10 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                     e.printStackTrace();
                 }
                 bm = BitmapFactory.decodeStream(in);
+
+                // Salva la bitmap nelle preferenze
+                BitmapHelper.saveToPreferences(context, bm, ep.episodeId +"_banner");
+
                 return bm;
             }
 
@@ -136,6 +141,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 viewHolder.epImg.setImageBitmap(bitmap);
                 // salva l'oggetto BitMap nell'oggetto Episode
                 ep.bmp = bitmap;
+
                 // Imposta la TextView con indice episodio: titolo episodio
                 viewHolder.mTextView.setText((i+1)+": "+item);
                 if (episodes.get(i).watchingFriends.size() != 0) {
@@ -144,30 +150,31 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 else{
                     viewHolder.numberFriends.setText("");
                 }
-                // Imposta l'altezza della TextView con il titolo dell'episodio alla stessa altezza
-                // dell'immagine (cosi il testo viene centrato verticalmente)
-                //viewHolder.mTextView.setHeight(viewHolder.epImg.getHeight());
-                // Lo fa anche per la checkbox
-                //viewHolder.cb.setHeight(viewHolder.epImg.getHeight());
 
             }
         };
 
         // Se l'immagine dell'episodio non è stata scaricata
         if (ep.bmp == null) {
-            Log.d("HUSTLE", "Downloading image: " + ep.bmpPath);
             // La scarica su un thread separato, ma solo se l'URL è diverso
             // da quello qui sotto (che significa che l'episodio non ha banner)
             if (ep.bmpPath == null) {
                 return;
             }
-            if (!ep.bmpPath.equals("http://thetvdb.com/banners/"))
-                at.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,ep.bmpPath);
+            if (!ep.bmpPath.equals("http://thetvdb.com/banners/")) {
+                Bitmap bmp = BitmapHelper.getFromPreferences(context, ep.episodeId + "_banner");
+                if (bmp == null) {
+                    Log.d("HUSTLE", "Downloading image: " + ep.bmpPath);
+                    at.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ep.bmpPath);
+                } else {
+                    Log.d("HUSTLE", "Prendo l'immagine dell'episodio dalle preferenze");
+                    ep.bmp = bmp;
+                    viewHolder.epImg.setImageBitmap(bmp);
+                }
+            }
         } else {
             // Se l'immagine dell'episodio è già stata salvata, riusa quella
             viewHolder.epImg.setImageBitmap(ep.bmp);
-            //viewHolder.mTextView.setHeight(viewHolder.epImg.getHeight());
-            //viewHolder.cb.setHeight(viewHolder.epImg.getHeight());
         }
         // mette check o uncheck per l'episodio a seconda del valore che ha l'oggetto Episode
         // se i dati erano scaricati dal server quando l'user era loggato, ogni episodio
@@ -207,34 +214,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 activity.startActivityForResult(i, EP_CHANGED);
             }
         });
-/*
-        // Se clicchi sull'img dell'episodio apre EpisodeActivity
-        viewHolder.epImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent i = new Intent(context, EpisodeActivity.class);
-                Bundle b = new Bundle();
-                b.putParcelable("picture", ep.bmp);
-                b.putString("episode", ep.source.toString());
-                i.putExtras(b);
-                activity.startActivityForResult(i, EP_CHANGED);
-            }
-        });
-        // Se clicchi sul testo dell'episodio apre EpisodeActivity
-        viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent i = new Intent(context, EpisodeActivity.class);
-                Bundle b = new Bundle();
-                b.putParcelable("picture", ep.bmp);
-                b.putString("episode", ep.source.toString());
-                i.putExtras(b);
-                activity.startActivityForResult(i, EP_CHANGED);
-            }
-        });
-*/
 
     }
 

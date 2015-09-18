@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.asg.hustle.Info.Show;
+import it.asg.hustle.Utils.BitmapHelper;
 
 /**
  * Created by sara on 17/09/2015.
@@ -37,10 +38,12 @@ import it.asg.hustle.Info.Show;
 public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     List<GridItem> mItems;
+    Context ctx;
 
-    public GridAdapter() {
+    public GridAdapter(Context ctx) {
         super();
         mItems = new ArrayList<GridItem>();
+        this.ctx = ctx;
     }
 
     @Override
@@ -70,6 +73,8 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                     e.printStackTrace();
                 }
                 bm = BitmapFactory.decodeStream(in);
+                // Salva la bitmap nelle shared preferences
+                //BitmapHelper.saveToPreferences(ctx, bm, item.getShow().id + "_poster");
                 return bm;
             }
 
@@ -80,25 +85,30 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 viewHolder.thumbnail.setImageBitmap(bitmap);
                 // salva l'oggetto BitMap nell'oggetto Episode
                 item.setThumbnail(bitmap);
-
             }
         };
 
         // Se l'immagine dell'episodio non è stata scaricata
         if (item.getThumbnail() == null) {
-            Log.d("HUSTLE", "Downloading image: " + item.getShow().poster);
             // La scarica su un thread separato, ma solo se l'URL è diverso
             // da quello qui sotto (che significa che l'episodio non ha banner)
             if (item.getShow().poster == null) {
                 return;
             }
-            if (!item.getShow().poster.equals("http://thetvdb.com/banners/"))
-                at.execute(item.getShow().poster);
+            //Bitmap b = BitmapHelper.getFromPreferences(ctx,item.getShow().id+"_poster");
+            //if (b != null) {
+            //    Log.d("HUSTLE", "Prendo poster dalle preferenze");
+            //    item.setThumbnail(b);
+            //    viewHolder.thumbnail.setImageBitmap(b);
+            //} else {
+                if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
+                    Log.d("HUSTLE", "Downloading image: " + item.getShow().poster);
+                    at.execute(item.getShow().poster);
+                }
+            //}
         } else {
             // Se l'immagine dell'episodio è già stata salvata, riusa quella
             viewHolder.thumbnail.setImageBitmap(item.getThumbnail());
-            //viewHolder.mTextView.setHeight(viewHolder.epImg.getHeight());
-            //viewHolder.cb.setHeight(viewHolder.epImg.getHeight());
         }
 
         viewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {

@@ -411,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences options = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
             String id = options.getString("id_facebook", null);
 
-            gridAdapter = new GridAdapter();
+            gridAdapter = new GridAdapter(getActivity());
             recyclerView.setAdapter(gridAdapter);
 
             if (tabPosition == 0){
