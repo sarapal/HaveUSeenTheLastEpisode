@@ -145,7 +145,6 @@ public class ShowActivity extends AppCompatActivity {
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
             Log.d("HUSTLE", "landscape mode!");
         }
-        // TODO: mostra la serie nell'activity
     }
 
     @Override
@@ -271,14 +270,7 @@ public class ShowActivity extends AppCompatActivity {
                 show.seasonsList.get(number-1).fromJson(seasonJSON);
                 show.seasonsList.get(number-1).seasonNumber = number;
 
-                return show.seasonsList.get(number-1);
-            }
-
-            @Override
-            protected void onPostExecute(Season season) {
-                super.onPostExecute(season);
-                adapterList.get(season.seasonNumber).notifyDataSetChanged();
-
+                Season season = show.seasonsList.get(number-1);
                 // se updateFromServer è false, significa che la stagione non si trova
                 // nel DB e devo aggiungerla
                 if (!updateFromServer) {
@@ -294,6 +286,14 @@ public class ShowActivity extends AppCompatActivity {
                         DBHelper.updateSeasonDB(show.seasonsList.get(season.seasonNumber - 1));
                     }
                 }
+
+                return season;
+            }
+
+            @Override
+            protected void onPostExecute(Season season) {
+                super.onPostExecute(season);
+                adapterList.get(season.seasonNumber).notifyDataSetChanged();
             }
         };
 
