@@ -55,6 +55,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     }
 
     public void reset() {
+        this.mItems.clear();
         this.mItems = new ArrayList<GridItem>();
     }
 
@@ -81,6 +82,8 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                     e.printStackTrace();
                 }
                 bm = BitmapFactory.decodeStream(in);
+                // TODO: scala la bitmap
+                //bm = Bitmap.createScaledBitmap(bm, )
                 BitmapHelper.saveToPreferences(ctx, bm, item.getShow().id + "_poster");
                 Log.d("HUSTLE", "Immagine salvata");
                 return bm;
@@ -93,13 +96,6 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 viewHolder.thumbnail.setImageBitmap(bitmap);
                 // salva l'oggetto BitMap nell'oggetto Episode
                 item.setThumbnail(bitmap);
-                // Salva l'immagine nelle preferenze ma in un thread separato
-                /*(new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BitmapHelper.saveToPreferences(ctx, bitmap, item.getShow().id + "_poster");
-                    }
-                })).run();*/
             }
         };
 
@@ -111,7 +107,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 return;
             }
             if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
-                Log.d("HUSTLE", "Eseguo l'asynctask");
+                Log.d("HUSTLE", "Eseguo l'asynctask per scaricare il poster della serie");
                 at.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, item.getShow().poster);
             }
         } else {
