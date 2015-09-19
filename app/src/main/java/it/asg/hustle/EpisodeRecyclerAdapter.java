@@ -125,10 +125,12 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         // Imposta la TextView con indice episodio: titolo episodio
         viewHolder.mTextView.setText((i+1)+": "+item);
         if (episodes.get(i).watchingFriends.size() != 0) {
+            viewHolder.numberFriends.setVisibility(View.VISIBLE);
             viewHolder.numberFriends.setText(episodes.get(i).watchingFriends.size() + "");
         }
         else{
             viewHolder.numberFriends.setText("0");
+            viewHolder.numberFriends.setVisibility(View.INVISIBLE);
         }
 
         final Episode ep = episodes.get(i);
