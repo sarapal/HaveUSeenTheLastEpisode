@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import it.asg.hustle.EpisodeRecyclerAdapter;
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.R;
 
@@ -26,7 +27,7 @@ import it.asg.hustle.R;
  * Created by gbyolo on 9/16/15.
  */
 public class UpdateEpisodeState {
-    public static synchronized boolean changeState(Context c, final Episode ep, final CheckBox cb, final boolean state,final FloatingActionButton fab) {
+    public static synchronized boolean changeState(Context c, final Episode ep, final CheckBox cb, final boolean state,final FloatingActionButton fab, final EpisodeRecyclerAdapter ad) {
 
         final String episodeid = ep.episodeId;
         final String seen = "" + state;
@@ -87,6 +88,8 @@ public class UpdateEpisodeState {
                         ep.checked = !ep.checked;
                         // Aggiorno il JSON
                         ep.source.put("seen", ep.checked);
+                        if (ad != null)
+                            ad.notifyDataSetChanged();
                         // Aggiorno il DB
                         DBHelper.updateEpisode(ep.episodeId, ep.checked);
                         // Aggiorno il fab se diverso da null

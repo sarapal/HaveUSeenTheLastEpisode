@@ -36,9 +36,6 @@ import it.asg.hustle.Utils.UpdateEpisodeState;
  * Created by sara on 8/26/15.
  */
 public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecyclerAdapter.ViewHolder> {
-
-    private Bitmap posterBitmap = null;
-    private ImageView posterImageView;
     private ArrayList<Episode> episodes;
 
     private Context context = null;
@@ -47,7 +44,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     private Display display;
     public static final int EP_CHANGED = 1;
 
-    private FloatingActionButton checkall;
 
     public EpisodeRecyclerAdapter(Context c, Season season) {
         this.context = c;
@@ -170,7 +166,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 // Invia dati al server esterno e cambia l'oggetto ep sulla base di come è impostata la cb
                 boolean newState = viewHolder.cb.isChecked();
                 Log.d("HUSTLE", "Nuovo stato per episodio: " + newState);
-                if (!UpdateEpisodeState.changeState(context, ep, viewHolder.cb, newState, null)) {
+                if (!UpdateEpisodeState.changeState(context, ep, viewHolder.cb, newState, null, null)) {
                     // Qui posso cambiare lo stato della cb
                     viewHolder.cb.setChecked(!newState);
                     // avvisa l'utente che non è possibile cambiare lo stato dell'episodio

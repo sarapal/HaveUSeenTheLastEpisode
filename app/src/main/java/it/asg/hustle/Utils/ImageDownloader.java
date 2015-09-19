@@ -25,6 +25,10 @@ public class ImageDownloader {
 
     public void download(String url, ImageView imageView, ThumbnailViewer tv) {
 
+        if (CheckConnection.isConnected(ctx) == false) {
+            return;
+        }
+
         Bitmap bmp = BitmapCache.getBitmapFromMemCache(url);
         if (bmp != null) {
             Log.d("HUSTLE", "foto in cache!");

@@ -34,6 +34,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +56,7 @@ import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.CheckConnection;
 import it.asg.hustle.Utils.DBHelper;
 import it.asg.hustle.Utils.ImageDownloader;
+import it.asg.hustle.Utils.UpdateEpisodeState;
 
 public class ShowActivity extends AppCompatActivity {
     private ImageView posterImageView;
@@ -64,7 +66,7 @@ public class ShowActivity extends AppCompatActivity {
     private TextView card_description;
     public static Show show;
     private SeasonsAdapter a;
-    private ViewPager viewPager;
+    public static ViewPager viewPager;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbar;
     static private ArrayList<EpisodeRecyclerAdapter> adapterList;
@@ -72,6 +74,7 @@ public class ShowActivity extends AppCompatActivity {
     private ArrayList<Friend> show_friends = null;
     private ArrayList<Friend> all_friends = null;
     private boolean updateFromServer = false;
+
 
 
     private ArrayList<String> info;
@@ -415,10 +418,6 @@ public class ShowActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id) {
-            case R.id.action_settings:
-                return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -426,6 +425,7 @@ public class ShowActivity extends AppCompatActivity {
     // sottoclasse per gestire i fragment della pagina inziale
     public static class SeasonsFragment extends Fragment {
         private static final String TAB_POSITION = "tab_position";
+        private FloatingActionButton checkall;
 
         public SeasonsFragment() {
 
@@ -440,25 +440,33 @@ public class ShowActivity extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public void onResume() {
             Bundle args = getArguments();
             int tabPosition = args.getInt(TAB_POSITION);
 
-            if (tabPosition == 0) {
-                Log.d("HUSTLE", "Questo è il fragment con le info");
-                // TODO: modifica questo fragment in modo da mostrare le info sulla serie TV
+            if (ShowActivity.viewPager.getCurrentItem() == 0) {
+                ((FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll)).setVisibility(View.INVISIBLE);
             }
+            else{
+                ((FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll)).setVisibility(View.VISIBLE);
+            }
+            super.onResume();
+        }
 
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            Bundle args = getArguments();
+            final int tabPosition = args.getInt(TAB_POSITION);
 
             View v;
 
             if (tabPosition == 0){
                 v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
                 TextView card_description = (TextView) v.findViewById(R.id.card_description_text);
-                /*
-                TextView card_series_id = (TextView) v.findViewById(R.id.id_serie_info);
-                card_series_id.setText(show.id);
-                */
+
+                /*TextView card_series_id = (TextView) v.findViewById(R.id.id_serie_info);
+                card_series_id.setText(show.id);*/
+
                 //description card
                 card_description.setText(show.overview);
                 //card friend
@@ -480,17 +488,61 @@ public class ShowActivity extends AppCompatActivity {
                 TextView card_genre = (TextView) v.findViewById(R.id.card_genre_text);
                 card_actors.setText(show.actors);
                 card_genre.setText(show.genre);
-
-
+                checkall = (FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll);
 
             }
             else {
                 v = inflater.inflate(R.layout.fragment_episodes_view, container, false);
+                checkall = (FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll);
+
                 RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 recyclerView.setAdapter(adapterList.get(tabPosition));
+
+                checkall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int pos = ShowActivity.viewPager.getCurrentItem();
+                        Log.d("HUSTLE", "FAB-checkall was pressed tabPosition " + pos);
+                        if (pos != 0)
+                            checkAll(adapterList.get(pos));
+                    }
+                });
             }
+
+            if (ShowActivity.viewPager.getCurrentItem() == 0) {
+                checkall.setVisibility(View.INVISIBLE);
+            }
+            else{
+                checkall.setVisibility(View.VISIBLE);
+            }
+
             return v;
+
+        }
+
+
+        private void checkAll(EpisodeRecyclerAdapter episodeRecyclerAdapter) {
+            ArrayList<Episode> episodes = episodeRecyclerAdapter.getEpisodes();
+            boolean status = true;     //true=tutti check false=almeno un non-check
+
+            for (Episode i : episodes) {
+                if (i.checked==false) {
+                    status = false;
+                }
+            }
+
+            boolean new_status = (status == false) ? true : false;
+            for (Episode i : episodes) {
+                if (i.checked != new_status){
+                    if (!UpdateEpisodeState.changeState(getActivity(), i, null, new_status, null, episodeRecyclerAdapter)){
+                        Toast.makeText(getActivity(),"Impossibile effettuare il check-all",Toast.LENGTH_SHORT);
+                        Log.d("HUSTLE", "Impossibile effettuare il check-all");
+                    }
+                }
+
+            }
+
 
         }
     }
