@@ -455,9 +455,11 @@ public class ShowActivity extends AppCompatActivity {
             if (tabPosition == 0){
                 v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
                 TextView card_description = (TextView) v.findViewById(R.id.card_description_text);
+                /*
                 TextView card_series_id = (TextView) v.findViewById(R.id.id_serie_info);
-                //description card
                 card_series_id.setText(show.id);
+                */
+                //description card
                 card_description.setText(show.overview);
                 //card friend
                 RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview_friends_card);
