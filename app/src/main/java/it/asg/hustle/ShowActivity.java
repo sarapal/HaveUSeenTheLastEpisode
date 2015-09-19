@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -469,6 +470,8 @@ public class ShowActivity extends AppCompatActivity {
                 ratingBar.setMax(5);
                 ratingBar.setNumStars(5);
                 ratingBar.setRating((float) (show.rating / 2));
+
+
             }
             else {
                 v = inflater.inflate(R.layout.fragment_episodes_view, container, false);

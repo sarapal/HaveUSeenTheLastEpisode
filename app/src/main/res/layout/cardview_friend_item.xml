@@ -20,8 +20,8 @@
         android:gravity="center"
         android:maxLines="3"
         android:padding="2dp"
-        android:textColor="#000"
-        android:textSize="17sp" />
+        android:textColor="@color/cardview_text"
+        android:textSize="12sp" />
 
 
 

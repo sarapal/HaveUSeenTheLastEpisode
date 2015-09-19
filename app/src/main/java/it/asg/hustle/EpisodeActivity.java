@@ -52,11 +52,10 @@ public class EpisodeActivity extends AppCompatActivity {
             JSONObject jo = new JSONObject(b.getString("episode"));
             ep = new Episode(jo);
             ep.bmp = b.getParcelable("picture");
-
+            //descrizione card
             TextView description_title = (TextView) findViewById(R.id.description_text_title_episode);
             String overview = getResources().getString(R.string.description_text_title_episode);
             description_title.setText(overview + ": " + ep.title + " (" + ep.season + "X" + ep.episodeNumber + ")");
-            //descrizione card
             TextView description = (TextView) findViewById(R.id.episode_description_text);
             //rating bar
             updateRatingBar(ep);
