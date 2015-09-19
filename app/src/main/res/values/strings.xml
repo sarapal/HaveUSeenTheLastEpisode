@@ -34,6 +34,7 @@
     <string name="loading_image">Loading image...</string>
     <string name="description_text_title">Overview</string>
     <string name="card_friends_title">Friends watching the show</string>
+    <string name="description_text_title_episode">Episode overview</string>
 
 </resources>
 
