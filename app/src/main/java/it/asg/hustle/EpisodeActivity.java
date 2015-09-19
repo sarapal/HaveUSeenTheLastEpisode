@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -49,7 +50,8 @@ public class EpisodeActivity extends AppCompatActivity {
             ep.bmp = b.getParcelable("picture");
 
             ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
-
+            TextView description = (TextView) findViewById(R.id.episode_description_text);
+            description.setText(ep.overview);
             collapsingToolbar.setTitle(ep.title);
             if(ep.bmp!=null){
                 iv_epImg.setImageBitmap(ep.bmp);
@@ -69,12 +71,13 @@ public class EpisodeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("HUSTLE", "FAB (in EpisodeActivity) was pressed");
-                if(!UpdateEpisodeState.changeState(getApplicationContext(),ep,null,!ep.checked,fabCheck)){
-                    Toast.makeText(getApplicationContext(),"Impossibile selezionare l'elemento. Effettuare il login",Toast.LENGTH_LONG).show();
+                if (!UpdateEpisodeState.changeState(getApplicationContext(), ep, null, !ep.checked, fabCheck)) {
+                    Toast.makeText(getApplicationContext(), "Impossibile selezionare l'elemento. Effettuare il login", Toast.LENGTH_LONG).show();
                 }
             }
 
         });
+
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview_friends_card_episode);
