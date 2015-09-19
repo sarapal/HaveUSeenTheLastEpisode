@@ -493,6 +493,7 @@ public class MainActivity extends AppCompatActivity {
                 if (CheckConnection.isConnected(getActivity())) {
                     downloadMySeries(gridAdapter[tabPosition], true);
                 } else {
+                    //TODO: onResume non ricarica la griglia
                     // Altrimenti prende le mie serie TV dalle SharedPreferences e mostra quelle
                     // se my_series è diverso da null significa che ho già ripristinato lo stato
                     if (my_series == null) {
@@ -518,6 +519,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
 
             gridAdapter.reset();
+
             for(int i=0;i<jsonArraySeries.length();i++){
                 try {
                     GridItem g = new GridItem();

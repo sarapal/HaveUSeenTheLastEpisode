@@ -83,7 +83,7 @@ public class EpisodeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("HUSTLE", "FAB (in EpisodeActivity) was pressed");
-                if (!UpdateEpisodeState.changeState(getApplicationContext(), ep, null, !ep.checked, fabCheck)) {
+                if (!UpdateEpisodeState.changeState(getApplicationContext(), ep, null, !ep.checked, fabCheck,null)) {
                     Toast.makeText(getApplicationContext(), "Impossibile selezionare l'elemento. Effettuare il login", Toast.LENGTH_LONG).show();
                 }
             }
@@ -125,10 +125,7 @@ public class EpisodeActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
