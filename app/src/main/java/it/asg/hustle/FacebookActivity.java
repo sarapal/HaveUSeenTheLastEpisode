@@ -57,6 +57,7 @@ public class FacebookActivity extends AppCompatActivity {
 
         callbackManager = CallbackManager.Factory.create();
         login = (LoginButton)findViewById(R.id.login_button);
+        login.setReadPermissions("user_friends");
         profile = (ProfilePictureView)findViewById(R.id.picture);
         shareDialog = new ShareDialog(this);
         share = (Button)findViewById(R.id.share);
