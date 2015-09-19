@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +15,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +30,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -451,11 +455,23 @@ public class ShowActivity extends AppCompatActivity {
                 v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
                 TextView card_description = (TextView) v.findViewById(R.id.card_description_text);
                 TextView card_series_id = (TextView) v.findViewById(R.id.id_serie_info);
+                //description card
                 card_series_id.setText(show.id);
                 card_description.setText(show.overview);
+                //card friend
                 RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview_friends_card);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 recyclerView.setAdapter(adapter_friends);
+                //rating bar
+                RatingBar ratingBar = (RatingBar) v.findViewById(R.id.ratingBar_show);
+                ratingBar.setIsIndicator(true);
+                Drawable progress = ratingBar.getProgressDrawable();
+                DrawableCompat.setTint(progress, Color.RED);
+                Drawable indet = ratingBar.getIndeterminateDrawable();
+                DrawableCompat.setTint(indet, Color.LTGRAY);
+                ratingBar.setMax(5);
+                ratingBar.setNumStars(5);
+                ratingBar.setRating((float) (show.rating / 2));
             }
             else {
                 v = inflater.inflate(R.layout.fragment_episodes_view, container, false);

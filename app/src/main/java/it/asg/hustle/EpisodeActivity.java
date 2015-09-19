@@ -2,8 +2,11 @@ package it.asg.hustle;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -48,9 +53,18 @@ public class EpisodeActivity extends AppCompatActivity {
             ep = new Episode(jo);
             ep.bmp = b.getParcelable("picture");
 
-            ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
-
+            TextView description_title = (TextView) findViewById(R.id.description_text_title_episode);
+            String overview = getResources().getString(R.string.description_text_title_episode);
+            description_title.setText(overview + ": " + ep.title + " (" + ep.season + "X" + ep.episodeNumber + ")");
+            //descrizione card
+            TextView description = (TextView) findViewById(R.id.episode_description_text);
+            //rating bar
+            updateRatingBar(ep);
+            //overview card
+            description.setText(ep.overview);
+            //titolo e immagine
             collapsingToolbar.setTitle(ep.title);
+            ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
             if(ep.bmp!=null){
                 iv_epImg.setImageBitmap(ep.bmp);
             }
@@ -69,12 +83,13 @@ public class EpisodeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("HUSTLE", "FAB (in EpisodeActivity) was pressed");
-                if(!UpdateEpisodeState.changeState(getApplicationContext(),ep,null,!ep.checked,fabCheck)){
-                    Toast.makeText(getApplicationContext(),"Impossibile selezionare l'elemento. Effettuare il login",Toast.LENGTH_LONG).show();
+                if (!UpdateEpisodeState.changeState(getApplicationContext(), ep, null, !ep.checked, fabCheck)) {
+                    Toast.makeText(getApplicationContext(), "Impossibile selezionare l'elemento. Effettuare il login", Toast.LENGTH_LONG).show();
                 }
             }
 
         });
+
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview_friends_card_episode);
@@ -102,6 +117,7 @@ public class EpisodeActivity extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -116,4 +132,17 @@ public class EpisodeActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void updateRatingBar(Episode ep){
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar_episode);
+        ratingBar.setIsIndicator(true);
+        Drawable progress = ratingBar.getProgressDrawable();
+        DrawableCompat.setTint(progress, Color.RED);
+        Drawable indet = ratingBar.getIndeterminateDrawable();
+        DrawableCompat.setTint(indet, Color.LTGRAY);
+        ratingBar.setMax(5);
+        ratingBar.setNumStars(5);
+        ratingBar.setRating((float)(ep.rating/2));
+    }
+
 }

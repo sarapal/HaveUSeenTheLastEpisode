@@ -38,7 +38,7 @@ import it.asg.hustle.Utils.ImageDownloader;
  */
 public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
-    List<GridItem> mItems;
+    ArrayList<GridItem> mItems;
     Context ctx;
 
     public GridAdapter(Context ctx) {

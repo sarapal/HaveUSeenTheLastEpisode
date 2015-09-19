@@ -33,8 +33,11 @@
     <string name="searching">Searching...</string>
     <string name="loading_image">Loading image...</string>
     <string name="description_text_title">Overview</string>
-    <string name="card_friends_title">Friends watching the show:</string>
-    <string name="card_friends_episode_title">Who already watched this episode:</string>
+    <string name="card_friends_title">Friends watching the show</string>
+    <string name="description_text_title_episode">Episode overview</string>
+    <string name="rating_text_title_episode">Rating</string>
+    <string name="rating_text_title_show">Rating</string>
+    <string name="card_friends_title_episode">Watched by:</string>
 
 </resources>
 
