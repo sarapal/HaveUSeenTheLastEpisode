@@ -568,6 +568,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                     Log.d("HUSTLE", "returned: " + s);
                     // Salva le mie serie TV nelle SharedPreferences
+                    Context c = getActivity();
+                    if (c == null)
+                        return s;
                     SharedPreferences.Editor editor = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).edit();
                     editor.putString("my_series_json", s);
                     editor.commit();
