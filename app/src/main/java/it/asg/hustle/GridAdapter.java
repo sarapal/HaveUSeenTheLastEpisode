@@ -72,9 +72,11 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             Log.d("HUSTLE", "La bitmap già c'è");
             viewHolder.thumbnail.setImageBitmap(item.getThumbnail());
         } else {
-            new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
-        }
+            if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
+                new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
+            }
 
+        }
         viewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

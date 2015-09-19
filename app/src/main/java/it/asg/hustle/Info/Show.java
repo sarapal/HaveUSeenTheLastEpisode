@@ -10,10 +10,12 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import it.asg.hustle.Interfaces.ThumbnailViewer;
+
 /**
  * Created by sara on 8/26/15.
  */
-public class Show {
+public class Show implements ThumbnailViewer {
     public String title;
     public String id;
     public String overview;
@@ -152,5 +154,16 @@ public class Show {
                 ", language='" + language + '\'' +
                 ", banner='" + banner + '\'' +
                 '}';
+    }
+
+    @Override
+    public Bitmap getThumbnail() {
+        return this.bmp;
+    }
+
+    @Override
+    public void setThumbnail(Bitmap thumbnail) {
+        if (thumbnail != null)
+            this.bmp = thumbnail;
     }
 }

@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,6 +54,7 @@ import it.asg.hustle.Info.Season;
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.CheckConnection;
 import it.asg.hustle.Utils.DBHelper;
+import it.asg.hustle.Utils.ImageDownloader;
 
 public class ShowActivity extends AppCompatActivity {
     private ImageView posterImageView;
@@ -152,8 +154,6 @@ public class ShowActivity extends AppCompatActivity {
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
             Log.d("HUSTLE", "landscape mode!");
         }
-
-        // TODO: mostra la serie nell'activity
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.BitmapHelper;
+import it.asg.hustle.Utils.ImageDownloader;
 
 /**
  * Created by sara on 8/26/15.
@@ -51,6 +52,8 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
         final Show item = shows.get(i);
         final int width = getDisplayWidthPX();
 
+        int maxImagePX = (2*width)/3;
+
         viewHolder.mImageView.setMaxWidth((2 * width) / 3);
 
         viewHolder.mTextView.setWidth(width / 3);
@@ -69,7 +72,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 context.startActivity(i);
             }
         });
-
+/*
         final ProgressDialog progressDialog = new ProgressDialog(c);
         final String msg_loading = c.getResources().getString(R.string.loading_image);
 
@@ -88,23 +91,12 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             protected Bitmap doInBackground(String... params) {
                 Bitmap bm = null;
                 InputStream in = null;
-                /*Bitmap b = BitmapHelper.getFromPreferences(c, item.id+"_banner");
-                if (b != null) {
-                    return b;
-                }*/
                 try {
                     in = new java.net.URL(params[0]).openStream();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 bm = BitmapFactory.decodeStream(in);
-                /*final Bitmap finalBm = bm;
-                (new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BitmapHelper.saveToPreferences(c, finalBm, item.id + "_banner");
-                    }
-                })).run();*/
                 return bm;
             }
 
@@ -116,8 +108,8 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
                 progressDialog.dismiss();
             }
-        };
-
+        };*/
+        /*
         // Se l'immagine della serie non è stata scaricata
         if (item.bmp == null) {
             // La scarica su un thread separato, ma solo se l'URL è diverso
@@ -132,7 +124,11 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
         } else {
             // Se l'immagine della serie è già stata salvata, riusa quella
             viewHolder.mImageView.setImageBitmap(item.bmp);
+        }*/
+        if (!item.banner.equals("http://thetvdb.com/banners/")) {
+            new ImageDownloader(c,maxImagePX,maxImagePX).download(item.banner, viewHolder.mImageView, item);
         }
+
 
     }
 

@@ -152,7 +152,9 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             viewHolder.epImg.setImageBitmap(ep.bmp);
         }*/
 
-        new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
+        if (!ep.bmpPath.equals("http://thetvdb.com/banners/")) {
+            new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
+        }
 
         // mette check o uncheck per l'episodio a seconda del valore che ha l'oggetto Episode
         // se i dati erano scaricati dal server quando l'user era loggato, ogni episodio
