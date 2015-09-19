@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,10 +64,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import it.asg.hustle.Info.Episode;
-import it.asg.hustle.Info.Season;
 import it.asg.hustle.Info.Show;
 
+import it.asg.hustle.Utils.CheckConnection;
 import it.asg.hustle.Utils.DBHelper;
 import it.asg.hustle.Utils.MD5;
 
@@ -87,16 +87,11 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase db = null;
     private SQLiteOpenHelper helper = null;
 
-    com.facebook.login.widget.ProfilePictureView profilePictureInvisible = null;
-    de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
-    TextView account_name_facebook_tv = null;
-
-    RecyclerView mRecyclerView;             // RecyclerView: è un tipo di view che ricicla gli elementi
-    RecyclerView.LayoutManager mLayoutManager;
-    RecyclerView.Adapter mAdapter;          // adapter per RecyclerView
+    private com.facebook.login.widget.ProfilePictureView profilePictureInvisible = null;
+    private de.hdodenhof.circleimageview.CircleImageView circleImageView = null;
+    private TextView account_name_facebook_tv = null;
 
     private ViewPager viewPager ;
-    GridAdapter gridAdapter ;
 
     private boolean logged = false;
 
@@ -113,8 +108,6 @@ public class MainActivity extends AppCompatActivity {
         DBHelper.getInstance(this);
         Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
 
-        updateLogInServer();
-
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.title));
@@ -123,8 +116,6 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-
 
         //prendo DrawerLayout
         myDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -192,8 +183,11 @@ public class MainActivity extends AppCompatActivity {
         profilePictureInvisible = (com.facebook.login.widget.ProfilePictureView)findViewById(R.id.profilePictureInvisible);
         account_name_facebook_tv = (TextView) findViewById(R.id.account_name_facebook);
         //Log.d("HUSTLE", "profilePictureInvisible: " + profilePictureInvisible);
-        updateCircleProfile();
-        updateFriendList();
+        if (CheckConnection.isConnected(this)) {
+            updateLogInServer();
+            updateCircleProfile();
+            updateFriendList();
+        }
     }
 
     public void updateLogInServer() {
@@ -386,13 +380,54 @@ public class MainActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    //sottoclasse per l'adapter per i fragment e i titoli (delle varie tab)
+    class TvShowAdapter extends FragmentStatePagerAdapter {
+        public static final int NUMBER_OF_TABS = 3;
+
+        public TvShowAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return TvShowFragment.newInstance(position);
+        }
+
+        @Override
+        public int getCount() {
+            return NUMBER_OF_TABS;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position){
+                case 0:
+                    return getResources().getString(R.string.tab_myshow);
+                // break;
+                case 1:
+                    return getResources().getString(R.string.tab_friends);
+                // break;
+                case 2:
+                    return getResources().getString(R.string.tab_mostviewed);
+                // break;
+            }
+            return "";
+        }
+    }
+
 
     // sottoclasse per gestire i fragment della pagina inziale
     public static class TvShowFragment extends Fragment {
+
         private static final String TAB_POSITION = "tab_position";
-        GridAdapter gridAdapter;
+
+        // Crea un array di gridAdapter
+        GridAdapter[] gridAdapter = new GridAdapter[TvShowAdapter.NUMBER_OF_TABS];
         RecyclerView recyclerView;
-        private static String series = null;
+
+        // Stringa con il jsonArray delle mie serie
+        private static String my_series = null;
+        private JSONArray jsonArraySeries = null;
 
         public TvShowFragment() {
         }
@@ -405,7 +440,10 @@ public class MainActivity extends AppCompatActivity {
 
             if (tabPosition == 0) {
                 Log.d("HUSTLE", "onResume fragment delle mie serie TV");
-                downloadMySeries(false);
+                if (CheckConnection.isConnected(getActivity())) {
+                    downloadMySeries(gridAdapter[tabPosition], false);
+                }else if (my_series != null)
+                    showMySeries(my_series, gridAdapter[tabPosition]);
             }
         }
 
@@ -417,6 +455,13 @@ public class MainActivity extends AppCompatActivity {
             return fragment;
         }
 
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            // Salva le serie viste
+            Log.d("HUSTLE", "Saving state");
+            outState.putString("my_series", my_series);
+            super.onSaveInstanceState(outState);
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -431,24 +476,72 @@ public class MainActivity extends AppCompatActivity {
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity() , numOfElements);
             recyclerView.setLayoutManager(gridLayoutManager);
 
-            //prendi id per vedere le serie (nella prima schermata) che quell'utente segue
-            String id = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
-
-            gridAdapter = new GridAdapter(getActivity());
-            recyclerView.setAdapter(gridAdapter);
-
             if (tabPosition == 0){
-                downloadMySeries(true);
+                gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                recyclerView.setAdapter(gridAdapter[tabPosition]);
+                // Se c'è uno stato salvato, usa quello
+                if (savedInstanceState != null) {
+                    my_series = savedInstanceState.getString("my_series");
+                    Log.d("HUSTLE", "Ripristino da savedInstanceState");
+                }
+                // Se l'utente è connesso a internet scarica le sue serie TV
+                if (CheckConnection.isConnected(getActivity())) {
+                    downloadMySeries(gridAdapter[tabPosition], true);
+                } else {
+                    // Altrimenti prende le mie serie TV dalle SharedPreferences e mostra quelle
+                    // se my_series è diverso da null significa che ho già ripristinato lo stato
+                    if (my_series == null) {
+                        Log.d("HUSTLE", "Ripristino da shared preferences");
+                        my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
+                    }
+                    // Mostra le serie
+                    if (my_series != null)
+                        showMySeries(my_series, gridAdapter[tabPosition]);
+                }
             }
-
             return v;
         }
 
-        public void downloadMySeries(final boolean oncreate) {
+        private void showMySeries(String new_series, GridAdapter gridAdapter) {
+            try {
+                jsonArraySeries = new JSONArray(new_series);
+            } catch (JSONException e) {
+                jsonArraySeries = null;
+                e.printStackTrace();
+            }
+            if (jsonArraySeries == null)
+                return;
+
+            gridAdapter.reset();
+            for(int i=0;i<jsonArraySeries.length();i++){
+                try {
+                    GridItem g = new GridItem();
+                    JSONObject jo = jsonArraySeries.getJSONObject(i);
+                    Show s = new Show(jo);
+
+                    g.setShow(s);
+                    g.setName(s.title);
+                    g.setThumbnail(s.bmp);
+
+                    gridAdapter.mItems.add(g);
+                    gridAdapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            TvShowFragment.my_series = new_series;
+            //Log.d("HUSTLE", "series: " + TvShowFragment.my_series);
+        }
+
+        public void downloadMySeries(final GridAdapter gridAdapter, final boolean oncreate) {
+            // Prende id di Facebook
             final String id = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
-            AsyncTask<String,Void,JSONArray> at = new AsyncTask<String, Void, JSONArray>() {
+            // Definisce un AsyncTask che scaricherà le serie viste dall'utente
+            AsyncTask<String,Void,String> at = new AsyncTask<String, Void, String>() {
                 @Override
-                protected JSONArray doInBackground(String... params) {
+                protected String doInBackground(String... params) {
                     URL url = null;
                     String s = null;
                     try {
@@ -469,111 +562,35 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     Log.d("HUSTLE", "returned: " + s);
-                    JSONArray ja = null;
-                    try {
-                        ja = new JSONArray(s);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    return ja;
+                    // Salva le mie serie TV nelle SharedPreferences
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).edit();
+                    editor.putString("my_series_json", s);
+                    editor.commit();
+
+                    return s;
                 }
 
                 @Override
-                protected void onPostExecute(JSONArray jsonArray) {
-                    super.onPostExecute(jsonArray);
-
-                    if (jsonArray.toString().equals(TvShowFragment.series) && !oncreate) {
-                        Log.d("HUSTLE", "Le serie sono uguali a prima");
-                        gridAdapter.notifyDataSetChanged();
-                        return;
-                    }
-
-                    gridAdapter.reset();
-                    ArrayList<GridItem> prova = new ArrayList<GridItem>();
-                    for(int i=0;i<jsonArray.length();i++){
-                        try {
-                            GridItem g = new GridItem();
-                            JSONObject jo = jsonArray.getJSONObject(i);
-                            Show s = new Show(jo);
-
-                            g.setShow(s);
-                            g.setName(s.title);
-                            g.setThumbnail(s.bmp);
-
-                            gridAdapter.mItems.add(g);
-                            gridAdapter.notifyDataSetChanged();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    TvShowFragment.series = jsonArray.toString();
-                    Log.d("HUSTLE", "series: " + TvShowFragment.series);
-
+                protected void onPostExecute(String s) {
+                    super.onPostExecute(s);
+                    showMySeries(s, gridAdapter);
                 }
             };
-            if (id != null) {
+            // Se l'id è diverso da null e l'utente è connesso a internet, esegue l'AsyncTask
+            if (id != null && CheckConnection.isConnected(getActivity())) {
                 at.execute(id);
             }
-        }
-    }
-
-    public int getDisplayDimensions(Display d){
-        Point size = new Point();
-        d.getSize(size);
-        int widthPX = size.x;
-        int widthDP = pxToDp(widthPX);
-
-
-        int wPX = (int) getResources().getDimension(R.dimen.grid_item_RelativeLayout_width);
-        int wDP = pxToDp(wPX);
-        int num = (int) Math.floor(widthDP/wDP);
-
-        return num;
-    }
-
-    //sottoclasse per l'adapter per i fragment e i titoli (delle varie tab)
-    class TvShowAdapter extends FragmentStatePagerAdapter {
-        private int number_of_tabs=3;
-
-        public TvShowAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return TvShowFragment.newInstance(position);
-        }
-
-        @Override
-        public int getCount() {
-            return number_of_tabs;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position){
-                case 0:
-                    return getResources().getString(R.string.tab_myshow);
-                // break;
-                case 1:
-                    return getResources().getString(R.string.tab_friends);
-                // break;
-                case 2:
-                    return getResources().getString(R.string.tab_mostviewed);
-                // break;
-            }
-            return "";
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateCircleProfile();
-        updateLogInServer();
-        updateFriendList();
+        if (CheckConnection.isConnected(this)) {
+            updateCircleProfile();
+            updateLogInServer();
+            updateFriendList();
+        }
     }
 
     void updateFriendList(){
@@ -671,9 +688,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    public int getDisplayDimensions(Display d){
+        Point size = new Point();
+        d.getSize(size);
+        int widthPX = size.x;
+        int widthDP = pxToDp(widthPX);
+
+
+        int wPX = (int) getResources().getDimension(R.dimen.grid_item_RelativeLayout_width);
+        int wDP = pxToDp(wPX);
+        int num = (int) Math.floor(widthPX/wPX);
+
+        return num;
     }
 
     public int pxToDp(int px) {

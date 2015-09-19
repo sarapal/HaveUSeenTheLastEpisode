@@ -3,8 +3,9 @@ package it.asg.hustle;
 import android.graphics.Bitmap;
 
 import it.asg.hustle.Info.Show;
+import it.asg.hustle.Interfaces.ThumbnailViewer;
 
-public class GridItem {
+public class GridItem implements ThumbnailViewer {
     private String mName;
     private Bitmap mThumbnail;
     private Show mShow;

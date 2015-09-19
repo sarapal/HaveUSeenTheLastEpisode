@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Season;
 import it.asg.hustle.Utils.BitmapHelper;
+import it.asg.hustle.Utils.ImageDownloader;
 import it.asg.hustle.Utils.UpdateEpisodeState;
 
 /**
@@ -98,8 +99,9 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         display = wm.getDefaultDisplay();
         int dimPX = getDisplayDimensionsPX(display);
+        int maxImageWidth = dimPX/4;
 
-        viewHolder.epImg.setMaxWidth(dimPX/4);
+        viewHolder.epImg.setMaxWidth(maxImageWidth);
         viewHolder.mTextView.setWidth(dimPX/2);
         //viewHolder.cb.setWidth(dimPX/4);
 
@@ -115,53 +117,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         final Episode ep = episodes.get(i);
         // Prende l'url dell'immagine dell'episodio
         String imgURL = ep.bmpPath;
-        // AsyncTask per scaricare l'immagine dell'episodio
-        AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
-
-            @Override
-            protected Bitmap doInBackground(String... params) {
-                Bitmap bm = null;
-                InputStream in = null;
-                /*Bitmap b = BitmapHelper.getFromPreferences(context, "ep_" + ep.episodeId + "_poster");
-                if (b != null) {
-                    return b;
-                }*/
-                try {
-                    in = new java.net.URL(params[0]).openStream();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                bm = BitmapFactory.decodeStream(in);
-                /*final Bitmap finalBm = bm;
-                (new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        BitmapHelper.saveToPreferences(context, finalBm, "ep_" + ep.episodeId + "_poster");
-                    }
-                })).run();*/
-                return bm;
-            }
-
-            @Override
-            protected void onPostExecute(final Bitmap bitmap) {
-                super.onPostExecute(bitmap);
-                // Imposta l'immagine nella ImageView
-                viewHolder.epImg.setImageBitmap(bitmap);
-                // salva l'oggetto BitMap nell'oggetto Episode
-                ep.bmp = bitmap;
-
-                // Imposta la TextView con indice episodio: titolo episodio
-                viewHolder.mTextView.setText((i+1)+": "+item);
-                if (episodes.get(i).watchingFriends.size() != 0) {
-                    viewHolder.numberFriends.setText(episodes.get(i).watchingFriends.size() + "");
-                }
-                else{
-                    viewHolder.numberFriends.setText("");
-                }
-
-            }
-        };
-
+        /*
         // Se l'immagine dell'episodio non è stata scaricata
         if (ep.bmp == null) {
             // La scarica su un thread separato, ma solo se l'URL è diverso
@@ -175,7 +131,10 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         } else {
             // Se l'immagine dell'episodio è già stata salvata, riusa quella
             viewHolder.epImg.setImageBitmap(ep.bmp);
-        }
+        }*/
+
+        new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
+
         // mette check o uncheck per l'episodio a seconda del valore che ha l'oggetto Episode
         // se i dati erano scaricati dal server quando l'user era loggato, ogni episodio
         // ha nel JSON il campo "seen" impostato a true o false se l'utente l'ha visto oppure no
