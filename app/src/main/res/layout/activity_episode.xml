@@ -47,16 +47,16 @@
         android:fitsSystemWindows="true">
 
 
-      <!-- <android.support.v7.widget.RecyclerView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/recyclerview"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/searchView"
-            android:paddingBottom="50dp"
-            android:fitsSystemWindows="true">
+        <!-- <android.support.v7.widget.RecyclerView
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/recyclerview"
+              android:layout_width="fill_parent"
+              android:layout_height="match_parent"
+              android:layout_alignBottom="@+id/searchView"
+              android:paddingBottom="50dp"
+              android:fitsSystemWindows="true">
 
-        </android.support.v7.widget.RecyclerView> -->
+          </android.support.v7.widget.RecyclerView> -->
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -67,7 +67,46 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
 
-                android:padding="20dp">
+                android:padding="10dp">
+
+
+                <android.support.v7.widget.CardView
+                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/activity_episode_description"
+                    android:layout_gravity="top"
+                    android:layout_width="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_height="wrap_content"
+                    card_view:cardCornerRadius="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/description_text_title_episode"
+                            android:text="@string/description_text_title_episode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="24dp"
+                            android:paddingRight="24dp"
+                            android:paddingTop="24dp"
+                            android:textColor="@color/primary_dark"
+                            android:textSize="14dp" />
+
+
+                        <TextView
+                            android:id="@+id/episode_description_text"
+                            android:padding="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:textColor="@color/primary_text_default_material_light"/>
+
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
 
                 <android.support.v7.widget.CardView
                     xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -93,7 +132,7 @@
                             android:paddingTop="24dp"
                             android:textColor="@color/primary_dark"
                             android:textSize="14dp"
-                            android:text="@string/card_friends_title" />
+                            android:text="@string/card_friends_title_episode" />
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -116,6 +155,45 @@
                     </LinearLayout>
 
 
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/activity_episode_rating"
+                    android:layout_gravity="top"
+                    android:layout_width="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_height="wrap_content"
+                    card_view:cardCornerRadius="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/rating_text_title_episode"
+                            android:text="@string/rating_text_title_episode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="24dp"
+                            android:paddingRight="24dp"
+                            android:paddingTop="24dp"
+                            android:textColor="@color/primary_dark"
+                            android:textSize="14dp" />
+
+
+                        <RatingBar
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="?android:attr/ratingBarStyleIndicator"
+
+                            android:layout_margin="10dp"
+                            android:id="@+id/ratingBar_episode"
+                            android:layout_gravity="center_horizontal" />
+
+
+                    </LinearLayout>
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
