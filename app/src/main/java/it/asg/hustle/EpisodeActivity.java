@@ -53,13 +53,18 @@ public class EpisodeActivity extends AppCompatActivity {
             ep = new Episode(jo);
             ep.bmp = b.getParcelable("picture");
 
-            ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
+            TextView description_title = (TextView) findViewById(R.id.description_text_title_episode);
+            String overview = getResources().getString(R.string.description_text_title_episode);
+            description_title.setText(overview + ": " + ep.title + " (" + ep.season + "X" + ep.episodeNumber + ")");
+            //descrizione card
             TextView description = (TextView) findViewById(R.id.episode_description_text);
-
+            //rating bar
             updateRatingBar(ep);
-
+            //overview card
             description.setText(ep.overview);
+            //titolo e immagine
             collapsingToolbar.setTitle(ep.title);
+            ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
             if(ep.bmp!=null){
                 iv_epImg.setImageBitmap(ep.bmp);
             }
