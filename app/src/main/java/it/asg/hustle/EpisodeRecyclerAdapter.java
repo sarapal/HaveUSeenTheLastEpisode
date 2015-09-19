@@ -47,6 +47,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     private Display display;
     public static final int EP_CHANGED = 1;
 
+    private FloatingActionButton checkall;
+
     public EpisodeRecyclerAdapter(Context c, Season season) {
         this.context = c;
         if (season.episodesList != null) {
@@ -86,6 +88,15 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, viewGroup, false);
 
+        //click del FAB-checkall spunti tutti episodi di quella stagione come visti
+        /*checkall = (FloatingActionButton) v.findViewById(R.id.fab_checkAll);
+        checkall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("HUSTLE", "FAB-check all was pressed");
+                //TODO spunta tutti elementi della serie corrente come gia visti
+            }
+        }); */
         return new ViewHolder(v);
     }
 
@@ -105,13 +116,19 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         viewHolder.mTextView.setWidth(dimPX/2);
         //viewHolder.cb.setWidth(dimPX/4);
 
+        // PROVA width
+        viewHolder.cb.setWidth(dimPX/12);
+        //viewHolder.friendsIcon.setMaxWidth(dimPX/12);
+        //viewHolder.numberFriends.setWidth(dimPX/12);
+
+
         // Imposta la TextView con indice episodio: titolo episodio
         viewHolder.mTextView.setText((i+1)+": "+item);
         if (episodes.get(i).watchingFriends.size() != 0) {
             viewHolder.numberFriends.setText(episodes.get(i).watchingFriends.size() + "");
         }
         else{
-            viewHolder.numberFriends.setText("");
+            viewHolder.numberFriends.setText("0");
         }
 
         final Episode ep = episodes.get(i);
@@ -174,15 +191,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             }
         });
 
-        //click del FAB-checkall spunti tutti episodi di quella stagione come vist
-        viewHolder.checkall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("HUSTLE", "FAB-check all was pressed");
-                //TODO spunta tutti elementi della serie corrente come gia visti
-            }
-        });
-
         // TODO: mostra la serie nell'activity
     }
 
@@ -198,7 +206,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         private final ImageView epImg;
         private final CheckBox cb;
         private final CardView cardView;
-        private final FloatingActionButton checkall;
+        private final ImageView friendsIcon;
+
 
 
         ViewHolder(View v) {
@@ -208,6 +217,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             epImg = (ImageView) v.findViewById(R.id.ep_img);
             cb= (CheckBox) v.findViewById(R.id.checkEp);
             cardView = (CardView) v.findViewById(R.id.cardview);
+            friendsIcon = (ImageView) v.findViewById(R.id.ic_friends);
 
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             display = wm.getDefaultDisplay();
@@ -216,7 +226,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             mTextView.setWidth(dimPX/2);
             //epImg.setMaxWidth(20);
             //cb.setWidth(dimPX / 4);
-            checkall = (FloatingActionButton) v.findViewById(R.id.fab_checkAll);
 
         }
     }

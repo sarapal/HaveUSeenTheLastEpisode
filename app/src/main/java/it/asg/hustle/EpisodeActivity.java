@@ -56,6 +56,7 @@ public class EpisodeActivity extends AppCompatActivity {
             TextView description_title = (TextView) findViewById(R.id.description_text_title_episode);
             String overview = getResources().getString(R.string.description_text_title_episode);
             description_title.setText(overview + ": " + ep.title + " (" + ep.season + "X" + ep.episodeNumber + ")");
+            //descrizione card
             TextView description = (TextView) findViewById(R.id.episode_description_text);
             //rating bar
             updateRatingBar(ep);

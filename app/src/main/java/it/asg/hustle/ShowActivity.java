@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -69,6 +70,7 @@ public class ShowActivity extends AppCompatActivity {
     private ArrayList<Friend> show_friends = null;
     private ArrayList<Friend> all_friends = null;
     private boolean updateFromServer = false;
+
 
     private ArrayList<String> info;
     @Override
@@ -150,6 +152,7 @@ public class ShowActivity extends AppCompatActivity {
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
             Log.d("HUSTLE", "landscape mode!");
         }
+
         // TODO: mostra la serie nell'activity
     }
 
