@@ -13,7 +13,9 @@
 
         <color name="cardview_background">#424242</color>
         <color name="info_cv_background">#c5cae9</color>
-        <!--<color name="info_cv_background">#e0e0e0</color> -->
+
+        <color name="rounded_fb">#3864A3</color>
+        <color name="rounded_share">#4caf50</color>
 
 
 </resources>

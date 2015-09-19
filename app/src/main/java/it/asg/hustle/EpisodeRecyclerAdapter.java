@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -173,6 +174,16 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             }
         });
 
+        //click del FAB-checkall spunti tutti episodi di quella stagione come vist
+        viewHolder.checkall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("HUSTLE", "FAB-check all was pressed");
+                //TODO spunta tutti elementi della serie corrente come gia visti
+            }
+        });
+
+        // TODO: mostra la serie nell'activity
     }
 
     @Override
@@ -187,6 +198,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         private final ImageView epImg;
         private final CheckBox cb;
         private final CardView cardView;
+        private final FloatingActionButton checkall;
 
 
         ViewHolder(View v) {
@@ -204,6 +216,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             mTextView.setWidth(dimPX/2);
             //epImg.setMaxWidth(20);
             //cb.setWidth(dimPX / 4);
+            checkall = (FloatingActionButton) v.findViewById(R.id.fab_checkAll);
 
         }
     }
