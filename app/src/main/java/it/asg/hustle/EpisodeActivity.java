@@ -55,6 +55,7 @@ public class EpisodeActivity extends AppCompatActivity {
             collapsingToolbar.setTitle(ep.title);
             if(ep.bmp!=null){
                 iv_epImg.setImageBitmap(ep.bmp);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
