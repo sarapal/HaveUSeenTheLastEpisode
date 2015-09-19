@@ -1,6 +1,7 @@
 package it.asg.hustle.Utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
@@ -23,6 +24,13 @@ public class ImageDownloader {
     }
 
     public void download(String url, ImageView imageView, ThumbnailViewer tv) {
+
+        Bitmap bmp = BitmapCache.getBitmapFromMemCache(url);
+        if (bmp != null) {
+            Log.d("HUSTLE", "foto in cache!");
+            imageView.setImageBitmap(bmp);
+            return;
+        }
         if (cancelPotentialDownload(url, imageView)) {
             //Log.d("HUSTLE", "ImageDownloader Download OK");
             BitmapDownloader task = new BitmapDownloader(ctx, imageView, reqWidth, reqHeight, tv);

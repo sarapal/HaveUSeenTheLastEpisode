@@ -66,6 +66,7 @@ import java.util.ArrayList;
 
 import it.asg.hustle.Info.Show;
 
+import it.asg.hustle.Utils.BitmapCache;
 import it.asg.hustle.Utils.CheckConnection;
 import it.asg.hustle.Utils.DBHelper;
 import it.asg.hustle.Utils.MD5;
@@ -95,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean logged = false;
 
+    private BitmapCache cache;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
         db = helper.getWritableDatabase();
         DBHelper.getInstance(this);
         Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
+
+        cache = new BitmapCache();
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
