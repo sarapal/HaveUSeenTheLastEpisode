@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,8 +64,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import it.asg.hustle.Info.Episode;
-import it.asg.hustle.Info.Season;
 import it.asg.hustle.Info.Show;
 
 import it.asg.hustle.Utils.DBHelper;
@@ -401,6 +400,10 @@ public class MainActivity extends AppCompatActivity {
             return fragment;
         }
 
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -512,14 +515,14 @@ public class MainActivity extends AppCompatActivity {
 
         int wPX = (int) getResources().getDimension(R.dimen.grid_item_RelativeLayout_width);
         int wDP = pxToDp(wPX);
-        int num = (int) Math.floor(widthDP/wDP);
+        int num = (int) Math.floor(widthPX/wPX);
 
         return num;
     }
 
     //sottoclasse per l'adapter per i fragment e i titoli (delle varie tab)
     class TvShowAdapter extends FragmentStatePagerAdapter {
-        private int number_of_tabs=3;
+        public  int number_of_tabs=3;
 
         public TvShowAdapter(FragmentManager fm) {
             super(fm);

@@ -31,6 +31,7 @@ import java.util.List;
 
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.BitmapHelper;
+import it.asg.hustle.Utils.ImageDownloader;
 
 /**
  * Created by sara on 17/09/2015.
@@ -64,55 +65,14 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
         final GridItem item = mItems.get(i);
         viewHolder.title.setText(item.getName());
 
-        // AsyncTask per scaricare l'immagine dell'episodio
-        final AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
+        final int reqWidth = (int) ctx.getResources().getDimension(R.dimen.grid_item_ImageView_width);
+        final int reqHeight = (int) ctx.getResources().getDimension(R.dimen.grid_item_ImageView_height);
 
-            @Override
-            protected Bitmap doInBackground(String... params) {
-                Bitmap bm = null;
-                InputStream in = null;
-
-                Bitmap b = BitmapHelper.getFromPreferences(ctx, item.getShow().id + "_poster");
-                if (b != null) {
-                    return b;
-                }
-                try {
-                    in = new java.net.URL(params[0]).openStream();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                bm = BitmapFactory.decodeStream(in);
-                // TODO: scala la bitmap
-                //bm = Bitmap.createScaledBitmap(bm, )
-                BitmapHelper.saveToPreferences(ctx, bm, item.getShow().id + "_poster");
-                Log.d("HUSTLE", "Immagine salvata");
-                return bm;
-            }
-
-            @Override
-            protected void onPostExecute(final Bitmap bitmap) {
-                super.onPostExecute(bitmap);
-                // Imposta l'immagine nella ImageView
-                viewHolder.thumbnail.setImageBitmap(bitmap);
-                // salva l'oggetto BitMap nell'oggetto Episode
-                item.setThumbnail(bitmap);
-            }
-        };
-
-        // Se l'immagine dell'episodio non è stata scaricata
-        if (item.getThumbnail() == null) {
-            // La scarica su un thread separato, ma solo se l'URL è diverso
-            // da quello qui sotto (che significa che l'episodio non ha banner)
-            if (item.getShow().poster == null) {
-                return;
-            }
-            if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
-                Log.d("HUSTLE", "Eseguo l'asynctask per scaricare il poster della serie");
-                at.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, item.getShow().poster);
-            }
-        } else {
-            // Se l'immagine dell'episodio è già stata salvata, riusa quella
+        if (item.getThumbnail() != null) {
+            Log.d("HUSTLE", "La bitmap già c'è");
             viewHolder.thumbnail.setImageBitmap(item.getThumbnail());
+        } else {
+            new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
         }
 
         viewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {

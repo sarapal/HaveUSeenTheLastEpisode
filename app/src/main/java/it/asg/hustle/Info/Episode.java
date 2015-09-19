@@ -21,12 +21,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import it.asg.hustle.Interfaces.ThumbnailViewer;
 import it.asg.hustle.Utils.MD5;
 
 /**
  * Created by andrea on 9/7/15.
  */
-public class Episode{
+public class Episode implements ThumbnailViewer {
     public String title;
     public int season;
     public int episodeNumber;
@@ -109,6 +110,14 @@ public class Episode{
             e.printStackTrace();
         }
         return this.source;
+    }
+
+    public Bitmap getThumbnail() {
+        return this.bmp;
+    }
+
+    public void setThumbnail(Bitmap thumbnail) {
+        this.bmp = thumbnail;
     }
 
     @Override
