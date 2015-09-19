@@ -43,7 +43,10 @@ class BitmapDownloader extends AsyncTask<String, Void, Bitmap> {
         url = params[0];
         //Log.d("HUSTLE", "BITMAPDOWNLOADER IN ESECUZ");
         // Scarica la BitMap e imposta le dimensioni
-        return BitmapHelper.downloadBitmapFromURL(url, reqWidth, reqHeight);
+        Bitmap bmp = BitmapHelper.downloadBitmapFromURL(url, reqWidth, reqHeight);
+        // Aggiunge la Bitmap in cache, usa come "chiave" l'url
+        BitmapCache.addBitmapToMemoryCache(url, bmp);
+        return bmp;
     }
 
     // Quando la BitMap è stata scaricata, vede se il reference all'ImageView
