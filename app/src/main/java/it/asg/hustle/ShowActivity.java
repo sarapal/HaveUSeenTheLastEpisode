@@ -473,6 +473,12 @@ public class ShowActivity extends AppCompatActivity {
                 ratingBar.setMax(5);
                 ratingBar.setNumStars(5);
                 ratingBar.setRating((float) (show.rating / 2));
+                //actor e genre
+                TextView card_actors = (TextView) v.findViewById(R.id.card_actors_text);
+                TextView card_genre = (TextView) v.findViewById(R.id.card_genre_text);
+                card_actors.setText(show.actors);
+                card_genre.setText(show.genre);
+
 
 
             }

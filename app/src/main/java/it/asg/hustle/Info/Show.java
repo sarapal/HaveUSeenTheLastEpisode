@@ -22,6 +22,8 @@ public class Show {
     public double rating;
     public String poster;
     public String fanart;
+    public String actors;
+    public String genre;
     public Bitmap bmp;
     public int seasonNumber;
     public JSONObject source;
@@ -48,6 +50,12 @@ public class Show {
             }
             if (jo.has("poster")) {
                 this.poster = jo.getString("poster");
+            }
+            if (jo.has("genre")) {
+                this.genre = jo.getString("genre");
+            }
+            if (jo.has("actors")) {
+                this.actors = jo.getString("actors");
             }
             if (jo.has("fanart")) {
                 this.fanart = jo.getString("fanart");

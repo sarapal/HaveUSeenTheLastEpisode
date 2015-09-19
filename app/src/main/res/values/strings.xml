@@ -34,6 +34,8 @@
     <string name="loading_image">Loading image...</string>
     <string name="description_text_title">Overview</string>
     <string name="card_friends_title">Friends watching the show</string>
+    <string name="card_actors_title">Actors</string>
+    <string name="card_genre_title">Genre</string>
     <string name="description_text_title_episode">Episode overview</string>
     <string name="rating_text_title_episode">Rating</string>
     <string name="rating_text_title_show">Rating</string>
