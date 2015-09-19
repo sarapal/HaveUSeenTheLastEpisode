@@ -2,8 +2,11 @@ package it.asg.hustle;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,11 +55,20 @@ public class EpisodeActivity extends AppCompatActivity {
 
             ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
             TextView description = (TextView) findViewById(R.id.episode_description_text);
+            RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar_episode);
+            Drawable progress = ratingBar.getProgressDrawable();
+            DrawableCompat.setTint(progress, Color.RED);
+            Drawable indet = ratingBar.getIndeterminateDrawable();
+            DrawableCompat.setTint(indet, Color.LTGRAY);
+            ratingBar.setIsIndicator(true);
+            ratingBar.setMax(10);
+            ratingBar.setNumStars(10);
+            ratingBar.setRating((float)ep.rating);
+
             description.setText(ep.overview);
             collapsingToolbar.setTitle(ep.title);
             if(ep.bmp!=null){
                 iv_epImg.setImageBitmap(ep.bmp);
-
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -36,6 +36,7 @@ public class Episode implements ThumbnailViewer {
     public String overview;
     public String language;
     public String bmpPath;
+    public double rating;
     public Bitmap bmp;
     public JSONObject source;
     public Boolean checked = false;
@@ -65,6 +66,9 @@ public class Episode implements ThumbnailViewer {
             }
             if (jo.has("seasonnumber")) {
                 this.season = jo.getInt("seasonnumber");
+            }
+            if (jo.has("rating")) {
+                this.rating = jo.getDouble("rating");
             }
             if (jo.has("seen")) {
                 this.checked = jo.getBoolean("seen");

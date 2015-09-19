@@ -35,6 +35,7 @@
     <string name="description_text_title">Overview</string>
     <string name="card_friends_title">Friends watching the show</string>
     <string name="description_text_title_episode">Episode overview</string>
+    <string name="rating_text_title_episode">Rating</string>
 
 </resources>
 
