@@ -13,6 +13,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         card_view:cardElevation="0.01dp"
+        card_view:cardPreventCornerOverlap="false"
         android:layout_marginBottom="0dp">
         <RelativeLayout
             android:id="@+id/top_layout"
