@@ -55,15 +55,8 @@ public class EpisodeActivity extends AppCompatActivity {
 
             ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
             TextView description = (TextView) findViewById(R.id.episode_description_text);
-            RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar_episode);
-            Drawable progress = ratingBar.getProgressDrawable();
-            DrawableCompat.setTint(progress, Color.RED);
-            Drawable indet = ratingBar.getIndeterminateDrawable();
-            DrawableCompat.setTint(indet, Color.LTGRAY);
-            ratingBar.setIsIndicator(true);
-            ratingBar.setMax(10);
-            ratingBar.setNumStars(10);
-            ratingBar.setRating((float)ep.rating);
+
+            updateRatingBar(ep);
 
             description.setText(ep.overview);
             collapsingToolbar.setTitle(ep.title);
@@ -119,6 +112,7 @@ public class EpisodeActivity extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -133,4 +127,17 @@ public class EpisodeActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void updateRatingBar(Episode ep){
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar_episode);
+        ratingBar.setIsIndicator(true);
+        Drawable progress = ratingBar.getProgressDrawable();
+        DrawableCompat.setTint(progress, Color.RED);
+        Drawable indet = ratingBar.getIndeterminateDrawable();
+        DrawableCompat.setTint(indet, Color.LTGRAY);
+        ratingBar.setMax(5);
+        ratingBar.setNumStars(5);
+        ratingBar.setRating((float)(ep.rating/2));
+    }
+
 }

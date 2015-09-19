@@ -19,6 +19,7 @@ public class Show {
     public String overview;
     public String language;
     public String banner;
+    public double rating;
     public String poster;
     public String fanart;
     public Bitmap bmp;
@@ -41,6 +42,9 @@ public class Show {
         try {
             if (jo.has("banner")) {
                 this.banner = jo.getString("banner");
+            }
+            if (jo.has("rating")) {
+                this.rating = jo.getDouble("rating");
             }
             if (jo.has("poster")) {
                 this.poster = jo.getString("poster");
