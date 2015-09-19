@@ -440,7 +440,9 @@ public class MainActivity extends AppCompatActivity {
 
             if (tabPosition == 0) {
                 Log.d("HUSTLE", "onResume fragment delle mie serie TV");
-                if (my_series != null)
+                if (CheckConnection.isConnected(getActivity())) {
+                    downloadMySeries(gridAdapter[tabPosition], false);
+                }else if (my_series != null)
                     showMySeries(my_series, gridAdapter[tabPosition]);
             }
         }
