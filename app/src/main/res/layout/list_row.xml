@@ -1,75 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinator"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:paddingTop="5dp"
-    android:paddingBottom="2.5dp">
+    android:layout_height="match_parent">
 
-
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        card_view:theme="@style/CardStyleEp"
-        android:id="@+id/cardview"
-        android:layout_gravity="left"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardCornerRadius="4dp"
-        card_view:cardPreventCornerOverlap="false">
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="2.5dp">
 
-        <GridLayout
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            card_view:theme="@style/CardStyleEp"
+            android:id="@+id/cardview"
+            android:layout_gravity="left"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardPreventCornerOverlap="false">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
-                android:layout_row="0"
-                android:id="@+id/ep_img"
-                android:adjustViewBounds="true"
-                android:layout_gravity="center" />
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/list_item"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:layout_column="1"
-                android:layout_row="0"
-                android:layout_gravity="center|fill_horizontal"
-                android:gravity="center_vertical|left"
-                android:textColor="@color/text_primary" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:id="@+id/ep_img"
+                    android:adjustViewBounds="true"
+                    android:layout_gravity="center" />
 
-            <TextView
-                android:id="@+id/friends_number_episode"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_vertical|right"
-                android:gravity="right"
-                android:layout_column="2"
-                android:layout_row="0"
-                android:textColor="@color/text_primary" />
+                <TextView
+                    android:id="@+id/list_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:layout_gravity="center|fill_horizontal"
+                    android:gravity="center_vertical|left"
+                    android:textColor="@color/text_primary"
+                    />
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_vertical|right"
-                android:gravity="right"
-                android:id="@+id/checkEp"
-                android:layout_row="0"
-                android:layout_column="3" />
+                <ImageView
+                    android:id="@+id/ic_friends"
+                    android:src="@drawable/ic_friends"
+                    android:layout_column="2"
+                    android:layout_row="0"
+                    android:layout_gravity="center|right"
+                    android:gravity="right"
+                    />
+
+                <TextView
+                    android:id="@+id/friends_number_episode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|right"
+                    android:gravity="right"
+                    android:layout_column="3"
+                    android:layout_row="0"
+                    android:textColor="@color/text_primary"
+                    android:icon="@drawable/ic_friends"
+                    android:textAlignment="center"
+                    />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|right"
+                    android:gravity="right"
+                    android:id="@+id/checkEp"
+                    android:layout_row="0"
+                    android:layout_column="4" />
 
 
+            </GridLayout>
 
+        </android.support.v7.widget.CardView>
 
-        </GridLayout>
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.design.widget.FloatingActionButton
+    </LinearLayout>
+    <!-- <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_checkAll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -78,10 +97,11 @@
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:src="@drawable/ic_plus" />
+        android:src="@drawable/ic_plus" /> -->
 
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
+
 
 <!--
             PROVA

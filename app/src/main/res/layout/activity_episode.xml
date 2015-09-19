@@ -93,7 +93,7 @@
                             android:paddingTop="24dp"
                             android:textColor="@color/primary_dark"
                             android:textSize="14dp"
-                            android:text="@string/card_friends_title" />
+                            android:text="@string/card_friends_episode_title" />
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -105,7 +105,6 @@
                                 android:layout_height="match_parent"
                                 android:scrollbars="horizontal"
                                 android:id="@+id/recyclerview_friends_card_episode">
-
 
 
                             </android.support.v7.widget.RecyclerView>
