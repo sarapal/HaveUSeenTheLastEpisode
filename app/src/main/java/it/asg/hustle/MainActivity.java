@@ -38,7 +38,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -56,6 +55,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,9 +63,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.Collections;;
 
 import it.asg.hustle.Info.Friend;
 import it.asg.hustle.Info.Show;
@@ -116,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         DBHelper.getInstance(this);
         Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
 
+        // Initialize memory cache
         cache = new BitmapCache();
 
         // imposto ActionBar sulla Toolbar
@@ -451,9 +450,14 @@ public class MainActivity extends AppCompatActivity {
             if (tabPosition == 0) {
                 Log.d("HUSTLE", "onResume fragment delle mie serie TV");
                 if (CheckConnection.isConnected(getActivity())) {
-                    downloadMySeries(gridAdapter[tabPosition], false);
-                }else if (my_series != null)
-                    showMySeries(my_series, gridAdapter[tabPosition]);
+                    downloadMySeries(gridAdapter[0], false);
+                } else if (my_series != null)
+                    showMySeries(my_series, gridAdapter[0]);
+                else {
+                    my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
+                    if (my_series != null)
+                        showMySeries(my_series, gridAdapter[0]);
+                }
             }
         }
 
@@ -492,13 +496,13 @@ public class MainActivity extends AppCompatActivity {
                 // Se c'è uno stato salvato, usa quello
                 if (savedInstanceState != null) {
                     my_series = savedInstanceState.getString("my_series");
-                    Log.d("HUSTLE", "Ripristino da savedInstanceState");
+                    Log.d("HUSTLE", "Ripristino mie serie da savedInstanceState");
                 }
                 // Se l'utente è connesso a internet scarica le sue serie TV
                 if (CheckConnection.isConnected(getActivity())) {
+                    Log.d("HUSTLE", "onCreate, connesso a internet, scarico le serie");
                     downloadMySeries(gridAdapter[tabPosition], true);
                 } else {
-                    //TODO: onResume non ricarica la griglia
                     // Altrimenti prende le mie serie TV dalle SharedPreferences e mostra quelle
                     // se my_series è diverso da null significa che ho già ripristinato lo stato
                     if (my_series == null) {
@@ -506,8 +510,9 @@ public class MainActivity extends AppCompatActivity {
                         my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
                     }
                     // Mostra le serie
-                    if (my_series != null)
+                    if (my_series != null) {
                         showMySeries(my_series, gridAdapter[tabPosition]);
+                    }
                 }
             }
             if(tabPosition == 1){

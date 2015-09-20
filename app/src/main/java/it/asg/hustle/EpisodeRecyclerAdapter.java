@@ -83,16 +83,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, viewGroup, false);
-
-        //click del FAB-checkall spunti tutti episodi di quella stagione come visti
-        /*checkall = (FloatingActionButton) v.findViewById(R.id.fab_checkAll);
-        checkall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("HUSTLE", "FAB-check all was pressed");
-                //TODO spunta tutti elementi della serie corrente come gia visti
-            }
-        }); */
         return new ViewHolder(v);
     }
 
@@ -190,8 +180,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 activity.startActivityForResult(i, EP_CHANGED);
             }
         });
-
-        // TODO: mostra la serie nell'activity
     }
 
     @Override

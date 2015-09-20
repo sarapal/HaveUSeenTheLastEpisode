@@ -83,6 +83,8 @@ public class ShowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         adapterList = new ArrayList<EpisodeRecyclerAdapter>();
 
+        // TODO: controlla connessione internet prima di scaricare
+
         //caso in cui l'activity è stata stoppata o messa in pausa, ricrea i dati dai savedInstanceState
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster
         if (savedInstanceState != null) {try {
@@ -382,9 +384,6 @@ public class ShowActivity extends AppCompatActivity {
                 for (int i = 0; i<adapterList.size(); i++) {
                     adapterList.get(i).notifyDataSetChanged();
                 }
-
-
-                //TODO: invalidate dellìadapter episodi
             }
         };
         friend_asynctask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
