@@ -64,7 +64,13 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final GridItem item = mItems.get(i);
         viewHolder.title.setText(item.getName());
-
+        if(mItems.get(i).getFriends()>0) {
+            viewHolder.friendIndicator.setVisibility(View.VISIBLE);
+            viewHolder.friendIndicator.setText(mItems.get(i).getFriends() + "");
+        }
+        else{
+            viewHolder.friendIndicator.setVisibility(View.INVISIBLE);
+        }
         final int reqWidth = (int) ctx.getResources().getDimension(R.dimen.grid_item_ImageView_width);
         final int reqHeight = (int) ctx.getResources().getDimension(R.dimen.grid_item_ImageView_height);
 
@@ -98,11 +104,13 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
         public ImageView thumbnail;
         public TextView title;
+        public TextView friendIndicator;
 
         public ViewHolder(View itemView) {
             super(itemView);
             thumbnail = (ImageView)itemView.findViewById(R.id.thumbnail);
             title = (TextView)itemView.findViewById(R.id.title);
+            friendIndicator = (TextView) itemView.findViewById(R.id.friend_indicator);
         }
     }
 }

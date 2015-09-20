@@ -31,6 +31,8 @@ public class GridItem implements ThumbnailViewer,Comparable<GridItem> {
         this.friends++;
     }
 
+    public int getFriends() {return this.friends;}
+
     public GridItem() {
         this.friends=0;
     }

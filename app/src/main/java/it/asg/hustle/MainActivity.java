@@ -528,6 +528,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 downloadFriendShows(return_list, gridAdapter[tabPosition]);
+
             }
             return v;
         }
