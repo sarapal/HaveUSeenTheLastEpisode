@@ -69,6 +69,7 @@
             android:paddingBottom="10dp"
             android:paddingLeft="14dp"
             android:paddingRight="14dp"
+            android:textColor="@color/text_primary"
             android:elevation="@dimen/fab_elevation"
             android:background="@drawable/fab_background"
             android:backgroundTint="@color/checked"
