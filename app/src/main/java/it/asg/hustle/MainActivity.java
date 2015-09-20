@@ -63,7 +63,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
 
+import it.asg.hustle.Info.Friend;
 import it.asg.hustle.Info.Show;
 
 import it.asg.hustle.Utils.BitmapCache;
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager ;
 
     private boolean logged = false;
+    private static ArrayList<Friend> friendsList;
 
     private BitmapCache cache;
 
@@ -505,6 +510,25 @@ public class MainActivity extends AppCompatActivity {
                         showMySeries(my_series, gridAdapter[tabPosition]);
                 }
             }
+            if(tabPosition == 1){
+                gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                recyclerView.setAdapter(gridAdapter[tabPosition]);
+                SharedPreferences options = getActivity().getSharedPreferences("friend_list", Context.MODE_PRIVATE);
+                String friend_list_json_string = options.getString("friend_list", null);
+                Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
+                ArrayList<Friend> return_list = new ArrayList<Friend>();
+                if(friend_list_json_string != null){
+                    try {
+                        JSONArray friend_list_json = new JSONArray(friend_list_json_string);
+                        for (int i= 0; i< friend_list_json.length(); i++) {
+                            return_list.add(new Friend(friend_list_json.getJSONObject(i)));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                downloadFriendShows(return_list, gridAdapter[tabPosition]);
+            }
             return v;
         }
 
@@ -591,6 +615,91 @@ public class MainActivity extends AppCompatActivity {
                 at.execute(id);
             }
         }
+
+        public void downloadFriendShows(final ArrayList<Friend> all_friends, final GridAdapter gridAdapter){
+        //async task, prende come parametro la lista amici totale
+
+            AsyncTask<ArrayList<Friend>, Void, ArrayList<GridItem>> friend_shows_download = new AsyncTask<ArrayList<Friend>, Void, ArrayList<GridItem>>() {
+                @Override
+                protected ArrayList<GridItem> doInBackground(ArrayList<Friend> ...params) {
+                    String s=null;
+                    JSONArray friendshowsJSON = null;
+
+                    ArrayList<Friend> all_friends = (ArrayList<Friend>) params[0];
+                    Friend actual = null;
+                    String user_id = null;
+                    ArrayList<GridItem> listItem = new ArrayList<GridItem>();
+                    while(all_friends == null){}
+                    for (int i= 0; i < all_friends.size(); i++){
+                        actual = all_friends.get(i);
+                        user_id = actual.id;
+                        actual.shows.clear();
+                        try {
+                            URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            InputStream in = new BufferedInputStream(conn.getInputStream());
+                            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                            s = br.readLine();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        //lettura risposta
+                        if(s!=null) {
+                            try {
+
+                                friendshowsJSON = new JSONArray(s);
+                                if (friendshowsJSON.length() >= 1) {
+                                    //per ogni amico legge ogni show
+
+                                    for (int j = 0; j < friendshowsJSON.length(); j++) {
+                                        Show friend_show;
+                                        GridItem item = new GridItem();
+                                        //crea oggetto show
+                                        friend_show = new Show(friendshowsJSON.getJSONObject(j));
+                                        //aggiunge alla lista personale dell'amico
+                                        actual.shows.add(friend_show);
+
+                                        //se è gia nella lista icrementa il contatore, altrimenti lo aggiunge
+                                        item.setShow(friend_show);
+                                        item.setName(friend_show.title);
+                                        item.setThumbnail(friend_show.bmp);
+
+                                        if (listItem.contains(item)) {
+                                            Log.d("HUSTLELOG", "incremento  " +item.getName());
+
+                                            listItem.get(listItem.indexOf(item)).addFriend();
+                                        } else {
+                                            item.addFriend();
+                                            listItem.add(item);
+                                            Log.d("HUSTLELOG", "aggiungo  " + item.getName());
+                                        }
+                                    }
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    Collections.sort(listItem);
+                    return listItem;
+                }
+                @Override
+                protected void onPostExecute(ArrayList<GridItem> gridList) {
+                    super.onPostExecute(gridList);
+                    for (GridItem it : gridList) {
+                        gridAdapter.mItems.add(it);
+                        Log.d("HUSTLELOG", "tot  " + it.getName());
+                    }
+                    gridAdapter.notifyDataSetChanged();
+                }
+            };
+
+            friend_shows_download.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, all_friends);
+        }
     }
 
     @Override
@@ -625,6 +734,15 @@ public class MainActivity extends AppCompatActivity {
                                     String id = friend_list.getJSONObject(i).getString("id");
                                     //downloadFriendPhotos(id);
                                 }
+                                friendsList = new ArrayList<Friend>();
+                                try {
+                                    for (int i= 0; i< friend_list.length(); i++) {
+                                        friendsList.add(new Friend(friend_list.getJSONObject(i)));
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -633,6 +751,9 @@ public class MainActivity extends AppCompatActivity {
             ).executeAsync();
         }
     }
+
+
+
 
     void downloadFriendPhotos(final String id){
         //non viene usata questa funzione, sdk di facebook mette a disposizione il widget che fa gia tutto

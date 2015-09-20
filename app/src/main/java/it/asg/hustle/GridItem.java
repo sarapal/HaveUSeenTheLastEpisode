@@ -5,23 +5,34 @@ import android.graphics.Bitmap;
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Interfaces.ThumbnailViewer;
 
-public class GridItem implements ThumbnailViewer {
+public class GridItem implements ThumbnailViewer,Comparable<GridItem> {
     private String mName;
     private Bitmap mThumbnail;
     private Show mShow;
+    private int friends;
 
     @Override
     public boolean equals(Object o) {
+        GridItem gridItem = (GridItem) o;
+        if(gridItem.getName().compareTo(this.getName())==0){return true;}
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GridItem gridItem = (GridItem) o;
+
 
         if (!mName.equals(gridItem.mName)) return false;
         if (mThumbnail != null ? !mThumbnail.equals(gridItem.mThumbnail) : gridItem.mThumbnail != null)
             return false;
         return mShow.equals(gridItem.mShow);
 
+    }
+
+    public void addFriend(){
+        this.friends++;
+    }
+
+    public GridItem() {
+        this.friends=0;
     }
 
     @Override
@@ -56,4 +67,11 @@ public class GridItem implements ThumbnailViewer {
     public void setThumbnail(Bitmap thumbnail) {
         this.mThumbnail = thumbnail;
     }
+
+    @Override
+    public int compareTo(GridItem o) {
+        return  o.friends-this.friends ;
+    }
+
+
 }

@@ -5,19 +5,23 @@ import android.graphics.Bitmap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 /**
  * Created by andrea on 15/09/15.
  */
 public class Friend {
     public String name = null;
     public String id = null;
+    public ArrayList<Show> shows = null;
 
     public Friend(){
+        this.shows = new ArrayList<Show>();
         return;
     }
 
     public Friend(String id_in, String name_in){
-
+        this.shows = new ArrayList<Show>();
         name = name_in;
         id = id_in;
     }
@@ -39,6 +43,8 @@ public class Friend {
     }
 
     public Friend(JSONObject friend_JSON){
+        this.shows = new ArrayList<Show>();
+
         if(friend_JSON != null) {
             try {
                 this.name = friend_JSON.getString("name");
