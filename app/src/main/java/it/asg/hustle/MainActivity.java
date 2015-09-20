@@ -55,7 +55,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -69,6 +68,7 @@ import it.asg.hustle.Info.Friend;
 import it.asg.hustle.Info.Show;
 
 import it.asg.hustle.Utils.BitmapCache;
+import it.asg.hustle.Utils.BitmapMemoryCache;
 import it.asg.hustle.Utils.CheckConnection;
 import it.asg.hustle.Utils.DBHelper;
 import it.asg.hustle.Utils.MD5;
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean logged = false;
     private static ArrayList<Friend> friendsList;
 
-    private BitmapCache cache;
+    private BitmapCache bitmapCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
         DBHelper.getInstance(this);
         Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
 
-        // Initialize memory cache
-        cache = new BitmapCache();
+        // Initialize bitmap cache
+        bitmapCache = BitmapCache.createOrOpen(getApplicationContext());
 
         // imposto ActionBar sulla Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);

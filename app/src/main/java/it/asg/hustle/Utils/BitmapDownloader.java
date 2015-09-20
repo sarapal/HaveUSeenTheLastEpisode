@@ -45,7 +45,8 @@ class BitmapDownloader extends AsyncTask<String, Void, Bitmap> {
         // Scarica la BitMap e imposta le dimensioni
         Bitmap bmp = BitmapHelper.downloadBitmapFromURL(url, reqWidth, reqHeight);
         // Aggiunge la Bitmap in cache, usa come "chiave" l'url
-        BitmapCache.addBitmapToMemoryCache(url, bmp);
+        //BitmapMemoryCache.addBitmapToMemoryCache(url, bmp);
+        BitmapCache.put(url, bmp);
         return bmp;
     }
 

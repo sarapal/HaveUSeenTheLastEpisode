@@ -25,14 +25,15 @@ public class ImageDownloader {
 
     public void download(String url, ImageView imageView, ThumbnailViewer tv) {
 
-        if (CheckConnection.isConnected(ctx) == false) {
-            return;
-        }
-
-        Bitmap bmp = BitmapCache.getBitmapFromMemCache(url);
+        //Bitmap bmp = BitmapMemoryCache.getBitmapFromMemCache(url);
+        Bitmap bmp = BitmapCache.get(url);
         if (bmp != null) {
             Log.d("HUSTLE", "foto in cache!");
             imageView.setImageBitmap(bmp);
+            return;
+        }
+        // Se la foto non è in cache e non sei connesso a internet, non scaricare
+        if (CheckConnection.isConnected(ctx) == false) {
             return;
         }
         if (cancelPotentialDownload(url, imageView)) {
