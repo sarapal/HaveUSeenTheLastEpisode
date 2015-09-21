@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager ;
 
     private boolean logged = false;
-    private static ArrayList<Friend> friendsList;
+    private ArrayList<Friend> friendsList;
 
     private BitmapCache bitmapCache;
 
@@ -195,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
             updateLogInServer();
             updateCircleProfile();
             updateFriendList();
+            updateFriendShows();
         }
     }
 
@@ -459,7 +460,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else if (tabPosition == 1) {
                 // TODO: fai resume delle serie degli amici
+
+                downloadFriendShows(gridAdapter[tabPosition]);
             }
+
+
+
         }
 
         public static TvShowFragment newInstance(int tabPosition) {
@@ -522,21 +528,8 @@ public class MainActivity extends AppCompatActivity {
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
 
-                SharedPreferences options = getActivity().getSharedPreferences("friend_list", Context.MODE_PRIVATE);
-                String friend_list_json_string = options.getString("friend_list", null);
-                Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
-                ArrayList<Friend> return_list = new ArrayList<Friend>();
-                if(friend_list_json_string != null){
-                    try {
-                        JSONArray friend_list_json = new JSONArray(friend_list_json_string);
-                        for (int i= 0; i< friend_list_json.length(); i++) {
-                            return_list.add(new Friend(friend_list_json.getJSONObject(i)));
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                downloadFriendShows(return_list, gridAdapter[tabPosition]);
+
+                downloadFriendShows(gridAdapter[tabPosition]);
 
             }
             return v;
@@ -627,36 +620,56 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public void downloadFriendShows(final ArrayList<Friend> all_friends, final GridAdapter gridAdapter){
+        public void downloadFriendShows(final GridAdapter gridAdapter){
         //async task, prende come parametro la lista amici totale
 
             AsyncTask<ArrayList<Friend>, Void, ArrayList<GridItem>> friend_shows_download = new AsyncTask<ArrayList<Friend>, Void, ArrayList<GridItem>>() {
                 @Override
                 protected ArrayList<GridItem> doInBackground(ArrayList<Friend> ...params) {
+                    SharedPreferences options = getActivity().getSharedPreferences("friend_list", Context.MODE_PRIVATE);
+                    String friend_list_json_string = options.getString("friend_list", null);
+                    Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
+                    ArrayList<Friend> return_list = new ArrayList<Friend>();
+                    if(friend_list_json_string != null){
+                        try {
+                            JSONArray friend_list_json = new JSONArray(friend_list_json_string);
+                            for (int i= 0; i< friend_list_json.length(); i++) {
+                                return_list.add(new Friend(friend_list_json.getJSONObject(i)));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     String s=null;
                     JSONArray friendshowsJSON = null;
 
-                    ArrayList<Friend> all_friends = (ArrayList<Friend>) params[0];
+                    ArrayList<Friend> all_friends = return_list;
                     Friend actual = null;
                     String user_id = null;
                     ArrayList<GridItem> listItem = new ArrayList<GridItem>();
-                    while(all_friends == null){}
                     for (int i= 0; i < all_friends.size(); i++){
                         actual = all_friends.get(i);
                         user_id = actual.id;
                         actual.shows.clear();
-                        try {
-                            URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
-                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                            InputStream in = new BufferedInputStream(conn.getInputStream());
-                            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                            s = br.readLine();
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
+                        options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                        s = options.getString(user_id, null);
                         //lettura risposta
+                        if(s==null){
+                            try {
+                                URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
+                                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                InputStream in = new BufferedInputStream(conn.getInputStream());
+                                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                                s = br.readLine();
+                                options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = options.edit();
+                                editor.putString(user_id, s);
+                                editor.commit();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         if(s!=null) {
                             try {
 
@@ -678,13 +691,10 @@ public class MainActivity extends AppCompatActivity {
                                         item.setThumbnail(friend_show.bmp);
 
                                         if (listItem.contains(item)) {
-                                            Log.d("HUSTLELOG", "incremento  " +item.getName());
-
                                             listItem.get(listItem.indexOf(item)).addFriend();
                                         } else {
                                             item.addFriend();
                                             listItem.add(item);
-                                            Log.d("HUSTLELOG", "aggiungo  " + item.getName());
                                         }
                                     }
                                 }
@@ -693,6 +703,8 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+
+
                     }
 
                     Collections.sort(listItem);
@@ -701,15 +713,15 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(ArrayList<GridItem> gridList) {
                     super.onPostExecute(gridList);
+                    gridAdapter.mItems.clear();
                     for (GridItem it : gridList) {
                         gridAdapter.mItems.add(it);
-                        Log.d("HUSTLELOG", "tot  " + it.getName());
                     }
                     gridAdapter.notifyDataSetChanged();
                 }
             };
 
-            friend_shows_download.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, all_friends);
+            friend_shows_download.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -735,19 +747,20 @@ public class MainActivity extends AppCompatActivity {
                     new GraphRequest.Callback() {
                         public void onCompleted(GraphResponse response) {
                             try {
-                                Log.d("HUSTLE","amici: " + response.getJSONObject().getJSONArray("data").toString());
+                                Log.d("HUSTLE", "amici: " + response.getJSONObject().getJSONArray("data").toString());
                                 SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = options.edit();
                                 editor.putString("friend_list", response.getJSONObject().getJSONArray("data").toString());
                                 editor.commit();
+                                //get friend list
                                 JSONArray friend_list = response.getJSONObject().getJSONArray("data");
-                                for (int i= 0; i < friend_list.length(); i++){
+                                for (int i = 0; i < friend_list.length(); i++) {
                                     String id = friend_list.getJSONObject(i).getString("id");
-                                    //downloadFriendPhotos(id);
                                 }
                                 friendsList = new ArrayList<Friend>();
+                                //fill friend list
                                 try {
-                                    for (int i= 0; i< friend_list.length(); i++) {
+                                    for (int i = 0; i < friend_list.length(); i++) {
                                         friendsList.add(new Friend(friend_list.getJSONObject(i)));
                                     }
                                 } catch (JSONException e) {
@@ -758,6 +771,7 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+
                     }
             ).executeAsync();
         }
@@ -802,6 +816,63 @@ public class MainActivity extends AppCompatActivity {
         profile_photo_downloader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, id);
         }
 
+    void updateFriendShows(){
+        Log.d("HUSTLE", "Update show amici");
+
+        AsyncTask<Void, Void, Void> updateFriendShowTask = new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
+                String friend_list_json_string = options.getString("friend_list", null);
+                Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
+                ArrayList<Friend> return_list = new ArrayList<Friend>();
+                if (friend_list_json_string != null) {
+                    try {
+                        JSONArray friend_list_json = new JSONArray(friend_list_json_string);
+                        for (int i = 0; i < friend_list_json.length(); i++) {
+                            return_list.add(new Friend(friend_list_json.getJSONObject(i)));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String user_id;
+                for (Friend friend : return_list) {
+                    String s = null;
+                    user_id = friend.id;
+
+                    try {
+                        URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                        s = br.readLine();
+                        Log.d("HUSTLE", "aggiornato profilo show di " + friend.name+ " con " + s);
+                        options = getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = options.edit();
+                        editor.putString(user_id, s);
+                        editor.commit();
+                    } catch (IOException e) {
+                        Log.d("HUSTLE", "ERRORE" + s);
+                        e.printStackTrace();
+                    }
+
+
+
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void v) {
+                super.onPostExecute(v);
+            }
+
+        };
+
+        updateFriendShowTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
 
     void updateCircleProfile() {
         SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
