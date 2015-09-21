@@ -81,7 +81,6 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
                 new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
             }
-
         }
         viewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override

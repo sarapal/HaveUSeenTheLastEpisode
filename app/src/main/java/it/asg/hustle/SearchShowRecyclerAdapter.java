@@ -72,43 +72,6 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
                 context.startActivity(i);
             }
         });
-/*
-        final ProgressDialog progressDialog = new ProgressDialog(c);
-        final String msg_loading = c.getResources().getString(R.string.loading_image);
-
-        AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog.setMessage(msg_loading);
-                progressDialog.setIndeterminate(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setCancelable(true);
-                progressDialog.show();
-            }
-
-            @Override
-            protected Bitmap doInBackground(String... params) {
-                Bitmap bm = null;
-                InputStream in = null;
-                try {
-                    in = new java.net.URL(params[0]).openStream();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                bm = BitmapFactory.decodeStream(in);
-                return bm;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                super.onPostExecute(bitmap);
-                viewHolder.mImageView.setImageBitmap(bitmap);
-                item.bmp = bitmap;
-                viewHolder.mTextView.setText(item.title + " (" + item.language + ")");
-                progressDialog.dismiss();
-            }
-        };*/
         /*
         // Se l'immagine della serie non è stata scaricata
         if (item.bmp == null) {
@@ -125,11 +88,14 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             // Se l'immagine della serie è già stata salvata, riusa quella
             viewHolder.mImageView.setImageBitmap(item.bmp);
         }*/
-        if (!item.banner.equals("http://thetvdb.com/banners/")) {
-            new ImageDownloader(c,maxImagePX,maxImagePX).download(item.banner, viewHolder.mImageView, item);
+        if (item.getThumbnail() != null) {
+            Log.d("HUSTLE", "La bitmap già c'è");
+            viewHolder.mImageView.setImageBitmap(item.getThumbnail());
+        } else {
+            if (!item.banner.equals("http://thetvdb.com/banners/")) {
+                new ImageDownloader(c,maxImagePX,maxImagePX).download(item.banner, viewHolder.mImageView, item);
+            }
         }
-
-
     }
 
     public int getDisplayWidthPX(){

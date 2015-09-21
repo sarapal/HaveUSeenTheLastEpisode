@@ -32,12 +32,16 @@ public class BitmapMemoryCache {
     }
 
     public static synchronized void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (key == null || bitmap == null)
+            return;
         if (getBitmapFromMemCache(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
 
     public static synchronized Bitmap getBitmapFromMemCache(String key) {
+        if (key == null)
+            return null;
         return mMemoryCache.get(key);
     }
 }
