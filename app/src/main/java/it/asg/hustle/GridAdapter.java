@@ -78,8 +78,12 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             Log.d("HUSTLE", "La bitmap già c'è");
             viewHolder.thumbnail.setImageBitmap(item.getThumbnail());
         } else {
-            if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
-                new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
+            if (item.getShow().poster != null) {
+                if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
+                    new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
+                }
+            } else {
+                Log.d("NOPOSTER", "Lo show " + item.getShow().title + " non ha poster: " + item.getShow());
             }
         }
         viewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {
