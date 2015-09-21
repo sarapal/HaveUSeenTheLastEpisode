@@ -17,4 +17,17 @@
     <string name="title_activity_show">Serie TV</string>
     <string name="account_default_name">Login non effettuato</string>
     <string name="app_name">HUSTLE</string>
+    <string name="card_actors_title">Attori</string>
+    <string name="card_friends_title">Amici che guardano la serie</string>
+    <string name="card_friends_title_episode">Visto da</string>
+    <string name="card_genre_title">Genere</string>
+    <string name="description_text_title">Trama</string>
+    <string name="description_text_title_episode">Trama episodio</string>
+    <string name="loading_image">Caricamento immagine...</string>
+    <string name="nav_item_contactus">Contattaci!</string>
+    <string name="rating_text_title_episode">Voto</string>
+    <string name="rating_text_title_show">Voto</string>
+    <string name="search_activity_hint">Cerca serie TV</string>
+    <string name="searching">Ricerca...</string>
+    <string name="tv_show_activity_title">Serie TV</string>
 </resources>

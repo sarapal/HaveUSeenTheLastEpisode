@@ -32,6 +32,8 @@ public class BitmapDiskCache {
     }
 
     public Bitmap getBitmapFromDiskCache(String key) {
+        if (key == null)
+            return null;
         synchronized (mDiskCacheLock) {
             // Wait while disk cache is started from background thread
             while (mDiskCacheStarting) {
@@ -59,6 +61,8 @@ public class BitmapDiskCache {
     }
 
     public void addBitmapToCache(String key, Bitmap bitmap) {
+        if (key == null || bitmap == null)
+            return;
         // add to disk cache
         synchronized (mDiskCacheLock) {
             try {

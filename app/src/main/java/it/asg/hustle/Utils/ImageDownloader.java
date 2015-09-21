@@ -1,7 +1,9 @@
 package it.asg.hustle.Utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
@@ -16,11 +18,29 @@ public class ImageDownloader {
     private Context ctx;
     private int reqWidth;
     private int reqHeight;
+    private Bitmap placeHolder;
+    private Resources res;
 
     public ImageDownloader(Context context, int reqWidth, int reqHeight) {
         this.ctx = context;
         this.reqHeight = reqHeight;
         this.reqWidth = reqWidth;
+    }
+
+    public ImageDownloader(Context context, Resources res, int holderID, int reqWidth, int reqHeight) {
+        this.ctx = context;
+        this.reqHeight = reqHeight;
+        this.reqWidth = reqWidth;
+        this.res = res;
+        this.placeHolder = BitmapFactory.decodeResource(res, holderID);
+    }
+
+    public ImageDownloader(Context context, Resources res, Bitmap placeHolder, int reqWidth, int reqHeight) {
+        this.ctx = context;
+        this.reqHeight = reqHeight;
+        this.reqWidth = reqWidth;
+        this.res = res;
+        this.placeHolder = placeHolder;
     }
 
     public boolean download(String url, ImageView imageView, ThumbnailViewer tv) {
@@ -44,7 +64,7 @@ public class ImageDownloader {
         if (cancelPotentialDownload(url, imageView)) {
             //Log.d("HUSTLE", "ImageDownloader Download OK");
             BitmapDownloader task = new BitmapDownloader(ctx, imageView, reqWidth, reqHeight, tv);
-            AsyncDrawable asyncDrawable = new AsyncDrawable(task);
+            AsyncDrawable asyncDrawable = new AsyncDrawable(res, placeHolder, task);
             imageView.setImageDrawable(asyncDrawable);
             task.execute(url);
         }
