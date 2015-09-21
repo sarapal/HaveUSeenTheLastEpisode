@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -22,12 +23,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -103,7 +106,9 @@ public class ShowActivity extends AppCompatActivity {
                 try {
                     showJSON = new JSONObject(s);
                     show = new Show(showJSON);
-                    if (!new ImageDownloader(this, 0,  0).download(show.fanart, posterImageView, show)) {
+
+                    int dimPX = getDisplayDimensionsPX();
+                    if (!new ImageDownloader(this, dimPX, dimPX).download(show.fanart, posterImageView, show)) {
                         Log.d("HUSTLE", "Gli arriva il NULL");
                     }
                     doGetInfo(show);
@@ -126,7 +131,11 @@ public class ShowActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         try {
-            collapsingToolbar.setTitle(showJSON.getString("seriesname"));
+          //  collapsingToolbar.setTitle(showJSON.getString("seriesname"));
+          // collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.title_background));
+            TextView tv = (TextView)findViewById(R.id.titleSeason);
+            tv.setText(showJSON.getString("seriesname"));
+            //collapsingToolbar.ser
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -158,6 +167,17 @@ public class ShowActivity extends AppCompatActivity {
             Log.d("HUSTLE", "landscape mode!");
         }
     }
+
+    public int getDisplayDimensionsPX() {
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int widthPX = size.x;
+
+        return widthPX;
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -331,6 +351,8 @@ public class ShowActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                if (episodesFriend == null)
+                    return null;
 
                 for (int i = 0; i < episodesFriend.length(); i++){
                     try {

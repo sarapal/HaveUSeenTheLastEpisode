@@ -528,6 +528,7 @@ public class MainActivity extends AppCompatActivity {
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
 
+
                 downloadFriendShows(gridAdapter[tabPosition]);
 
             }
@@ -699,7 +700,6 @@ public class MainActivity extends AppCompatActivity {
                                         } else {
                                             item.addFriend();
                                             listItem.add(item);
-                                            Log.d("HUSTLE", item.getName() + " prima volta: "+ item.getFriends() + " ; "+actual.name);
                                         }
                                     }
                                 }

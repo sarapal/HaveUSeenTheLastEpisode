@@ -22,5 +22,10 @@
     </style>
 
 
+    <style name="ActionbarTitle" parent="AppTheme">
+        <item name="android:background">@color/title_background</item>
+
+    </style>
+
 
 </resources>
