@@ -14,7 +14,7 @@ public class BitmapCache {
     private BitmapDiskCache diskCache = null;
     private Context context = null;
 
-    public BitmapCache(Context context) {
+    private BitmapCache(Context context) {
         Log.d("CACHE", "creo cache");
         this.memCache = new BitmapMemoryCache();
         this.diskCache = new BitmapDiskCache(context);
@@ -25,6 +25,7 @@ public class BitmapCache {
         // Si assicura che ci sia solo un'istanza della cache in azione
         if (!cache_created) {
             cache = new BitmapCache(context);
+            cache_created = true;
         }
         return cache;
     }
