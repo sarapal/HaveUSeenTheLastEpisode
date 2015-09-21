@@ -126,7 +126,11 @@ public class ShowActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         try {
-            collapsingToolbar.setTitle(showJSON.getString("seriesname"));
+          //  collapsingToolbar.setTitle(showJSON.getString("seriesname"));
+          // collapsingToolbar.setExpandedTitleColor(getResources().getColor(R.color.title_background));
+            TextView tv = (TextView)findViewById(R.id.titleSeason);
+            tv.setText(showJSON.getString("seriesname"));
+            //collapsingToolbar.ser
         } catch (JSONException e) {
             e.printStackTrace();
         }
