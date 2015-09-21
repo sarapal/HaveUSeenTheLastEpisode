@@ -19,7 +19,7 @@ public class BitmapDiskCache {
     private DiskLruCache mDiskLruCache;
     private final Object mDiskCacheLock = new Object();
     private boolean mDiskCacheStarting = true;
-    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 20; // 20MB
+    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 50; // 50MB
     private static final String DISK_CACHE_SUBDIR = "thumbnails";
     private File cacheDir;
 

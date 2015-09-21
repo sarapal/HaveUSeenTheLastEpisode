@@ -16,7 +16,7 @@ class AsyncDrawable extends ColorDrawable {
     private final WeakReference<BitmapDownloader> bitmapDownloaderReference;
 
     public AsyncDrawable(BitmapDownloader bitmapDownloader) {
-        super(Color.WHITE);
+        super(Color.RED);
         bitmapDownloaderReference = new WeakReference<BitmapDownloader>(bitmapDownloader);
     }
 

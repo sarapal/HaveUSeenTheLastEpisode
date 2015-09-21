@@ -2,6 +2,7 @@ package it.asg.hustle;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -51,7 +52,10 @@ public class EpisodeActivity extends AppCompatActivity {
         try {
             JSONObject jo = new JSONObject(b.getString("episode"));
             ep = new Episode(jo);
-            ep.bmp = b.getParcelable("picture");
+            Bitmap bmp = b.getParcelable("picture");
+            if (bmp == null)
+                Log.d("HUSTLE", "No bitmap nell'intent");
+            ep.setThumbnail((Bitmap) b.getParcelable("picture"));
             //descrizione card
             TextView description_title = (TextView) findViewById(R.id.description_text_title_episode);
             String overview = getResources().getString(R.string.description_text_title_episode);
@@ -65,8 +69,9 @@ public class EpisodeActivity extends AppCompatActivity {
             //titolo e immagine
             collapsingToolbar.setTitle(ep.title);
             ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
-            if(ep.bmp!=null){
-                iv_epImg.setImageBitmap(ep.bmp);
+            if(ep.getThumbnail()!=null){
+                Log.d("HUSTLE", "L'episodio ha la foto");
+                iv_epImg.setImageBitmap(ep.getThumbnail());
             }
         } catch (JSONException e) {
             e.printStackTrace();
