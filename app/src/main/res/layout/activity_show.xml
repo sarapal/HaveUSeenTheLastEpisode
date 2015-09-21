@@ -16,7 +16,7 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             >
@@ -34,6 +34,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/titleSeason"
+                android:textAlignment="center"
+                android:layout_gravity="bottom"
+                android:gravity="center"
+                style="@style/ActionbarTitle"
+                android:textSize="20dp"
+                android:fontFamily="@string/abc_action_bar_home_description_format"
+                android:textColor="@color/text_primary"
+                />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
