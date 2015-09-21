@@ -666,6 +666,7 @@ public class MainActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = options.edit();
                                 editor.putString(user_id, s);
                                 editor.commit();
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
