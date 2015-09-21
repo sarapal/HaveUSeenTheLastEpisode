@@ -1,6 +1,7 @@
 package it.asg.hustle;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Interfaces.ThumbnailViewer;
@@ -29,6 +30,8 @@ public class GridItem implements ThumbnailViewer,Comparable<GridItem> {
 
     public void addFriend(){
         this.friends++;
+        Log.d("HUSTLE", this.getName() + "++ = " + this.getFriends());
+
     }
 
     public int getFriends() {return this.friends;}

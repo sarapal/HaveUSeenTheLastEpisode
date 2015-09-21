@@ -528,23 +528,10 @@ public class MainActivity extends AppCompatActivity {
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
 
-                SharedPreferences options = getActivity().getSharedPreferences("friend_list", Context.MODE_PRIVATE);
-                String friend_list_json_string = options.getString("friend_list", null);
-                Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
-                ArrayList<Friend> return_list = new ArrayList<Friend>();
-                if(friend_list_json_string != null){
-                    try {
-                        JSONArray friend_list_json = new JSONArray(friend_list_json_string);
-                        for (int i= 0; i< friend_list_json.length(); i++) {
-                            return_list.add(new Friend(friend_list_json.getJSONObject(i)));
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                downloadFriendShows(return_list, gridAdapter[tabPosition]);
 
                 downloadFriendShows(gridAdapter[tabPosition]);
+
+                
 
             } else if (tabPosition == 2) {
                 Log.d("MOST", "onCreate");
@@ -642,7 +629,6 @@ public class MainActivity extends AppCompatActivity {
                 at.execute(id);
             }
         }
-
         public void downloadMostViewedShows(final GridAdapter gridAdapter) {
             AsyncTask<Void, Void, String> download = new AsyncTask<Void, Void, String>() {
                 @Override
@@ -684,6 +670,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        
         public void downloadFriendShows(final GridAdapter gridAdapter){
         //async task, prende come parametro la lista amici totale
 
@@ -730,6 +717,7 @@ public class MainActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = options.edit();
                                 editor.putString(user_id, s);
                                 editor.commit();
+
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -745,7 +733,11 @@ public class MainActivity extends AppCompatActivity {
                                         Show friend_show;
                                         GridItem item = new GridItem();
                                         //crea oggetto show
+                                        if(j ==8){
+                                            Log.d("HUSTLE", "possibile errore: "+ friendshowsJSON.get(j).toString());
+                                        }
                                         friend_show = new Show(friendshowsJSON.getJSONObject(j));
+
                                         //aggiunge alla lista personale dell'amico
                                         actual.shows.add(friend_show);
 
@@ -756,6 +748,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         if (listItem.contains(item)) {
                                             listItem.get(listItem.indexOf(item)).addFriend();
+                                            Log.d("HUSTLE", item.getName() + " altra volta; " + actual.name);
                                         } else {
                                             item.addFriend();
                                             listItem.add(item);
@@ -764,6 +757,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                             } catch (JSONException e) {
+                                Log.d("HUSTLE", "errore! +"+actual.name+" :" + s);
                                 e.printStackTrace();
                             }
                         }
@@ -835,7 +829,6 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-
                     }
             ).executeAsync();
         }
