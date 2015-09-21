@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,13 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Season;
-import it.asg.hustle.Utils.BitmapHelper;
 import it.asg.hustle.Utils.ImageDownloader;
 import it.asg.hustle.Utils.UpdateEpisodeState;
 
@@ -174,7 +168,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
                 Context context = v.getContext();
                 Intent i = new Intent(context, EpisodeActivity.class);
                 Bundle b = new Bundle();
-                b.putParcelable("picture", ep.bmp);
+                b.putParcelable("picture", ep.getThumbnail());
                 b.putString("episode", (ep.toJSON()).toString());
                 i.putExtras(b);
                 activity.startActivityForResult(i, EP_CHANGED);

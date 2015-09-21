@@ -27,7 +27,8 @@ public class BitmapHelper {
         try {
             in1 = new java.net.URL(url).openStream();
             // TODO: trova un modo alternativo senza riscaricare lo stream
-            in2 = new java.net.URL(url).openStream();
+            if (reqWidth != 0 && reqHeight != 0)
+                in2 = new java.net.URL(url).openStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,17 +42,17 @@ public class BitmapHelper {
 
         // Decodifica con inJustDecodeBounds=true per prendere solo le dimensioni
         final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(in1, null, options);
 
-        // Calcola il fattore di sampling
-        options.inSampleSize = BitmapHelper.calculateInSampleSize(options, reqWidth, reqHeight);
-
-        //Log.d("HUSTLE", "calcolato sampleSize: " + options.inSampleSize);
+        if (reqWidth != 0 && reqHeight != 0) {
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(in1, null, options);
+            // Calcola il fattore di sampling
+            options.inSampleSize = BitmapHelper.calculateInSampleSize(options, reqWidth, reqHeight);
+        }
 
         // Crea la BitMap con il valore di sampling
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeStream(in2, null, options);
+        return BitmapFactory.decodeStream(in2 != null ? in2 : in1, null, options);
     }
 
     // Calcola un valore per SampleSize che è una potenza di due in modo che il sampling ottenuto

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -22,7 +21,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,7 +28,6 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -81,9 +78,8 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_show);
         adapterList = new ArrayList<EpisodeRecyclerAdapter>();
-
-        // TODO: controlla connessione internet prima di scaricare
 
         //caso in cui l'activity è stata stoppata o messa in pausa, ricrea i dati dai savedInstanceState
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster
@@ -96,6 +92,7 @@ public class ShowActivity extends AppCompatActivity {
             show.fillSeasonsList(seasonsJSON);
         }
 
+        posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
 
         //caso in cui l'activity viene generata dalla ricerca
         if(savedInstanceState == null){
@@ -106,7 +103,9 @@ public class ShowActivity extends AppCompatActivity {
                 try {
                     showJSON = new JSONObject(s);
                     show = new Show(showJSON);
-                    doGetShowPoster(showJSON.getString("fanart"));
+                    if (!new ImageDownloader(this, 0,  0).download(show.fanart, posterImageView, show)) {
+                        Log.d("HUSTLE", "Gli arriva il NULL");
+                    }
                     doGetInfo(show);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -120,9 +119,6 @@ public class ShowActivity extends AppCompatActivity {
             adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), ShowActivity.this, show.seasonsList.get(i - 1)));
 
         }
-
-
-        setContentView(R.layout.activity_show);
 
         // get toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -152,8 +148,10 @@ public class ShowActivity extends AppCompatActivity {
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         //get poster image
-        posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
-        if(posterBitmap!=null){posterImageView.setImageBitmap(posterBitmap);}
+        if(posterBitmap!=null){
+            Log.d("HUSTLE", "prendo poster da savedInstanceState");
+            posterImageView.setImageBitmap(posterBitmap);
+        }
 
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
@@ -194,35 +192,6 @@ public class ShowActivity extends AppCompatActivity {
         } else {
             Log.d("HUSTLE", ""+requestCode);
         }
-    }
-
-
-    private void doGetShowPoster(String imageUrl) {
-
-        AsyncTask<String, Void, Bitmap> at = new AsyncTask<String, Void, Bitmap>() {
-
-            @Override
-            protected Bitmap doInBackground(String... params) {
-                Bitmap bm;
-                InputStream in = null;
-                try {
-                    in = new java.net.URL(params[0]).openStream();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                bm = BitmapFactory.decodeStream(in);
-                return bm;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                super.onPostExecute(bitmap);
-                posterImageView.setImageBitmap(bitmap);
-                posterBitmap = bitmap;
-
-            }
-        };
-        at.execute(imageUrl);
     }
 
     private void doGetInfoSeason(final Show showInfo, final int seasonNumber){
@@ -309,8 +278,9 @@ public class ShowActivity extends AppCompatActivity {
                 }
             }
         };
-
-        st.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, showInfo.id, "" + seasonNumber);
+        if (CheckConnection.isConnected(this)) {
+            st.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, showInfo.id, "" + seasonNumber);
+        }
     }
 
 
@@ -386,14 +356,16 @@ public class ShowActivity extends AppCompatActivity {
                 }
             }
         };
-        friend_asynctask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (CheckConnection.isConnected(this)) {
+            friend_asynctask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
 
 
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
-        savedInstanceState.putParcelable("poster", posterBitmap);
+        savedInstanceState.putParcelable("poster", show.getThumbnail());
         savedInstanceState.putString("show", showJSON.toString());
         seasonsJSON = show.toSeasonsJSON();
 
@@ -662,7 +634,9 @@ public class ShowActivity extends AppCompatActivity {
             }
         };
 
-        friend_shows_download.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, all_friends, friends_list_adapter);
+        if (CheckConnection.isConnected(this)) {
+            friend_shows_download.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, all_friends, friends_list_adapter);
+        }
     }
 
 

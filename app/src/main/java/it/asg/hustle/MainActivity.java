@@ -68,7 +68,6 @@ import it.asg.hustle.Info.Friend;
 import it.asg.hustle.Info.Show;
 
 import it.asg.hustle.Utils.BitmapCache;
-import it.asg.hustle.Utils.BitmapMemoryCache;
 import it.asg.hustle.Utils.CheckConnection;
 import it.asg.hustle.Utils.DBHelper;
 import it.asg.hustle.Utils.MD5;
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 else if (menuItem.getTitle().equals(getResources().getString(R.string.nav_item_contactus)) == true) {
                     // intent per mandare email
                     Intent i = new Intent(Intent.ACTION_SEND);
-                    i.setType("text/html");
+                    i.setType("application/email");
                     i.putExtra(Intent.EXTRA_EMAIL, new String[]{"hustle.asg@gmail.com"});
                     i.putExtra(Intent.EXTRA_SUBJECT, "[HUSTLE - contact]");
                     //i.putExtra(Intent.EXTRA_TEXT, "(body)");
@@ -458,6 +457,8 @@ public class MainActivity extends AppCompatActivity {
                     if (my_series != null)
                         showMySeries(my_series, gridAdapter[0]);
                 }
+            } else if (tabPosition == 1) {
+                // TODO: fai resume delle serie degli amici
             }
         }
 

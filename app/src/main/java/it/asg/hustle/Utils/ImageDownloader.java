@@ -23,18 +23,23 @@ public class ImageDownloader {
         this.reqWidth = reqWidth;
     }
 
-    public void download(String url, ImageView imageView, ThumbnailViewer tv) {
+    public boolean download(String url, ImageView imageView, ThumbnailViewer tv) {
+
+        if (imageView == null || tv == null) {
+            return false;
+        }
 
         //Bitmap bmp = BitmapMemoryCache.getBitmapFromMemCache(url);
         Bitmap bmp = BitmapCache.get(url);
         if (bmp != null) {
             Log.d("HUSTLE", "foto in cache!");
             imageView.setImageBitmap(bmp);
-            return;
+            tv.setThumbnail(bmp);
+            return true;
         }
         // Se la foto non è in cache e non sei connesso a internet, non scaricare
         if (CheckConnection.isConnected(ctx) == false) {
-            return;
+            return false;
         }
         if (cancelPotentialDownload(url, imageView)) {
             //Log.d("HUSTLE", "ImageDownloader Download OK");
@@ -43,6 +48,7 @@ public class ImageDownloader {
             imageView.setImageDrawable(asyncDrawable);
             task.execute(url);
         }
+        return true;
     }
 
     // Cancella un potenziale download inutile
