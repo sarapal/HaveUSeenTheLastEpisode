@@ -62,7 +62,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;;
+import java.util.Collections;
+import java.util.Locale;;
 
 import it.asg.hustle.Info.Friend;
 import it.asg.hustle.Info.Show;
@@ -452,20 +453,17 @@ public class MainActivity extends AppCompatActivity {
                 if (CheckConnection.isConnected(getActivity())) {
                     downloadMySeries(gridAdapter[0], false);
                 } else if (my_series != null)
-                    showMySeries(my_series, gridAdapter[0]);
+                    showSeries(my_series, gridAdapter[0], true);
                 else {
                     my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
                     if (my_series != null)
-                        showMySeries(my_series, gridAdapter[0]);
+                        showSeries(my_series, gridAdapter[0], true);
                 }
             } else if (tabPosition == 1) {
-                // TODO: fai resume delle serie degli amici
-
                 downloadFriendShows(gridAdapter[tabPosition]);
+            } else if (tabPosition == 2) {
+                downloadMostViewedShows(gridAdapter[tabPosition]);
             }
-
-
-
         }
 
         public static TvShowFragment newInstance(int tabPosition) {
@@ -520,7 +518,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     // Mostra le serie
                     if (my_series != null) {
-                        showMySeries(my_series, gridAdapter[tabPosition]);
+                        showSeries(my_series, gridAdapter[tabPosition], true);
                     }
                 }
             }
@@ -545,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
             return v;
         }
 
-        private void showMySeries(String new_series, GridAdapter gridAdapter) {
+        private void showSeries(String new_series, GridAdapter gridAdapter, boolean my) {
             try {
                 jsonArraySeries = new JSONArray(new_series);
             } catch (JSONException e) {
@@ -575,9 +573,10 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
-            TvShowFragment.my_series = new_series;
-            //Log.d("HUSTLE", "series: " + TvShowFragment.my_series);
+            if (my) {
+                TvShowFragment.my_series = new_series;
+                //Log.d("HUSTLE", "series: " + TvShowFragment.my_series);
+            }
         }
 
         public void downloadMySeries(final GridAdapter gridAdapter, final boolean oncreate) {
@@ -621,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
-                    showMySeries(s, gridAdapter);
+                    showSeries(s, gridAdapter, true);
                 }
             };
             // Se l'id è diverso da null e l'utente è connesso a internet, esegue l'AsyncTask
@@ -629,6 +628,7 @@ public class MainActivity extends AppCompatActivity {
                 at.execute(id);
             }
         }
+
         public void downloadMostViewedShows(final GridAdapter gridAdapter) {
             AsyncTask<Void, Void, String> download = new AsyncTask<Void, Void, String>() {
                 @Override
@@ -670,7 +670,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        
         public void downloadFriendShows(final GridAdapter gridAdapter){
         //async task, prende come parametro la lista amici totale
 
@@ -717,7 +716,6 @@ public class MainActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = options.edit();
                                 editor.putString(user_id, s);
                                 editor.commit();
-
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -733,11 +731,7 @@ public class MainActivity extends AppCompatActivity {
                                         Show friend_show;
                                         GridItem item = new GridItem();
                                         //crea oggetto show
-                                        if(j ==8){
-                                            Log.d("HUSTLE", "possibile errore: "+ friendshowsJSON.get(j).toString());
-                                        }
                                         friend_show = new Show(friendshowsJSON.getJSONObject(j));
-
                                         //aggiunge alla lista personale dell'amico
                                         actual.shows.add(friend_show);
 
