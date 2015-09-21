@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager ;
 
     private boolean logged = false;
-    private static ArrayList<Friend> friendsList;
+    private ArrayList<Friend> friendsList;
 
     private BitmapCache bitmapCache;
 
@@ -636,23 +636,31 @@ public class MainActivity extends AppCompatActivity {
                     Friend actual = null;
                     String user_id = null;
                     ArrayList<GridItem> listItem = new ArrayList<GridItem>();
-                    while(all_friends == null){}
                     for (int i= 0; i < all_friends.size(); i++){
                         actual = all_friends.get(i);
                         user_id = actual.id;
                         actual.shows.clear();
-                        try {
-                            URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
-                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                            InputStream in = new BufferedInputStream(conn.getInputStream());
-                            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                            s = br.readLine();
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
+                        SharedPreferences options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                        s = options.getString(user_id, null);
                         //lettura risposta
+                        if(s==null){
+                            try {
+                                URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
+                                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                InputStream in = new BufferedInputStream(conn.getInputStream());
+                                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                                s = br.readLine();
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = options.edit();
+                            editor.putString(user_id, s);
+                            editor.commit();
+
+                        }
                         if(s!=null) {
                             try {
 
@@ -675,7 +683,6 @@ public class MainActivity extends AppCompatActivity {
 
                                         if (listItem.contains(item)) {
                                             Log.d("HUSTLELOG", "incremento  " +item.getName());
-
                                             listItem.get(listItem.indexOf(item)).addFriend();
                                         } else {
                                             item.addFriend();
@@ -689,6 +696,8 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+
+
                     }
 
                     Collections.sort(listItem);
@@ -731,19 +740,20 @@ public class MainActivity extends AppCompatActivity {
                     new GraphRequest.Callback() {
                         public void onCompleted(GraphResponse response) {
                             try {
-                                Log.d("HUSTLE","amici: " + response.getJSONObject().getJSONArray("data").toString());
+                                Log.d("HUSTLE", "amici: " + response.getJSONObject().getJSONArray("data").toString());
                                 SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = options.edit();
                                 editor.putString("friend_list", response.getJSONObject().getJSONArray("data").toString());
                                 editor.commit();
+                                //get friend list
                                 JSONArray friend_list = response.getJSONObject().getJSONArray("data");
-                                for (int i= 0; i < friend_list.length(); i++){
+                                for (int i = 0; i < friend_list.length(); i++) {
                                     String id = friend_list.getJSONObject(i).getString("id");
-                                    //downloadFriendPhotos(id);
                                 }
                                 friendsList = new ArrayList<Friend>();
+                                //fill friend list
                                 try {
-                                    for (int i= 0; i< friend_list.length(); i++) {
+                                    for (int i = 0; i < friend_list.length(); i++) {
                                         friendsList.add(new Friend(friend_list.getJSONObject(i)));
                                     }
                                 } catch (JSONException e) {
@@ -754,6 +764,7 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+
                     }
             ).executeAsync();
         }
