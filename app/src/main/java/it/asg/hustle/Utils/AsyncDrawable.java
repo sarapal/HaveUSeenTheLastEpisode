@@ -1,6 +1,9 @@
 package it.asg.hustle.Utils;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 
 import java.lang.ref.WeakReference;
@@ -11,12 +14,12 @@ import java.lang.ref.WeakReference;
  * al suo AsyncTask;
  */
 
-class AsyncDrawable extends ColorDrawable {
+class AsyncDrawable extends BitmapDrawable{
 
     private final WeakReference<BitmapDownloader> bitmapDownloaderReference;
 
-    public AsyncDrawable(BitmapDownloader bitmapDownloader) {
-        super(Color.RED);
+    public AsyncDrawable(Resources res, Bitmap bmp, BitmapDownloader bitmapDownloader) {
+        super(res, bmp);
         bitmapDownloaderReference = new WeakReference<BitmapDownloader>(bitmapDownloader);
     }
 
