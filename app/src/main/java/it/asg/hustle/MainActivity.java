@@ -428,9 +428,9 @@ public class MainActivity extends AppCompatActivity {
     public static class TvShowFragment extends Fragment {
 
         private static final String TAB_POSITION = "tab_position";
-
         // Crea un array di gridAdapter
         GridAdapter[] gridAdapter = new GridAdapter[TvShowAdapter.NUMBER_OF_TABS];
+        // RecyclerView
         RecyclerView recyclerView;
 
         // Stringa con il jsonArray delle mie serie
@@ -492,7 +492,9 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(gridLayoutManager);
 
             if (tabPosition == 0){
+                // Crea un nuovo gridAdapter
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                // Imposta l'adapter sulla View
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
                 // Se c'è uno stato salvato, usa quello
                 if (savedInstanceState != null) {
@@ -519,6 +521,7 @@ public class MainActivity extends AppCompatActivity {
             if(tabPosition == 1){
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
+
                 SharedPreferences options = getActivity().getSharedPreferences("friend_list", Context.MODE_PRIVATE);
                 String friend_list_json_string = options.getString("friend_list", null);
                 Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
@@ -550,8 +553,9 @@ public class MainActivity extends AppCompatActivity {
                 return;
 
             gridAdapter.reset();
+            int len = jsonArraySeries.length();
 
-            for(int i=0;i<jsonArraySeries.length();i++){
+            for(int i=0;i<len;i++){
                 try {
                     GridItem g = new GridItem();
                     JSONObject jo = jsonArraySeries.getJSONObject(i);
