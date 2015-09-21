@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class BitmapHelper {
             BitmapFactory.decodeStream(in1, null, options);
             // Calcola il fattore di sampling
             options.inSampleSize = BitmapHelper.calculateInSampleSize(options, reqWidth, reqHeight);
+            //Log.d("HUSTLE", "sampling: " + options.inSampleSize);
         }
 
         // Crea la BitMap con il valore di sampling
