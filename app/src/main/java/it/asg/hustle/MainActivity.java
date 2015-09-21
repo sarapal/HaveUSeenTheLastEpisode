@@ -528,7 +528,6 @@ public class MainActivity extends AppCompatActivity {
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
 
-
                 downloadFriendShows(gridAdapter[tabPosition]);
 
             }
@@ -681,7 +680,11 @@ public class MainActivity extends AppCompatActivity {
                                         Show friend_show;
                                         GridItem item = new GridItem();
                                         //crea oggetto show
+                                        if(j ==8){
+                                            Log.d("HUSTLE", "possibile errore: "+ friendshowsJSON.get(j).toString());
+                                        }
                                         friend_show = new Show(friendshowsJSON.getJSONObject(j));
+
                                         //aggiunge alla lista personale dell'amico
                                         actual.shows.add(friend_show);
 
@@ -692,14 +695,17 @@ public class MainActivity extends AppCompatActivity {
 
                                         if (listItem.contains(item)) {
                                             listItem.get(listItem.indexOf(item)).addFriend();
+                                            Log.d("HUSTLE", item.getName() + " altra volta; " + actual.name);
                                         } else {
                                             item.addFriend();
                                             listItem.add(item);
+                                            Log.d("HUSTLE", item.getName() + " prima volta: "+ item.getFriends() + " ; "+actual.name);
                                         }
                                     }
                                 }
 
                             } catch (JSONException e) {
+                                Log.d("HUSTLE", "errore! +"+actual.name+" :" + s);
                                 e.printStackTrace();
                             }
                         }
