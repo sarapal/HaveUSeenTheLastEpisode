@@ -195,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
             updateLogInServer();
             updateCircleProfile();
             updateFriendList();
+            updateFriendShows();
         }
     }
 
@@ -459,7 +460,25 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else if (tabPosition == 1) {
                 // TODO: fai resume delle serie degli amici
+                SharedPreferences options = getActivity().getSharedPreferences("friend_list", Context.MODE_PRIVATE);
+                String friend_list_json_string = options.getString("friend_list", null);
+                Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
+                ArrayList<Friend> return_list = new ArrayList<Friend>();
+                if(friend_list_json_string != null){
+                    try {
+                        JSONArray friend_list_json = new JSONArray(friend_list_json_string);
+                        for (int i= 0; i< friend_list_json.length(); i++) {
+                            return_list.add(new Friend(friend_list_json.getJSONObject(i)));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                downloadFriendShows(return_list, gridAdapter[tabPosition]);
             }
+
+
+
         }
 
         public static TvShowFragment newInstance(int tabPosition) {
@@ -654,16 +673,13 @@ public class MainActivity extends AppCompatActivity {
                                 InputStream in = new BufferedInputStream(conn.getInputStream());
                                 BufferedReader br = new BufferedReader(new InputStreamReader(in));
                                 s = br.readLine();
-
+                                options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = options.edit();
+                                editor.putString(user_id, s);
+                                editor.commit();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
-                            options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = options.edit();
-                            editor.putString(user_id, s);
-                            editor.commit();
-
                         }
                         if(s!=null) {
                             try {
@@ -686,12 +702,10 @@ public class MainActivity extends AppCompatActivity {
                                         item.setThumbnail(friend_show.bmp);
 
                                         if (listItem.contains(item)) {
-                                            Log.d("HUSTLELOG", "incremento  " +item.getName());
                                             listItem.get(listItem.indexOf(item)).addFriend();
                                         } else {
                                             item.addFriend();
                                             listItem.add(item);
-                                            Log.d("HUSTLELOG", "aggiungo  " + item.getName());
                                         }
                                     }
                                 }
@@ -710,9 +724,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(ArrayList<GridItem> gridList) {
                     super.onPostExecute(gridList);
+                    gridAdapter.mItems.clear();
                     for (GridItem it : gridList) {
                         gridAdapter.mItems.add(it);
-                        Log.d("HUSTLELOG", "tot  " + it.getName());
                     }
                     gridAdapter.notifyDataSetChanged();
                 }
@@ -813,6 +827,62 @@ public class MainActivity extends AppCompatActivity {
         profile_photo_downloader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, id);
         }
 
+    void updateFriendShows(){
+
+
+        AsyncTask<Void, Void, Void> updateFriendShow = new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
+                String friend_list_json_string = options.getString("friend_list", null);
+                Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
+                ArrayList<Friend> return_list = new ArrayList<Friend>();
+                if (friend_list_json_string != null) {
+                    try {
+                        JSONArray friend_list_json = new JSONArray(friend_list_json_string);
+                        for (int i = 0; i < friend_list_json.length(); i++) {
+                            return_list.add(new Friend(friend_list_json.getJSONObject(i)));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String user_id;
+                for (Friend friend : return_list) {
+                    String s = null;
+                    user_id = friend.id;
+                    options = getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                    s = options.getString(user_id, null);
+                    //lettura risposta
+                    if (s == null) {
+                        try {
+                            URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            InputStream in = new BufferedInputStream(conn.getInputStream());
+                            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                            s = br.readLine();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        options = getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = options.edit();
+                        editor.putString(user_id, s);
+                        editor.commit();
+
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void v) {
+                super.onPostExecute(v);
+            }
+
+        };
+    }
 
     void updateCircleProfile() {
         SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
