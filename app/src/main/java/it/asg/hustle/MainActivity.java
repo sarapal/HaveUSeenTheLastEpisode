@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == null || name == null) {
             Log.d("HUSTLE", "Non sei loggato su FB, quindi non puoi essere loggato sul server");
+            Toast.makeText(getApplicationContext(),"Login non effettuato. Effettuare l'accesso per vedere le serie",Toast.LENGTH_SHORT).show();
             logged = false;
             SharedPreferences o = getSharedPreferences("logged", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = o.edit();

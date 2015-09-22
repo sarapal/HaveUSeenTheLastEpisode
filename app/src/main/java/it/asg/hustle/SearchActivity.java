@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import it.asg.hustle.Info.*;
+import it.asg.hustle.Utils.CheckConnection;
 import it.asg.hustle.Utils.DBHelper;
 
 import java.io.BufferedInputStream;
@@ -98,12 +99,18 @@ public class SearchActivity extends AppCompatActivity {
         shows = new ArrayList<Show>();
         adapter = new SearchShowRecyclerAdapter(shows, this);
         rw.setAdapter(adapter);
-        // Effettua la ricerca nel DB locale
-        JSONArray ja = DBHelper.getSeriesByNameFromDB(tvShowTitle, this.locale);
-        if (ja != null) {
-            handleJson(ja, false);
+        if (!CheckConnection.isConnected(getApplicationContext())) {
+            Log.d("HUSTLE","NO connessione. sto scaricando serie dal db locale");
+            // Effettua la ricerca nel DB locale
+            JSONArray ja = DBHelper.getSeriesByNameFromDB(tvShowTitle, this.locale);
+            if (ja != null) {
+                handleJson(ja, false);
+                return;
+            }
+
             return;
         }
+
 
         Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
         final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);

@@ -19,7 +19,7 @@
         <color name="rounded_fb">#3864A3</color>
         <color name="rounded_share">#4caf50</color>
 
-        <color name="title_background">#8f3F51B5</color>
+        <color name="expandedtitle_background">#00ffffff</color>
 
 
 </resources>

@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        >
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
@@ -33,9 +34,10 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin"
+                />
 
-            <TextView
+            <!--<TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/titleSeason"
@@ -46,7 +48,7 @@
                 android:textSize="20dp"
                 android:fontFamily="@string/abc_action_bar_home_description_format"
                 android:textColor="@color/text_primary"
-                />
+                /> -->
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
