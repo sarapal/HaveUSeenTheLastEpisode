@@ -280,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    return;
                 }
                 SharedPreferences o = getSharedPreferences("logged", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = o.edit();
@@ -650,6 +651,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        return null;
                     }
                     Log.d("HUSTLE", "returned: " + s);
                     // Salva le mie serie TV nelle SharedPreferences
@@ -666,7 +668,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
-                    showSeries(s, gridAdapter, true);
+                    if(s!=null) {
+                        showSeries(s, gridAdapter, true);
+                    }
                     swipeView.setRefreshing(false);
                 }
             };
@@ -700,6 +704,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        return null;
                     }
 
                     return s;
@@ -891,6 +896,9 @@ public class MainActivity extends AppCompatActivity {
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                if (friendsList == null){
+                                    friendsList = new ArrayList<Friend>();
+                                }
                             }
                         }
                     }
@@ -981,7 +989,7 @@ public class MainActivity extends AppCompatActivity {
                         editor.putString(user_id, s);
                         editor.commit();
                     } catch (IOException e) {
-                        Log.d("HUSTLE", "ERRORE" + s);
+                        Log.d("HUSTLE", "ERRORE " + s);
                         e.printStackTrace();
                     }
 
