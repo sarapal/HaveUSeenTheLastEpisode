@@ -463,7 +463,7 @@ public class MainActivity extends AppCompatActivity {
                         showSeries(my_series, gridAdapter[0], true);
                 }
             } else if (tabPosition == 1) {
-                downloadFriendShows(gridAdapter[tabPosition]);
+                downloadFriendShows(gridAdapter[tabPosition],false);
             } else if (tabPosition == 2) {
                 downloadMostViewedShows(gridAdapter[tabPosition]);
             }
@@ -486,21 +486,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
             Bundle args = getArguments();
-            int tabPosition = args.getInt(TAB_POSITION);
+            final int tabPosition = args.getInt(TAB_POSITION);
             Log.d("asg","tabPosition "+tabPosition);
 
 
 
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
             swipeView = (SwipeRefreshLayout) v.findViewById(R.id.refresh_swipe_main);
-            swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    Toast.makeText(getActivity(), "refresh!", Toast.LENGTH_LONG).show();
-                }
-            });
+
 
 
             recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
@@ -514,6 +509,20 @@ public class MainActivity extends AppCompatActivity {
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 // Imposta l'adapter sulla View
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
+                //imposta il refresh swipe
+                swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if(CheckConnection.isConnected(getActivity())) {
+                            Log.d("HUSTLE", "refresh on " + tabPosition);
+                            downloadMySeries(gridAdapter[0], true);
+                        }
+                        else{
+                            Toast.makeText(getActivity(),getResources().getString(R.string.toast_failure_refresh),Toast.LENGTH_SHORT).show();
+                            swipeView.setRefreshing(false);
+                        }
+                    }
+                });
                 // Se c'è uno stato salvato, usa quello
                 if (savedInstanceState != null) {
                     my_series = savedInstanceState.getString("my_series");
@@ -539,17 +548,41 @@ public class MainActivity extends AppCompatActivity {
             if(tabPosition == 1){
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
-                downloadFriendShows(gridAdapter[tabPosition]);
+                swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if (CheckConnection.isConnected(getActivity())) {
+                            Log.d("HUSTLE", "refresh on " + tabPosition);
+                            downloadFriendShows(gridAdapter[tabPosition],true);
+                        } else {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_failure_refresh), Toast.LENGTH_SHORT).show();
+                            swipeView.setRefreshing(false);
+                        }
+                    }
+                });
+                if (CheckConnection.isConnected(getActivity())) {
+                    downloadFriendShows(gridAdapter[tabPosition],false);
+                }
 
                 
 
             } else if (tabPosition == 2) {
-                Log.d("MOST", "onCreate");
                 // Crea un nuovo gridAdapter
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 // Imposta l'adapter sulla View
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
-
+                swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if (CheckConnection.isConnected(getActivity())) {
+                            Log.d("HUSTLE", "refresh on " + tabPosition);
+                            downloadMostViewedShows(gridAdapter[tabPosition]);
+                        } else {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.toast_failure_refresh), Toast.LENGTH_SHORT).show();
+                            swipeView.setRefreshing(false);
+                        }
+                    }
+                });
                 downloadMostViewedShows(gridAdapter[tabPosition]);
             }
             return v;
@@ -633,6 +666,7 @@ public class MainActivity extends AppCompatActivity {
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
                     showSeries(s, gridAdapter, true);
+                    swipeView.setRefreshing(false);
                 }
             };
             // Se l'id è diverso da null e l'utente è connesso a internet, esegue l'AsyncTask
@@ -677,7 +711,10 @@ public class MainActivity extends AppCompatActivity {
                     if(s!=null) {
                         Log.d("MOST", s);
                         showSeries(s, gridAdapter, false);
+                        swipeView.setRefreshing(false);
+
                     }
+
                 }
             };
 
@@ -685,7 +722,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public void downloadFriendShows(final GridAdapter gridAdapter){
+        public void downloadFriendShows(final GridAdapter gridAdapter,final Boolean force){
         //async task, prende come parametro la lista amici totale
 
             AsyncTask<ArrayList<Friend>, Void, ArrayList<GridItem>> friend_shows_download = new AsyncTask<ArrayList<Friend>, Void, ArrayList<GridItem>>() {
@@ -716,7 +753,7 @@ public class MainActivity extends AppCompatActivity {
                                 options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
                                 s = options.getString(user_id, null);
                                 //lettura risposta
-                                if(s==null){
+                                if(s==null || force==false){
                                     try {
                                         URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
                                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -753,7 +790,6 @@ public class MainActivity extends AppCompatActivity {
 
                                                 if (listItem.contains(item)) {
                                                     listItem.get(listItem.indexOf(item)).addFriend();
-                                                    Log.d("HUSTLE", item.getName() + " altra volta; " + actual.name);
                                                 } else {
                                                     item.addFriend();
                                                     listItem.add(item);
@@ -789,6 +825,10 @@ public class MainActivity extends AppCompatActivity {
                             gridAdapter.mItems.add(it);
                         }
                         gridAdapter.notifyDataSetChanged();
+                        swipeView.setRefreshing(false);
+                    }
+                    else{
+                        Toast.makeText(getActivity(),getResources().getString(R.string.toast_failure_refresh).toString(), Toast.LENGTH_SHORT).show();
                     }
                 }
             };
@@ -889,7 +929,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     void updateFriendShows(){
-        Log.d("HUSTLE", "Update show amici");
 
         AsyncTask<Void, Void, Void> updateFriendShowTask = new AsyncTask<Void,Void,Void>() {
             @Override
@@ -919,7 +958,7 @@ public class MainActivity extends AppCompatActivity {
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
                         s = br.readLine();
-                        Log.d("HUSTLE", "aggiornato profilo show di " + friend.name+ " con " + s);
+                        Log.d("HUSTLE", "aggiornato profilo show di " + friend.name);
                         options = getSharedPreferences(user_id, Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = options.edit();
                         editor.putString(user_id, s);
@@ -928,8 +967,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("HUSTLE", "ERRORE" + s);
                         e.printStackTrace();
                     }
-
-
 
                 }
 

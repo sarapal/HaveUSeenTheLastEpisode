@@ -30,8 +30,6 @@ public class GridItem implements ThumbnailViewer,Comparable<GridItem> {
 
     public void addFriend(){
         this.friends++;
-        Log.d("HUSTLE", this.getName() + "++ = " + this.getFriends());
-
     }
 
     public int getFriends() {return this.friends;}
