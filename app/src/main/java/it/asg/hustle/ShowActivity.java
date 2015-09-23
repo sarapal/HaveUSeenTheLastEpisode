@@ -248,14 +248,15 @@ public class ShowActivity extends AppCompatActivity {
                 // in modo che la risposta del server conterrà gli episodi già visti (campo "seen" del json object)
                 String x = "";
                 if (id != null && logged)
-                    x = "&user_id="+id;
+                    x = ""+id;
                 //richiesta dati episodi della stagione
                 while (seasonJSON == null) {
                     try {
                         Uri builtUri = Uri.parse("http://hustle.altervista.org/getEpisodes.php?").
                                 buildUpon().
                                 appendQueryParameter("seriesid", params[0]).
-                                appendQueryParameter("season", params[1] + x).
+                                appendQueryParameter("season", params[1]).
+                                appendQueryParameter("user_id", x).
                                 appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
