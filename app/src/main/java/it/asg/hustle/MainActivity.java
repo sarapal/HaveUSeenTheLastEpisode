@@ -41,6 +41,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -437,6 +438,8 @@ public class MainActivity extends AppCompatActivity {
         // RecyclerView
         RecyclerView recyclerView;
         SwipeRefreshLayout swipeView;
+        // Spinner
+        ProgressBar spinner;
 
         // Stringa con il jsonArray delle mie serie
         private static String my_series = null;
@@ -491,8 +494,6 @@ public class MainActivity extends AppCompatActivity {
             int tabPosition = args.getInt(TAB_POSITION);
             Log.d("asg","tabPosition "+tabPosition);
 
-
-
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
             swipeView = (SwipeRefreshLayout) v.findViewById(R.id.refresh_swipe_main);
             swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -502,6 +503,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            spinner = (ProgressBar) v.findViewById(R.id.spinner);
+            spinner.setVisibility(View.GONE);
 
             recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
             recyclerView.setHasFixedSize(true);
@@ -535,14 +538,10 @@ public class MainActivity extends AppCompatActivity {
                         showSeries(my_series, gridAdapter[tabPosition], true);
                     }
                 }
-            }
-            if(tabPosition == 1){
+            } else if(tabPosition == 1){
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
                 downloadFriendShows(gridAdapter[tabPosition]);
-
-                
-
             } else if (tabPosition == 2) {
                 Log.d("MOST", "onCreate");
                 // Crea un nuovo gridAdapter
@@ -597,6 +596,12 @@ public class MainActivity extends AppCompatActivity {
             // Definisce un AsyncTask che scaricherà le serie viste dall'utente
             AsyncTask<String,Void,String> at = new AsyncTask<String, Void, String>() {
                 @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    spinner.setVisibility(View.VISIBLE);
+                }
+
+                @Override
                 protected String doInBackground(String... params) {
                     URL url = null;
                     String s = null;
@@ -634,6 +639,7 @@ public class MainActivity extends AppCompatActivity {
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
                     showSeries(s, gridAdapter, true);
+                    spinner.setVisibility(View.GONE);
                 }
             };
             // Se l'id è diverso da null e l'utente è connesso a internet, esegue l'AsyncTask
@@ -644,6 +650,12 @@ public class MainActivity extends AppCompatActivity {
 
         public void downloadMostViewedShows(final GridAdapter gridAdapter) {
             AsyncTask<Void, Void, String> download = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    spinner.setVisibility(View.VISIBLE);
+                }
+
                 @Override
                 protected String doInBackground(Void... params) {
                     URL url = null;
@@ -679,6 +691,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("MOST", s);
                         showSeries(s, gridAdapter, false);
                     }
+                    spinner.setVisibility(View.GONE);
                 }
             };
 
@@ -690,6 +703,12 @@ public class MainActivity extends AppCompatActivity {
         //async task, prende come parametro la lista amici totale
 
             AsyncTask<ArrayList<Friend>, Void, ArrayList<GridItem>> friend_shows_download = new AsyncTask<ArrayList<Friend>, Void, ArrayList<GridItem>>() {
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    spinner.setVisibility(View.VISIBLE);
+                }
+
                 @Override
                 protected ArrayList<GridItem> doInBackground(ArrayList<Friend> ...params) {
                     SharedPreferences options = getActivity().getSharedPreferences("friend_list", Context.MODE_PRIVATE);
@@ -799,6 +818,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         gridAdapter.notifyDataSetChanged();
                     }
+                    spinner.setVisibility(View.GONE);
                 }
             };
 
