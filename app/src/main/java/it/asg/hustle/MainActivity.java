@@ -719,7 +719,15 @@ public class MainActivity extends AppCompatActivity {
                                 //lettura risposta
                                 if(s==null){
                                     try {
-                                        URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
+                                        Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
+                                                buildUpon().
+                                                appendQueryParameter("user_id", user_id).
+                                                appendQueryParameter("language", Locale.getDefault().getLanguage()).
+                                                build();
+                                        String u = builtUri.toString();
+                                        Log.d("FRIEND", "requesting: " + u);
+                                        URL url = new URL(u);
+                                        //URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id+"&language="+Locale.getDefault().getLanguage());
                                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                                         InputStream in = new BufferedInputStream(conn.getInputStream());
                                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -915,7 +923,15 @@ public class MainActivity extends AppCompatActivity {
                     user_id = friend.id;
 
                     try {
-                        URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
+                        Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
+                                buildUpon().
+                                appendQueryParameter("user_id", user_id).
+                                appendQueryParameter("language", Locale.getDefault().getLanguage()).
+                                build();
+                        String u = builtUri.toString();
+                        Log.d("FRIEND", "requesting: " + u);
+                        URL url = new URL(u);
+                        //URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
