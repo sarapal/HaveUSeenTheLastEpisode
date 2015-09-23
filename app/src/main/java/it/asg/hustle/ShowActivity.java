@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -48,6 +49,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Friend;
@@ -250,7 +252,16 @@ public class ShowActivity extends AppCompatActivity {
                 //richiesta dati episodi della stagione
                 while (seasonJSON == null) {
                     try {
-                        URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + params[0] + "&season=" + params[1] + x);
+                        Uri builtUri = Uri.parse("http://hustle.altervista.org/getEpisodes.php?").
+                                buildUpon().
+                                appendQueryParameter("seriesid", params[0]).
+                                appendQueryParameter("season", params[1] + x).
+                                appendQueryParameter("language", Locale.getDefault().getLanguage()).
+                                build();
+                        String u = builtUri.toString();
+                        Log.d("SEASON", "requesting: " + u);
+                        URL url = new URL(u);
+                        //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + params[0] + "&season=" + params[1] + x);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -332,7 +343,18 @@ public class ShowActivity extends AppCompatActivity {
                 while(s == null) {
                     //richiesta dati episodi dell'amico
                     try {
-                        URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
+                        Uri builtUri = Uri.parse("http://hustle.altervista.org/getEpisodes.php?").
+                                buildUpon().
+                                appendQueryParameter("seriesid", series_id).
+                                appendQueryParameter("season", "all").
+                                appendQueryParameter("user_id", friend_id).
+                                appendQueryParameter("short", "true").
+                                appendQueryParameter("language", Locale.getDefault().getLanguage()).
+                                build();
+                        String u = builtUri.toString();
+                        Log.d("SEASON", "requesting: " + u);
+                        URL url = new URL(u);
+                        //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -614,7 +636,16 @@ public class ShowActivity extends AppCompatActivity {
                     user_id = actual.id;
 
                     try {
-                        URL url = new URL("http://hustle.altervista.org/getSeries_bis.php?user_id_short=" + user_id + "&seriesid_short=" + series_id);
+                        Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries_bis.php?").
+                                buildUpon().
+                                appendQueryParameter("user_id_short", user_id).
+                                appendQueryParameter("seriesid_short", series_id).
+                                appendQueryParameter("language", Locale.getDefault().getLanguage()).
+                                build();
+                        String u = builtUri.toString();
+                        Log.d("FRIEND", "requesting: " + u);
+                        URL url = new URL(u);
+                        //URL url = new URL("http://hustle.altervista.org/getSeries_bis.php?user_id_short=" + user_id + "&seriesid_short=" + series_id);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
