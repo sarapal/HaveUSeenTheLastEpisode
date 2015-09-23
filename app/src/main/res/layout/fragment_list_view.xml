@@ -6,15 +6,20 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:id="@+id/refresh_swipe_main"
+            android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/recyclerview"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="20dp"
-        android:layout_gravity="center">
+            <android.support.v7.widget.RecyclerView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/recyclerview"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center">
 
-    </android.support.v7.widget.RecyclerView>
+            </android.support.v7.widget.RecyclerView>
 
+        </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

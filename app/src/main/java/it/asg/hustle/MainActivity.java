@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -435,6 +436,7 @@ public class MainActivity extends AppCompatActivity {
         GridAdapter[] gridAdapter = new GridAdapter[TvShowAdapter.NUMBER_OF_TABS];
         // RecyclerView
         RecyclerView recyclerView;
+        SwipeRefreshLayout swipeView;
 
         // Stringa con il jsonArray delle mie serie
         private static String my_series = null;
@@ -489,7 +491,18 @@ public class MainActivity extends AppCompatActivity {
             int tabPosition = args.getInt(TAB_POSITION);
             Log.d("asg","tabPosition "+tabPosition);
 
+
+
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
+            swipeView = (SwipeRefreshLayout) v.findViewById(R.id.refresh_swipe_main);
+            swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    Toast.makeText(getActivity(), "refresh!", Toast.LENGTH_LONG).show();
+                }
+            });
+
+
             recyclerView = (RecyclerView) v.findViewById(R.id.recyclerview);
             recyclerView.setHasFixedSize(true);
 
@@ -526,8 +539,6 @@ public class MainActivity extends AppCompatActivity {
             if(tabPosition == 1){
                 gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
-
-
                 downloadFriendShows(gridAdapter[tabPosition]);
 
                 
@@ -662,8 +673,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
-                    Log.d("MOST", s);
-                    showSeries(s, gridAdapter, false);
+
+                    if(s!=null) {
+                        Log.d("MOST", s);
+                        showSeries(s, gridAdapter, false);
+                    }
                 }
             };
 
@@ -681,84 +695,87 @@ public class MainActivity extends AppCompatActivity {
                     String friend_list_json_string = options.getString("friend_list", null);
                     Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
                     ArrayList<Friend> return_list = new ArrayList<Friend>();
+                    ArrayList<GridItem> listItem = new ArrayList<GridItem>();
                     if(friend_list_json_string != null){
                         try {
                             JSONArray friend_list_json = new JSONArray(friend_list_json_string);
                             for (int i= 0; i< friend_list_json.length(); i++) {
                                 return_list.add(new Friend(friend_list_json.getJSONObject(i)));
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
-                    String s=null;
-                    JSONArray friendshowsJSON = null;
+                            String s=null;
+                            JSONArray friendshowsJSON = null;
 
-                    ArrayList<Friend> all_friends = return_list;
-                    Friend actual = null;
-                    String user_id = null;
-                    ArrayList<GridItem> listItem = new ArrayList<GridItem>();
-                    for (int i= 0; i < all_friends.size(); i++){
-                        actual = all_friends.get(i);
-                        user_id = actual.id;
-                        actual.shows.clear();
-                        options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
-                        s = options.getString(user_id, null);
-                        //lettura risposta
-                        if(s==null){
-                            try {
-                                URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
-                                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                                InputStream in = new BufferedInputStream(conn.getInputStream());
-                                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                                s = br.readLine();
+                            ArrayList<Friend> all_friends = return_list;
+                            Friend actual = null;
+                            String user_id = null;
+                            for (int i= 0; i < all_friends.size(); i++){
+                                actual = all_friends.get(i);
+                                user_id = actual.id;
+                                actual.shows.clear();
                                 options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = options.edit();
-                                editor.putString(user_id, s);
-                                editor.commit();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if(s!=null) {
-                            try {
+                                s = options.getString(user_id, null);
+                                //lettura risposta
+                                if(s==null){
+                                    try {
+                                        URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
+                                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                                        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                                        s = br.readLine();
+                                        options = getActivity().getSharedPreferences(user_id, Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = options.edit();
+                                        editor.putString(user_id, s);
+                                        editor.commit();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                if(s!=null) {
+                                    try {
 
-                                friendshowsJSON = new JSONArray(s);
-                                if (friendshowsJSON.length() >= 1) {
-                                    //per ogni amico legge ogni show
+                                        friendshowsJSON = new JSONArray(s);
+                                        if (friendshowsJSON.length() >= 1) {
+                                            //per ogni amico legge ogni show
 
-                                    for (int j = 0; j < friendshowsJSON.length(); j++) {
-                                        Show friend_show;
-                                        GridItem item = new GridItem();
-                                        //crea oggetto show
-                                        friend_show = new Show(friendshowsJSON.getJSONObject(j));
-                                        //aggiunge alla lista personale dell'amico
-                                        actual.shows.add(friend_show);
+                                            for (int j = 0; j < friendshowsJSON.length(); j++) {
+                                                Show friend_show;
+                                                GridItem item = new GridItem();
+                                                //crea oggetto show
+                                                friend_show = new Show(friendshowsJSON.getJSONObject(j));
+                                                //aggiunge alla lista personale dell'amico
+                                                actual.shows.add(friend_show);
 
-                                        //se è gia nella lista icrementa il contatore, altrimenti lo aggiunge
-                                        item.setShow(friend_show);
-                                        item.setName(friend_show.title);
-                                        item.setThumbnail(friend_show.bmp);
+                                                //se è gia nella lista icrementa il contatore, altrimenti lo aggiunge
+                                                item.setShow(friend_show);
+                                                item.setName(friend_show.title);
+                                                item.setThumbnail(friend_show.bmp);
 
-                                        if (listItem.contains(item)) {
-                                            listItem.get(listItem.indexOf(item)).addFriend();
-                                            Log.d("HUSTLE", item.getName() + " altra volta; " + actual.name);
-                                        } else {
-                                            item.addFriend();
-                                            listItem.add(item);
+                                                if (listItem.contains(item)) {
+                                                    listItem.get(listItem.indexOf(item)).addFriend();
+                                                    Log.d("HUSTLE", item.getName() + " altra volta; " + actual.name);
+                                                } else {
+                                                    item.addFriend();
+                                                    listItem.add(item);
+                                                }
+                                            }
                                         }
+
+                                    } catch (JSONException e) {
+                                        Log.d("HUSTLE", "errore! +"+actual.name+" :" + s);
+                                        e.printStackTrace();
                                     }
                                 }
 
-                            } catch (JSONException e) {
-                                Log.d("HUSTLE", "errore! +"+actual.name+" :" + s);
-                                e.printStackTrace();
+
                             }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            return null;
                         }
-
-
                     }
+
+
 
                     Collections.sort(listItem);
                     return listItem;
@@ -766,11 +783,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(ArrayList<GridItem> gridList) {
                     super.onPostExecute(gridList);
-                    gridAdapter.mItems.clear();
-                    for (GridItem it : gridList) {
-                        gridAdapter.mItems.add(it);
+                    if (gridList != null) {
+                        gridAdapter.mItems.clear();
+                        for (GridItem it : gridList) {
+                            gridAdapter.mItems.add(it);
+                        }
+                        gridAdapter.notifyDataSetChanged();
                     }
-                    gridAdapter.notifyDataSetChanged();
                 }
             };
 
@@ -785,6 +804,7 @@ public class MainActivity extends AppCompatActivity {
             updateCircleProfile();
             updateLogInServer();
             updateFriendList();
+            updateFriendShows();
         }
     }
 
