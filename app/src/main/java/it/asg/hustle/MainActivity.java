@@ -604,6 +604,7 @@ public class MainActivity extends AppCompatActivity {
                         Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
                                 buildUpon().
                                 appendQueryParameter("user_id", id).
+                                appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
                         Log.d("HUSTLE", "requesting: " + u);
