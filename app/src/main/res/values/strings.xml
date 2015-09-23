@@ -40,6 +40,7 @@
     <string name="rating_text_title_episode">Rating</string>
     <string name="rating_text_title_show">Rating</string>
     <string name="card_friends_title_episode">Watched by:</string>
+    <string name="toast_failure_refresh">Unable to perform update</string>
 
 </resources>
 
