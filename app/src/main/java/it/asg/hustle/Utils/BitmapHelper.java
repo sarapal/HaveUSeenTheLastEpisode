@@ -49,7 +49,7 @@ public class BitmapHelper {
             BitmapFactory.decodeStream(in1, null, options);
             // Calcola il fattore di sampling
             options.inSampleSize = BitmapHelper.calculateInSampleSize(options, reqWidth, reqHeight);
-            //Log.d("HUSTLE", "sampling: " + options.inSampleSize);
+            Log.d("DIMENSIONI", "sampling: " + options.inSampleSize);
         }
 
         // Crea la BitMap con il valore di sampling
