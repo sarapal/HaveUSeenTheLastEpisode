@@ -276,6 +276,8 @@ public class ShowActivity extends AppCompatActivity {
                         s = br.readLine();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    } catch(Exception e){
+                        e.printStackTrace();
                     }
                     //creazione array dalla risposta
                     try {

@@ -262,6 +262,8 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
                 Log.d("HUSTLE", "returned: " + s);
                 return s;
@@ -657,7 +659,11 @@ public class MainActivity extends AppCompatActivity {
                         s = br.readLine();
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
+                        return null;
                     } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    } catch (Exception e) {
                         e.printStackTrace();
                         return null;
                     }
@@ -717,7 +723,11 @@ public class MainActivity extends AppCompatActivity {
                         s = br.readLine();
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
+                        return null;
                     } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }catch(Exception e){
                         e.printStackTrace();
                         return null;
                     }
@@ -802,6 +812,8 @@ public class MainActivity extends AppCompatActivity {
                                         editor.commit();
                                     } catch (IOException e) {
                                         e.printStackTrace();
+                                    }catch(Exception e){
+                                        e.printStackTrace();
                                     }
                                 }
                                 if(s!=null) {
@@ -836,12 +848,17 @@ public class MainActivity extends AppCompatActivity {
                                     } catch (JSONException e) {
                                         Log.d("HUSTLE", "errore! +"+actual.name+" :" + s);
                                         e.printStackTrace();
+                                    }catch(Exception e){
+                                        e.printStackTrace();
                                     }
                                 }
 
 
                             }
                         } catch (JSONException e) {
+                            e.printStackTrace();
+                            return null;
+                        }catch(Exception e){
                             e.printStackTrace();
                             return null;
                         }
@@ -922,6 +939,8 @@ public class MainActivity extends AppCompatActivity {
                                 if (friendsList == null){
                                     friendsList = new ArrayList<Friend>();
                                 }
+                            }catch(Exception e){
+                                e.printStackTrace();
                             }
                         }
                     }
@@ -948,6 +967,8 @@ public class MainActivity extends AppCompatActivity {
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
                     br.readLine();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                }catch(Exception e){
                     e.printStackTrace();
                 }
                 //creazione array dalla risposta
@@ -1013,6 +1034,8 @@ public class MainActivity extends AppCompatActivity {
                         editor.commit();
                     } catch (IOException e) {
                         Log.d("HUSTLE", "ERRORE " + s);
+                        e.printStackTrace();
+                    }catch(Exception e){
                         e.printStackTrace();
                     }
 

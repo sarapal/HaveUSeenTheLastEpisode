@@ -36,11 +36,12 @@
     <string name="card_friends_title">Friends watching the show</string>
     <string name="card_actors_title">Actors</string>
     <string name="card_genre_title">Genre</string>
-    <string name="description_text_title_episode">Episode overview</string>
     <string name="rating_text_title_episode">Rating</string>
     <string name="rating_text_title_show">Rating</string>
     <string name="card_friends_title_episode">Watched by:</string>
     <string name="toast_failure_refresh">Unable to perform update</string>
+    <string name="description_text_title_episode">Plot</string>
+    <string name="nav_item_settings">Settings</string>
 
 </resources>
 

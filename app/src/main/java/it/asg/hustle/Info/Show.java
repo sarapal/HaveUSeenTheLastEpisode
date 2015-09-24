@@ -57,7 +57,7 @@ public class Show implements ThumbnailViewer {
                 this.genre = jo.getString("genre");
             }
             if (jo.has("actors")) {
-                this.actors = jo.getString("actors");
+                this.actors = parseActors(jo.getString("actors"));
             }
             if (jo.has("fanart")) {
                 this.fanart = jo.getString("fanart");
@@ -96,6 +96,18 @@ public class Show implements ThumbnailViewer {
         this.bmp = null;
         Log.d("HUSTLE", "Show creato con lingua: " + this.language);
     }
+
+    private String parseActors(String actors) {
+        String s = actors;
+
+        s = s.replace("|", ",");
+
+        String a = s.substring(1,s.length()-1);
+
+        return a;
+    };
+
+
 
     public JSONObject toJSON()
     {
