@@ -713,6 +713,7 @@ public class ShowActivity extends AppCompatActivity {
                     progressBar.setProgress(Integer.parseInt(n));
                     Log.d("HUSTLEprogress", "risultato: "+Integer.parseInt(n) + " di 10000");
 
+
                 }
 
 
