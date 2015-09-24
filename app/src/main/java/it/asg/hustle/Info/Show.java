@@ -31,6 +31,7 @@ public class Show implements ThumbnailViewer {
     public JSONObject source;
     public ArrayList<Season> seasonsList;
     public ArrayList<Friend> friends = null;
+    public Episode lastViewed = null;
 
 
     public Show(String title)
@@ -59,6 +60,7 @@ public class Show implements ThumbnailViewer {
             if (jo.has("actors")) {
                 this.actors = parseActors(jo.getString("actors"));
             }
+
             if (jo.has("fanart")) {
                 this.fanart = jo.getString("fanart");
             }
@@ -90,6 +92,11 @@ public class Show implements ThumbnailViewer {
             this.language = new String(jo.getString("language"));
 
             this.source = jo;
+            if (jo.has("last")) {
+                if(jo.getJSONObject("last") != null) {
+                    this.lastViewed = new Episode(jo.getJSONObject("last"));
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

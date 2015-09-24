@@ -35,6 +35,7 @@ public class Episode implements ThumbnailViewer {
     public String seriesID;
     public String overview;
     public String language;
+    public int seasonEpisodeNumber;
     public String bmpPath;
     public double rating;
     public Bitmap bmp;
@@ -91,6 +92,16 @@ public class Episode implements ThumbnailViewer {
             }
 
             this.source = jo;
+
+            if (jo.has("seasonEpisodeNumber")) {
+                try{
+                    this.seasonEpisodeNumber = Integer.parseInt(jo.getString("seasonEpisodeNumber"));
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    this.seasonEpisodeNumber = 0;
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
