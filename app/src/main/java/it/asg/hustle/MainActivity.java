@@ -50,6 +50,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BitmapCache bitmapCache;
 
+    private ShareDialog shareDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +135,9 @@ public class MainActivity extends AppCompatActivity {
         //prendo DrawerLayout
         myDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        // abilito tasto share della drawer
+        shareDialog = new ShareDialog(this);
+
         //click elementi su NavigationDrawer
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -144,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
                     Intent intentactivityfacebook = new Intent(MainActivity.this, FacebookActivity.class);
                     startActivity(intentactivityfacebook);
 
+                }
+                else if (menuItem.getTitle().equals(getResources().getString(R.string.nav_item_share)) == true) {
+                    // stai cliccando sul tasto che permette la condivisione
+                    ShareLinkContent content = new ShareLinkContent.Builder().build();
+                    shareDialog.show(content);
                 }
                 else if (menuItem.getTitle().equals(getResources().getString(R.string.nav_item_tvshow)) == true) {
                     // stai cliccando sul tasto che riporta alle tue serie tv
