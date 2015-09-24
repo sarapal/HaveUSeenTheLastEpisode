@@ -1,5 +1,8 @@
 package it.asg.hustle;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +22,9 @@ import it.asg.hustle.Info.Friend;
 public class FriendsAdapter extends RecyclerView
         .Adapter<FriendsAdapter
         .FriendHolder> {
+    private Context context;
     private ArrayList<Friend> friends;
+
 
     public static class FriendHolder extends RecyclerView.ViewHolder{
         TextView friend_name;
@@ -33,8 +38,10 @@ public class FriendsAdapter extends RecyclerView
         }
     }
 
-    public FriendsAdapter(ArrayList<Friend> myDataset) {
+    public FriendsAdapter(ArrayList<Friend> myDataset, Context context) {
         friends = myDataset;
+
+        this.context=context;
     }
 
     @Override
@@ -43,14 +50,27 @@ public class FriendsAdapter extends RecyclerView
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.cardview_friend_item, parent, false);
 
+
         FriendHolder dataObjectHolder = new FriendHolder(view);
         return dataObjectHolder;
     }
 
     @Override
-    public void onBindViewHolder(FriendHolder holder, int position) {
+    public void onBindViewHolder(final FriendHolder holder, final int position) {
         holder.friend_name.setText(friends.get(position).getName());
         holder.friend_photo.setProfileId(friends.get(position).getId());
+
+        holder.friend_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context,FriendActivity.class);
+                i.putExtra("id", friends.get(position).getId());
+                i.putExtra("name", friends.get(position).getName());
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Log.d("HUSTLE","HAI CLICCATO SU UN AMICO");
+                context.startActivity(i);
+            }
+        });
     }
 
 

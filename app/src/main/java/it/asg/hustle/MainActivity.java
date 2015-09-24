@@ -191,6 +191,14 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         // Imposta
         circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.circleView);
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // accesso facebook se clicchi sulla foto
+                Intent intentactivityfacebook = new Intent(MainActivity.this, FacebookActivity.class);
+                startActivity(intentactivityfacebook);
+            }
+        });
         profilePictureInvisible = (com.facebook.login.widget.ProfilePictureView)findViewById(R.id.profilePictureInvisible);
         account_name_facebook_tv = (TextView) findViewById(R.id.account_name_facebook);
         //Log.d("HUSTLE", "profilePictureInvisible: " + profilePictureInvisible);
