@@ -15,6 +15,7 @@
         <color name="cardview_title">#FFFFFF</color>
         <color name="cardview_text">#FFCDCDCD</color>
         <color name="info_cv_background">#c5cae9</color>
+        <color name="progressbar_background">#83010101</color>
 
         <color name="rounded_fb">#3864A3</color>
         <color name="rounded_share">#4caf50</color>

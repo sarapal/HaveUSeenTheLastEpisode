@@ -699,6 +699,10 @@ public class ShowActivity extends AppCompatActivity {
                 int actualEpisodeNumber = lastEpisode.episodeNumber;
                 int actualSeason  = lastEpisode.season;
                 int actualSeasonNumberEpisodes  = lastEpisode.seasonEpisodeNumber;
+
+                if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
+                    return null;
+                }
                 Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
 
 
@@ -709,14 +713,11 @@ public class ShowActivity extends AppCompatActivity {
             protected void onPostExecute(String n) {
                 super.onPostExecute(n);
                 if (n != null){
+                    progressBar.setVisibility(View.VISIBLE);
                     progressBar.setMax(10000);
                     progressBar.setProgress(Integer.parseInt(n));
-                    Log.d("HUSTLEprogress", "risultato: "+Integer.parseInt(n) + " di 10000");
-
-
+                    Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
                 }
-
-
             }
         };
         if (CheckConnection.isConnected(context)) {

@@ -12,6 +12,18 @@ public class GridItem implements ThumbnailViewer,Comparable<GridItem> {
     private Show mShow;
     private int friends;
 
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    private int progress = -1;
+
+
+
     @Override
     public boolean equals(Object o) {
         GridItem gridItem = (GridItem) o;

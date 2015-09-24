@@ -52,6 +52,7 @@ public class Episode implements ThumbnailViewer {
     public Episode(JSONObject jo) {
         Log.d("HUSTLE", "Chiamato costruttore episode con parametro: " + jo.toString());
         this.watchingFriends =new ArrayList<Friend>();
+        this.bmp = null;
         try {
             if (jo.has("filename")) {
                 this.bmpPath = jo.getString("filename");
@@ -95,7 +96,12 @@ public class Episode implements ThumbnailViewer {
 
             if (jo.has("seasonEpisodeNumber")) {
                 try{
-                    this.seasonEpisodeNumber = Integer.parseInt(jo.getString("seasonEpisodeNumber"));
+                    if(jo.getString("seasonEpisodeNumber").length()!=0) {
+                        this.seasonEpisodeNumber = Integer.parseInt(jo.getString("seasonEpisodeNumber"));
+                    }
+                    else{
+                        this.seasonEpisodeNumber=0;
+                    }
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -105,7 +111,6 @@ public class Episode implements ThumbnailViewer {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        this.bmp = null;
         Log.d("HUSTLE", "Episode creato ");
     }
 

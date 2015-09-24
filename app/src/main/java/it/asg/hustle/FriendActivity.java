@@ -36,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
+import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.CheckConnection;
 
@@ -79,6 +80,7 @@ public class FriendActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         id = b.getString("id");
         name = b.getString("name");
+        gridAdapter.user_id = id;
 
         profilePicture = (com.facebook.login.widget.ProfilePictureView) findViewById(R.id.profilePicture);
         profilePicture.setProfileId(id);
@@ -201,6 +203,80 @@ public class FriendActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
         int dp = (int) ((px/displayMetrics.density)+0.5);
         return dp;
+    }
+
+    private static void doGetProgress(final Context context,final String series_id, final String user_id, final Show showProgress,final ProgressBar progressBar,final GridItem griditem){
+
+        AsyncTask<String, Void, String> progress_asynctask = new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+                Episode lastEpisode;
+                JSONObject lastEpisodeJSON = null;
+                String s = null;
+
+                //richiesta dati episodi
+                try {
+                    Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
+                            buildUpon().
+                            appendQueryParameter("progress", "true").
+                            appendQueryParameter("seriesid", series_id).
+                            appendQueryParameter("user_id", user_id).
+                            appendQueryParameter("language", Locale.getDefault().getLanguage()).
+                            build();
+                    String u = builtUri.toString();
+                    Log.d("SEASON", "requesting: " + u);
+                    URL url = new URL(u);
+                    //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    InputStream in = new BufferedInputStream(conn.getInputStream());
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                    s = br.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+
+                //creazione array dalla risposta
+                try {
+                    lastEpisodeJSON = new JSONObject(s);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+                if (lastEpisodeJSON == null)
+                    return null;
+
+                lastEpisode = new Episode(lastEpisodeJSON);
+                int numberOfSeasons = showProgress.seasonNumber;
+                int actualEpisodeNumber = lastEpisode.episodeNumber;
+                int actualSeason  = lastEpisode.season;
+                int actualSeasonNumberEpisodes  = lastEpisode.seasonEpisodeNumber;
+                if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
+                    return null;
+                }
+                Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
+
+
+                return ""+((10000/numberOfSeasons)*(actualSeason-1) + (10000/numberOfSeasons/actualSeasonNumberEpisodes)*actualEpisodeNumber);
+            }
+
+            @Override
+            protected void onPostExecute(String n) {
+                super.onPostExecute(n);
+                if (n != null){
+                    griditem.setProgress(Integer.parseInt(n));
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setMax(10000);
+                    progressBar.setProgress(Integer.parseInt(n));
+                    Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
+                }
+            }
+        };
+        if (CheckConnection.isConnected(context)) {
+            progress_asynctask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
 }
