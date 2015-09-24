@@ -110,14 +110,14 @@ public class ShowActivity extends AppCompatActivity {
                     show = new Show(showJSON);
 
                     int dimPX = getDisplayDimensionsPX();
-                    Log.d("DIMENSIONI", ""+dimPX);
-                    int heightPX = dimPX*1080/1920;
+                    //Log.d("DIMENSIONI", ""+dimPX);
+                    //int heightPX = dimPX*1080/1920;
 
-                    Log.d("DIMENSIONI", dimPX + " " + heightPX);
+                    //Log.d("DIMENSIONI", dimPX + " " + heightPX);
 
-                    ((ImageView) findViewById(R.id.show_activity_poster)).setMaxHeight(heightPX);
+                    //((ImageView) findViewById(R.id.show_activity_poster)).setMaxHeight(heightPX);
 
-                    if (!new ImageDownloader(this, dimPX, heightPX).download(show.fanart, posterImageView, show)) {
+                    if (!new ImageDownloader(this, dimPX, dimPX).download(show.fanart, posterImageView, show)) {
                         Log.d("HUSTLE", "Gli arriva il NULL");
                     }
                     doGetInfo(show);
