@@ -25,6 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -111,14 +112,14 @@ public class ShowActivity extends AppCompatActivity {
                     show = new Show(showJSON);
 
                     int dimPX = getDisplayDimensionsPX();
-                    Log.d("DIMENSIONI", ""+dimPX);
-                    int heightPX = dimPX*1080/1920;
+                    //Log.d("DIMENSIONI", ""+dimPX);
+                    //int heightPX = dimPX*1080/1920;
 
-                    Log.d("DIMENSIONI", dimPX + " " + heightPX);
+                    //Log.d("DIMENSIONI", dimPX + " " + heightPX);
 
-                    ((ImageView) findViewById(R.id.show_activity_poster)).setMaxHeight(heightPX);
+                    //((ImageView) findViewById(R.id.show_activity_poster)).setMaxHeight(heightPX);
 
-                    if (!new ImageDownloader(this, dimPX, heightPX).download(show.fanart, posterImageView, show)) {
+                    if (!new ImageDownloader(this, dimPX, dimPX).download(show.fanart, posterImageView, show)) {
                         Log.d("HUSTLE", "Gli arriva il NULL");
                     }
                     doGetInfo(show);
@@ -150,7 +151,7 @@ public class ShowActivity extends AppCompatActivity {
 
         //scarico la lista amici che vedono la serie
         show_friends = new ArrayList<Friend>();
-        adapter_friends = new FriendsAdapter(show_friends);
+        adapter_friends = new FriendsAdapter(show_friends,getApplicationContext());
         all_friends = getFriendList();
         downloadFriendShows(all_friends, show_friends, show.id);
 
@@ -471,7 +472,7 @@ public class ShowActivity extends AppCompatActivity {
             int tabPosition = args.getInt(TAB_POSITION);
 
             if (ShowActivity.viewPager.getCurrentItem() == 0) {
-                ((FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll)).setVisibility(View.INVISIBLE);
+                ((FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll)).setVisibility(View.GONE);
             }
             else{
                 ((FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll)).setVisibility(View.VISIBLE);
@@ -528,6 +529,12 @@ public class ShowActivity extends AppCompatActivity {
                 TextView card_actors = (TextView) v.findViewById(R.id.card_actors_text);
                 TextView card_genre = (TextView) v.findViewById(R.id.card_genre_text);
                 card_actors.setText(show.actors);
+                card_actors.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("HUSTLE","CLICCO SU CARD ATTORI");
+                    }
+                });
                 card_genre.setText(show.genre);
                 checkall = (FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll);
 
@@ -552,7 +559,7 @@ public class ShowActivity extends AppCompatActivity {
             }
 
             if (ShowActivity.viewPager.getCurrentItem() == 0) {
-                checkall.setVisibility(View.INVISIBLE);
+                checkall.setVisibility(View.GONE);
             }
             else{
                 checkall.setVisibility(View.VISIBLE);

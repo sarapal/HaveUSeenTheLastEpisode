@@ -99,7 +99,7 @@ public class EpisodeActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview_friends_card_episode);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.setAdapter(new FriendsAdapter(ep.watchingFriends));
+        recyclerView.setAdapter(new FriendsAdapter(ep.watchingFriends,getApplicationContext()));
     }
 
     @Override
