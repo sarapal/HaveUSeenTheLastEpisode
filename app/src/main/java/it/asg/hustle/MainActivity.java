@@ -67,7 +67,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Locale;;
+import java.util.Locale;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Friend;
