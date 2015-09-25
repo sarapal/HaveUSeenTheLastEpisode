@@ -43,7 +43,7 @@ import it.asg.hustle.Utils.ImageDownloader;
 public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     ArrayList<GridItem> mItems;
     Context ctx;
-    public String user_id="";
+    public String user_id_adapter=null;
     public String name_id="";
 
     public GridAdapter(Context ctx) {
@@ -76,14 +76,12 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             viewHolder.progressBar.setProgress(item.getProgress());
             viewHolder.progressBar.setVisibility(View.VISIBLE);
         }
-        if(item.getProgress() == -1 && this.user_id!=null) {
+        if(this.user_id_adapter!=null) {
             viewHolder.progressBar.setVisibility(View.INVISIBLE);
-            if(item.getShow().progress == -1){
-            doGetProgress(this.ctx, item.getShow().id, this.user_id + "", item.getShow(), viewHolder.progressBar, item);
-            }
-            else{
-                viewHolder.progressBar.setProgress(item.getShow().progress);
-            }
+
+            doGetProgress(this.ctx, item.getShow().id, this.user_id_adapter + "", item.getShow(), viewHolder.progressBar, item);
+
+
 
         }
 
@@ -115,7 +113,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ShowActivity.class);
                 intent.putExtra("show", item.getShow().toJSON().toString());
-                intent.putExtra("idProgress",user_id);
+                intent.putExtra("idProgress",user_id_adapter);
                 Log.d("HUSTLE", "devo far nome: " + name_id);
                 intent.putExtra("nameProgress",name_id);
                 context.startActivity(intent);
@@ -163,7 +161,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                             appendQueryParameter("language", Locale.getDefault().getLanguage()).
                             build();
                     String u = builtUri.toString();
-                    Log.d("SEASON", "requesting: " + u);
+                    Log.d("HUSTLE", "requesting: " + u);
                     URL url = new URL(u);
                     //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();

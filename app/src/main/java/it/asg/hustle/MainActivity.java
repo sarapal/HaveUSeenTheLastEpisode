@@ -479,11 +479,14 @@ public class MainActivity extends AppCompatActivity {
             int tabPosition = args.getInt(TAB_POSITION);
 
             if (tabPosition == 0) {
+
                 Log.d("HUSTLE", "onResume fragment delle mie serie TV");
                 final String id = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
+                gridAdapter[tabPosition].user_id_adapter=id;
                 if (id == null) {
                     Log.d("DADADA", "ID E NULL");
                     gridAdapter[0].reset();
+
                     gridAdapter[0].notifyDataSetChanged();
                     my_series = null;
                     return;
@@ -499,7 +502,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else if (tabPosition == 1) {
                 downloadFriendShows(gridAdapter[tabPosition],false);
+                gridAdapter[tabPosition].user_id_adapter=null;
             } else if (tabPosition == 2) {
+                gridAdapter[tabPosition].user_id_adapter=null;
                 downloadMostViewedShows(gridAdapter[tabPosition]);
             }
         }
@@ -547,7 +552,8 @@ public class MainActivity extends AppCompatActivity {
                 //gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 SharedPreferences options = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
                 String id = options.getString("id_facebook", null);
-                gridAdapter[tabPosition].user_id=id;
+                gridAdapter[tabPosition].user_id_adapter=id;
+                Log.d("HUSTLEu","id da associare a adapter "+gridAdapter[tabPosition].user_id_adapter);
                 // Imposta l'adapter sulla View
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
                 //imposta il refresh swipe
@@ -591,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
-                gridAdapter[tabPosition].user_id="";
+                gridAdapter[tabPosition].user_id_adapter=null;
                 gridAdapter[tabPosition].name_id="";
                 swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -618,7 +624,7 @@ public class MainActivity extends AppCompatActivity {
                 // Crea un nuovo gridAdapter
                 //gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 // Imposta l'adapter sulla View
-                gridAdapter[tabPosition].user_id="";
+                gridAdapter[tabPosition].user_id_adapter=null;
                 gridAdapter[tabPosition].name_id="";
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
                 swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

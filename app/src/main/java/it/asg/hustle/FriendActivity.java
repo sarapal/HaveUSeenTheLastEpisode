@@ -80,7 +80,7 @@ public class FriendActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         id = b.getString("id");
         name = b.getString("name");
-        gridAdapter.user_id = ""+id;
+        gridAdapter.user_id_adapter = ""+id;
         gridAdapter.name_id = ""+name;
 
         profilePicture = (com.facebook.login.widget.ProfilePictureView) findViewById(R.id.profilePicture);

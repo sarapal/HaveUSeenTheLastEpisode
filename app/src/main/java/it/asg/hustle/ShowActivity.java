@@ -99,8 +99,6 @@ public class ShowActivity extends AppCompatActivity {
 
         //caso in cui l'activity è stata stoppata o messa in pausa, ricrea i dati dai savedInstanceState
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster
-        if (savedInstanceState != null) friend_id = savedInstanceState.getString("friend_id"); //ripristina id amico progresso
-        if (savedInstanceState != null) friend_name = savedInstanceState.getString("friend_name"); //ripristina id amico progresso
 
         //Log.d("HUSTLE", "Devo far vedere il progresso per nome: " + friend_name + " e id: " + friend_id);
 
@@ -120,29 +118,12 @@ public class ShowActivity extends AppCompatActivity {
 
             if (b != null) {
                 String s = b.getString("show");
-                friend_id=b.getString("idProgress");
-                friend_name = b.getString("nameProgress");
-                Log.d("HUSTLE", "Devo far vedere il progresso per nome: " + friend_name + " e id: " + friend_id);
                 try {
                     showJSON = new JSONObject(s);
                     show = new Show(showJSON);
 
                     String id_bundle=null;
                     String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
-                    try{
-                        if(show.lastViewed!= null){
-
-                            if(show.lastViewed.user_id.compareTo(id)!=0) {
-                                friend_id = show.lastViewed.user_id;
-                                friend_progress=show.progress;
-                                show.progress=-1;
-                            }
-                        }
-
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
 
 
                     int dimPX = getDisplayDimensionsPX();
@@ -527,71 +508,33 @@ public class ShowActivity extends AppCompatActivity {
             if (tabPosition == 0){
                 v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
                 final TextView card_progress = (TextView) v.findViewById(R.id.card_description_progress);
-                final TextView card_progress_friend = (TextView) v.findViewById(R.id.card_description_progress_friend);
-                ProfilePictureView profile = (ProfilePictureView) v.findViewById(R.id.friend_id_picture_progress);
                 //progress bar
                 CardView progressCard = (CardView) v.findViewById(R.id.cardview_progress);
-                CardView progressCardFriend = (CardView) v.findViewById(R.id.cardview_progress_friend);
                 final ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress_bar_value);
-                final ProgressBar progressBarFriend = (ProgressBar) v.findViewById(R.id.progress_bar_value_friend);
                 progressBar.setMax(10000);
-                progressBarFriend.setMax(10000);
                 final String userid = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
                 final String nameid = getActivity().getSharedPreferences("name_facebook", Context.MODE_PRIVATE).getString("name_facebook", null);
                 String init = getActivity().getResources().getString(R.string.last_seen);
                 if(userid != null && nameid != null){
                     if(show.lastViewed!=null){
-                        if(friend_id==null){
-                            progressBar.setProgress(show.progress);
-                            card_progress.setText(init + " " + nameid + ": " + show.lastViewed.episodeNumber + "X" + show.lastViewed.season + ": " + show.lastViewed.title);
-                        }
-                        else{
-                            progressCardFriend.setVisibility(View.VISIBLE);
-                            profile.setProfileId(friend_id);
-                            progressBarFriend.setProgress(friend_progress);
-                            doGetProgress(getActivity(), show.id, friend_id, show, progressBarFriend, card_progress_friend, friend_name, true);
-                        }
+
+                        progressBar.setProgress(show.progress);
+                        card_progress.setText(init + " " + nameid + ": " + show.lastViewed.episodeNumber + "X" + show.lastViewed.season + ": " + show.lastViewed.title);
+
                     }
                     if(show.lastViewed==null){
                         doGetProgress(getActivity(), show.id, userid, show, progressBar, card_progress, nameid, false);
                     }
                 }
-                /*
-                if(show.progress!=-1 && show.lastViewed!=null){
-                    progressBar.setProgress(show.progress);
-                    card_progress.setText(init + " " + nameid + ": " + show.lastViewed.episodeNumber + "X" + show.lastViewed.season + ": " + show.lastViewed.title);
-                }
-                else{
-                    if(nameid!=null && userid!=null) {
-                        doGetProgress(getActivity(), show.id, userid, show, progressBar, card_progress, nameid, false);
-                    }
 
-                }
-                if(friend_id!=null && friend_name!=null){
-                    if(friend_progress!=-1 && friend_lastViewed!=null){
-                        progressCardFriend.setVisibility(View.VISIBLE);
-                        progressBarFriend.setProgress(friend_progress);
-                        card_progress_friend.setText(init +" "+friend_name+": "+ friend_lastViewed.episodeNumber + "X" + friend_lastViewed.season + ": " + friend_lastViewed.title);
-                    }
-                    else{
-                        progressBarFriend.setVisibility(View.VISIBLE);
-                        doGetProgress(getActivity(), show.id, friend_id, show, progressBarFriend, card_progress_friend, friend_name,true);
-                    }
-                }
-*/
+
                 progressCard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         doGetProgress(getActivity(), show.id, userid, show, progressBar,card_progress,nameid,false);
                     }
                 });
-                progressCardFriend.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        progressBarFriend.setVisibility(View.VISIBLE);
-                        doGetProgress(getActivity(), show.id, friend_id, show, progressBarFriend, card_progress_friend, friend_name,true);
-                    }
-                });
+
 
 
                 //description card
@@ -789,12 +732,9 @@ public class ShowActivity extends AppCompatActivity {
                 if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
                     return null;
                 }
-                if(friend){
-                    friend_lastViewed=lastEpisode;
-                }
-                else {
-                    show.lastViewed = lastEpisode;
-                }
+
+                show.lastViewed = lastEpisode;
+
 
                 Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
 
@@ -810,18 +750,13 @@ public class ShowActivity extends AppCompatActivity {
                     progressBar.setMax(10000);
                     progressBar.setProgress(Integer.parseInt(n));
                     String init = context.getResources().getString(R.string.last_seen);
-                    if(friend){
-                        friend_progress=Integer.parseInt(n);
-                        textview.setText(init +" "+name+": "+ friend_lastViewed.episodeNumber + "X" + friend_lastViewed.season + ": " + friend_lastViewed.title);
-                        Log.d("HUSTLEprogress", "progresso di " + showProgress.title +" di "+friend_name+ ": " + Integer.parseInt(n) + " di 10000");
 
-                    }
-                    else {
-                        showProgress.progress=Integer.parseInt(n);
-                        textview.setText(init +" "+name+": "+ show.lastViewed.episodeNumber + "X" + show.lastViewed.season + ": " + show.lastViewed.title);
-                        Log.d("HUSTLEprogress", "progresso di " + showProgress.title + ": " + Integer.parseInt(n) + " di 10000");
 
-                    }
+                    showProgress.progress=Integer.parseInt(n);
+                    textview.setText(init +" "+name+": "+ show.lastViewed.episodeNumber + "X" + show.lastViewed.season + ": " + show.lastViewed.title);
+                    Log.d("HUSTLEprogress", "progresso di " + showProgress.title + ": " + Integer.parseInt(n) + " di 10000");
+
+
                 }
             }
         };
