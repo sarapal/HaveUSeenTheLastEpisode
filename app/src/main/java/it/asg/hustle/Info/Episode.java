@@ -42,7 +42,7 @@ public class Episode implements ThumbnailViewer {
     public JSONObject source;
     public Boolean checked = false;
     public ArrayList<Friend> watchingFriends = null;
-
+    public String user_id=null;
     public Episode(String title)
     {
         this.watchingFriends =new ArrayList<Friend>();
@@ -107,6 +107,10 @@ public class Episode implements ThumbnailViewer {
                     e.printStackTrace();
                     this.seasonEpisodeNumber = 0;
                 }
+
+            }
+            if(jo.has("user_id")){
+                this.user_id=jo.getString("user_id");
             }
         } catch (JSONException e) {
             e.printStackTrace();

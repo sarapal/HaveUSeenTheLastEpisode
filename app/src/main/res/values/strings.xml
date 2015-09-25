@@ -46,6 +46,7 @@
     <string name="title_activity_friend">FriendActivity</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="last_seen">Last episode seen by  </string>
 
 </resources>
 

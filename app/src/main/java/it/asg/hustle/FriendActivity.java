@@ -81,6 +81,7 @@ public class FriendActivity extends AppCompatActivity {
         id = b.getString("id");
         name = b.getString("name");
         gridAdapter.user_id = id;
+        gridAdapter.name_id = name;
 
         profilePicture = (com.facebook.login.widget.ProfilePictureView) findViewById(R.id.profilePicture);
         profilePicture.setProfileId(id);
@@ -267,9 +268,10 @@ public class FriendActivity extends AppCompatActivity {
                 super.onPostExecute(n);
                 if (n != null){
                     griditem.setProgress(Integer.parseInt(n));
-                    progressBar.setVisibility(View.VISIBLE);
                     progressBar.setMax(10000);
                     progressBar.setProgress(Integer.parseInt(n));
+                    progressBar.setVisibility(View.VISIBLE);
+
                     Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
                 }
             }

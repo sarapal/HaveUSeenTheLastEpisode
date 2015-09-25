@@ -43,7 +43,8 @@ import it.asg.hustle.Utils.ImageDownloader;
 public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     ArrayList<GridItem> mItems;
     Context ctx;
-    public String user_id=null;
+    public String user_id="";
+    public String name_id="";
 
     public GridAdapter(Context ctx) {
         super();
@@ -57,6 +58,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 .inflate(R.layout.grid_item, viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(v);
         viewHolder.progressBar.setVisibility(View.INVISIBLE);
+        viewHolder.progressBar.setMax(10000);
         return viewHolder;
     }
 
@@ -69,13 +71,20 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final GridItem item = mItems.get(i);
         viewHolder.title.setText(item.getName());
+        viewHolder.progressBar.setMax(10000);
         if(item.getProgress() != -1){
-            viewHolder.progressBar.setVisibility(View.VISIBLE);
             viewHolder.progressBar.setProgress(item.getProgress());
+            viewHolder.progressBar.setVisibility(View.VISIBLE);
         }
         if(item.getProgress() == -1 && this.user_id!=null) {
             viewHolder.progressBar.setVisibility(View.INVISIBLE);
+            if(item.getShow().progress == -1){
             doGetProgress(this.ctx, item.getShow().id, this.user_id + "", item.getShow(), viewHolder.progressBar, item);
+            }
+            else{
+                viewHolder.progressBar.setProgress(item.getShow().progress);
+            }
+
         }
 
         if(mItems.get(i).getFriends()>0) {
@@ -105,7 +114,9 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ShowActivity.class);
-                intent.putExtra("show", item.getShow().source.toString());
+                intent.putExtra("show", item.getShow().toJSON().toString());
+                intent.putExtra("idProgress",user_id);
+                intent.putExtra("nameProgress",name_id);
                 context.startActivity(intent);
 
             }
@@ -195,9 +206,10 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 super.onPostExecute(n);
                 if (n != null){
                     griditem.setProgress(Integer.parseInt(n));
-                    progressBar.setVisibility(View.VISIBLE);
                     progressBar.setMax(10000);
                     progressBar.setProgress(Integer.parseInt(n));
+                    showProgress.progress = Integer.parseInt(n);
+                    progressBar.setVisibility(View.VISIBLE);
                     Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
                 }
             }

@@ -532,8 +532,11 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(gridLayoutManager);
 
             if (tabPosition == 0){
+                if(gridAdapter[tabPosition] ==null){
+                    gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                }
                 // Crea un nuovo gridAdapter
-                gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                //gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 SharedPreferences options = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
                 String id = options.getString("id_facebook", null);
                 gridAdapter[tabPosition].user_id=id;
@@ -575,8 +578,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             } else if(tabPosition == 1){
-                gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                if(gridAdapter[tabPosition] ==null){
+                    gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                }
+                //gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
+                gridAdapter[tabPosition].user_id="";
+                gridAdapter[tabPosition].name_id="";
                 swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
@@ -596,9 +604,14 @@ public class MainActivity extends AppCompatActivity {
                 
 
             } else if (tabPosition == 2) {
+                if(gridAdapter[tabPosition] ==null){
+                    gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                }
                 // Crea un nuovo gridAdapter
-                gridAdapter[tabPosition] = new GridAdapter(getActivity());
+                //gridAdapter[tabPosition] = new GridAdapter(getActivity());
                 // Imposta l'adapter sulla View
+                gridAdapter[tabPosition].user_id="";
+                gridAdapter[tabPosition].name_id="";
                 recyclerView.setAdapter(gridAdapter[tabPosition]);
                 swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -1125,77 +1138,6 @@ public class MainActivity extends AppCompatActivity {
         return dp;
     }
 
-    private static void doGetProgress(final Context context,final String series_id, final String user_id, final Show showProgress,final ProgressBar progressBar){
 
-        AsyncTask<String, Void, String> progress_asynctask = new AsyncTask<String, Void, String>() {
-            @Override
-            protected String doInBackground(String... params) {
-                Episode lastEpisode;
-                JSONObject lastEpisodeJSON = null;
-                String s = null;
-
-                //richiesta dati episodi
-                try {
-                    Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
-                            buildUpon().
-                            appendQueryParameter("progress", "true").
-                            appendQueryParameter("seriesid", series_id).
-                            appendQueryParameter("user_id", user_id).
-                            appendQueryParameter("language", Locale.getDefault().getLanguage()).
-                            build();
-                    String u = builtUri.toString();
-                    Log.d("SEASON", "requesting: " + u);
-                    URL url = new URL(u);
-                    //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    InputStream in = new BufferedInputStream(conn.getInputStream());
-                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                    s = br.readLine();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-
-
-                //creazione array dalla risposta
-                try {
-                    lastEpisodeJSON = new JSONObject(s);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-
-                if (lastEpisodeJSON == null)
-                    return null;
-
-                lastEpisode = new Episode(lastEpisodeJSON);
-                int numberOfSeasons = showProgress.seasonNumber;
-                int actualEpisodeNumber = lastEpisode.episodeNumber;
-                int actualSeason  = lastEpisode.season;
-                int actualSeasonNumberEpisodes  = lastEpisode.seasonEpisodeNumber;
-                if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
-                    return null;
-                }
-                Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
-
-
-                return ""+((10000/numberOfSeasons)*(actualSeason-1) + (10000/numberOfSeasons/actualSeasonNumberEpisodes)*actualEpisodeNumber);
-            }
-
-            @Override
-            protected void onPostExecute(String n) {
-                super.onPostExecute(n);
-                if (n != null){
-                    progressBar.setVisibility(View.VISIBLE);
-                    progressBar.setMax(10000);
-                    progressBar.setProgress(Integer.parseInt(n));
-                    Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
-                }
-            }
-        };
-        if (CheckConnection.isConnected(context)) {
-            progress_asynctask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-    }
 
 }

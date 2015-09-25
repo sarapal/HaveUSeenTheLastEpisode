@@ -26,6 +26,7 @@ public class Show implements ThumbnailViewer {
     public String fanart;
     public String actors;
     public String genre;
+    public int progress = -1;
     public Bitmap bmp;
     public int seasonNumber;
     public JSONObject source;
@@ -53,6 +54,9 @@ public class Show implements ThumbnailViewer {
             }
             if (jo.has("poster")) {
                 this.poster = jo.getString("poster");
+            }
+            if (jo.has("progress")) {
+                this.progress = jo.getInt("progress");
             }
             if (jo.has("genre")) {
                 this.genre = jo.getString("genre");
@@ -128,11 +132,16 @@ public class Show implements ThumbnailViewer {
         }
         try {
             this.source.put("friends", array);
+            this.source.put("progress",this.progress);
+            this.source.put("last",this.lastViewed);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return this.source;
     }
+
+
+
 
     public JSONArray toSeasonsJSON() {
         JSONArray seasonsJSON = new JSONArray();

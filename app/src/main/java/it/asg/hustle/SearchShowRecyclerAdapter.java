@@ -68,7 +68,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent i = new Intent(context, ShowActivity.class);
-                i.putExtra("show", item.source.toString());
+                i.putExtra("show", item.toJSON().toString());
                 context.startActivity(i);
             }
         });

@@ -41,6 +41,7 @@
             <ImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="@dimen/grid_item_ImageView_width"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:layout_height="@dimen/grid_item_RelativeLayout_height"
                 android:scaleType="centerCrop"
                 android:layout_above="@+id/title" />
