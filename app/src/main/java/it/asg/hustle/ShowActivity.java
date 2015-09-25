@@ -101,7 +101,9 @@ public class ShowActivity extends AppCompatActivity {
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster
         if (savedInstanceState != null) friend_id = savedInstanceState.getString("friend_id"); //ripristina id amico progresso
         if (savedInstanceState != null) friend_name = savedInstanceState.getString("friend_name"); //ripristina id amico progresso
-        if (savedInstanceState != null) friend_progress = savedInstanceState.getInt("friend_progress"); //ripristina id amico progresso
+
+        //Log.d("HUSTLE", "Devo far vedere il progresso per nome: " + friend_name + " e id: " + friend_id);
+
         if (savedInstanceState != null) {try {
             //ricrea gli oggetti java show stagioni e episodi
             showJSON = new JSONObject(savedInstanceState.getString("show"));
@@ -118,7 +120,9 @@ public class ShowActivity extends AppCompatActivity {
 
             if (b != null) {
                 String s = b.getString("show");
-                friend_id=b.getString("nameProgress");
+                friend_id=b.getString("idProgress");
+                friend_name = b.getString("nameProgress");
+                Log.d("HUSTLE", "Devo far vedere il progresso per nome: " + friend_name + " e id: " + friend_id);
                 try {
                     showJSON = new JSONObject(s);
                     show = new Show(showJSON);

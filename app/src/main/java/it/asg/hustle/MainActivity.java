@@ -480,6 +480,14 @@ public class MainActivity extends AppCompatActivity {
 
             if (tabPosition == 0) {
                 Log.d("HUSTLE", "onResume fragment delle mie serie TV");
+                final String id = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
+                if (id == null) {
+                    Log.d("DADADA", "ID E NULL");
+                    gridAdapter[0].reset();
+                    gridAdapter[0].notifyDataSetChanged();
+                    my_series = null;
+                    return;
+                }
                 if (CheckConnection.isConnected(getActivity())) {
                     downloadMySeries(gridAdapter[0], false);
                 } else if (my_series != null)

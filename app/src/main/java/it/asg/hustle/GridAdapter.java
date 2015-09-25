@@ -116,9 +116,9 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 Intent intent = new Intent(context, ShowActivity.class);
                 intent.putExtra("show", item.getShow().toJSON().toString());
                 intent.putExtra("idProgress",user_id);
+                Log.d("HUSTLE", "devo far nome: " + name_id);
                 intent.putExtra("nameProgress",name_id);
                 context.startActivity(intent);
-
             }
         });
     }
