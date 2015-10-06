@@ -863,8 +863,10 @@ public class MainActivity extends AppCompatActivity {
                                         editor.commit();
                                     } catch (IOException e) {
                                         e.printStackTrace();
+                                        return null;
                                     }catch(Exception e){
                                         e.printStackTrace();
+                                        return null;
                                     }
                                 }
                                 if(s!=null) {

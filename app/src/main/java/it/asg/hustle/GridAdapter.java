@@ -70,7 +70,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final GridItem item = mItems.get(i);
-        viewHolder.title.setText(item.getName());
+        //viewHolder.title.setText(item.getName());
         viewHolder.progressBar.setMax(10000);
         if(item.getProgress() != -1){
             viewHolder.progressBar.setProgress(item.getProgress());

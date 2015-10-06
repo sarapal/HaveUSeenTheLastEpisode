@@ -65,18 +65,18 @@
 
 
             <TextView
-                android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/grid_item_TextView_height"
+                android:layout_height="10dp"
+                android:layout_above="@id/progress_bar_show"
                 android:paddingLeft="5dp"
                 android:paddingRight="2dp"
                 android:layout_gravity="bottom"
                 android:gravity="center_vertical"
-                android:background="#B33F51B5"
+                android:id="@+id/text_view_last_episode"
+                android:background="@color/progressbar_background"
                 android:textColor="#fff"
                 android:textSize="15dp"
-                android:visibility="invisible"
-                android:layout_alignParentBottom="true"
+                android:visibility="gone"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
