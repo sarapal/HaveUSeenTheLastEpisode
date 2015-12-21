@@ -2,11 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
-            keyAlias 'HustleKey'
-            keyPassword 'hustle.asg'
-            storeFile file('/home/gbyolo/keystores/hustle.keystore.jks')
-            storePassword 'hustle.asg'
+        release {
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+            storeFile file(System.getenv("KEYSTORE"))
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+
         }
     }
     compileSdkVersion 22
@@ -22,9 +23,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
-            signingConfig signingConfigs.config
         }
     }
 }
