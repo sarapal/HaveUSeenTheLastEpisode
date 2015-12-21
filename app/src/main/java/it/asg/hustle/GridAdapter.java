@@ -43,8 +43,7 @@ import it.asg.hustle.Utils.ImageDownloader;
 public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     ArrayList<GridItem> mItems;
     Context ctx;
-    public String user_id_adapter=null;
-    public String name_id="";
+    public String user_id=null;
 
     public GridAdapter(Context ctx) {
         super();
@@ -58,7 +57,6 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 .inflate(R.layout.grid_item, viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(v);
         viewHolder.progressBar.setVisibility(View.INVISIBLE);
-        viewHolder.progressBar.setMax(10000);
         return viewHolder;
     }
 
@@ -70,19 +68,14 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final GridItem item = mItems.get(i);
-        //viewHolder.title.setText(item.getName());
-        viewHolder.progressBar.setMax(10000);
+        viewHolder.title.setText(item.getName());
         if(item.getProgress() != -1){
-            viewHolder.progressBar.setProgress(item.getProgress());
             viewHolder.progressBar.setVisibility(View.VISIBLE);
+            viewHolder.progressBar.setProgress(item.getProgress());
         }
-        if(this.user_id_adapter!=null) {
+        if(item.getProgress() == -1 && this.user_id!=null) {
             viewHolder.progressBar.setVisibility(View.INVISIBLE);
-
-            doGetProgress(this.ctx, item.getShow().id, this.user_id_adapter + "", item.getShow(), viewHolder.progressBar, item);
-
-
-
+            doGetProgress(this.ctx, item.getShow().id, this.user_id + "", item.getShow(), viewHolder.progressBar, item);
         }
 
         if(mItems.get(i).getFriends()>0) {
@@ -96,7 +89,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
         final int reqHeight = (int) ctx.getResources().getDimension(R.dimen.grid_item_ImageView_height);
 
         if (item.getThumbnail() != null) {
-            Log.d("HUSTLE", "La bitmap già c'è");
+            //Log.d("HUSTLE", "La bitmap già c'è");
             viewHolder.thumbnail.setImageBitmap(item.getThumbnail());
         } else {
             if (item.getShow().poster != null) {
@@ -104,7 +97,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                     new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
                 }
             } else {
-                Log.d("NOPOSTER", "Lo show " + item.getShow().title + " non ha poster: " + item.getShow());
+                //Log.d("NOPOSTER", "Lo show " + item.getShow().title + " non ha poster: " + item.getShow());
             }
         }
         viewHolder.thumbnail.setOnClickListener(new View.OnClickListener() {
@@ -112,11 +105,9 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ShowActivity.class);
-                intent.putExtra("show", item.getShow().toJSON().toString());
-                intent.putExtra("idProgress",user_id_adapter);
-                Log.d("HUSTLE", "devo far nome: " + name_id);
-                intent.putExtra("nameProgress",name_id);
+                intent.putExtra("show", item.getShow().source.toString());
                 context.startActivity(intent);
+
             }
         });
     }
@@ -161,7 +152,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                             appendQueryParameter("language", Locale.getDefault().getLanguage()).
                             build();
                     String u = builtUri.toString();
-                    Log.d("HUSTLE", "requesting: " + u);
+                    Log.d("SEASON", "requesting: " + u);
                     URL url = new URL(u);
                     //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -193,7 +184,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
                     return null;
                 }
-                Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
+                //Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
 
 
                 return ""+((10000/numberOfSeasons)*(actualSeason-1) + (10000/numberOfSeasons/actualSeasonNumberEpisodes)*actualEpisodeNumber);
@@ -204,11 +195,10 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 super.onPostExecute(n);
                 if (n != null){
                     griditem.setProgress(Integer.parseInt(n));
+                    progressBar.setVisibility(View.VISIBLE);
                     progressBar.setMax(10000);
                     progressBar.setProgress(Integer.parseInt(n));
-                    showProgress.progress = Integer.parseInt(n);
-                    progressBar.setVisibility(View.VISIBLE);
-                    Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
+                    //Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
                 }
             }
         };

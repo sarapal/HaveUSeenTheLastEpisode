@@ -80,8 +80,7 @@ public class FriendActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         id = b.getString("id");
         name = b.getString("name");
-        gridAdapter.user_id_adapter = ""+id;
-        gridAdapter.name_id = ""+name;
+        gridAdapter.user_id = id;
 
         profilePicture = (com.facebook.login.widget.ProfilePictureView) findViewById(R.id.profilePicture);
         profilePicture.setProfileId(id);
@@ -165,7 +164,7 @@ public class FriendActivity extends AppCompatActivity {
                     e.printStackTrace();
                     return null;
                 }
-                Log.d("HUSTLE", "returned: " + s);
+                //Log.d("HUSTLE", "returned: " + s);
 
                 return s;
             }
@@ -257,7 +256,7 @@ public class FriendActivity extends AppCompatActivity {
                 if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
                     return null;
                 }
-                Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
+                //Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
 
 
                 return ""+((10000/numberOfSeasons)*(actualSeason-1) + (10000/numberOfSeasons/actualSeasonNumberEpisodes)*actualEpisodeNumber);
@@ -268,11 +267,10 @@ public class FriendActivity extends AppCompatActivity {
                 super.onPostExecute(n);
                 if (n != null){
                     griditem.setProgress(Integer.parseInt(n));
+                    progressBar.setVisibility(View.VISIBLE);
                     progressBar.setMax(10000);
                     progressBar.setProgress(Integer.parseInt(n));
-                    progressBar.setVisibility(View.VISIBLE);
-
-                    Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
+                    //Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
                 }
             }
         };

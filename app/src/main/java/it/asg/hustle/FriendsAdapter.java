@@ -67,7 +67,7 @@ public class FriendsAdapter extends RecyclerView
                 i.putExtra("id", friends.get(position).getId());
                 i.putExtra("name", friends.get(position).getName());
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                Log.d("HUSTLE","HAI CLICCATO SU UN AMICO");
+                //Log.d("HUSTLE","HAI CLICCATO SU UN AMICO");
                 context.startActivity(i);
             }
         });

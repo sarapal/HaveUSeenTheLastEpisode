@@ -42,7 +42,9 @@ public class Episode implements ThumbnailViewer {
     public JSONObject source;
     public Boolean checked = false;
     public ArrayList<Friend> watchingFriends = null;
-    public String user_id=null;
+    public String firstaired;
+
+
     public Episode(String title)
     {
         this.watchingFriends =new ArrayList<Friend>();
@@ -91,6 +93,9 @@ public class Episode implements ThumbnailViewer {
                 Log.d("HUSTLE", "Episode in creazione con lingua: " + jo.getString("language"));
                 this.language = new String(jo.getString("language"));
             }
+            if (jo.has("firstaired")) {
+                this.firstaired = jo.getString("firstaired");
+            }
 
             this.source = jo;
 
@@ -107,10 +112,6 @@ public class Episode implements ThumbnailViewer {
                     e.printStackTrace();
                     this.seasonEpisodeNumber = 0;
                 }
-
-            }
-            if(jo.has("user_id")){
-                this.user_id=jo.getString("user_id");
             }
         } catch (JSONException e) {
             e.printStackTrace();

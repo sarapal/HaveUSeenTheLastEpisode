@@ -68,7 +68,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent i = new Intent(context, ShowActivity.class);
-                i.putExtra("show", item.toJSON().toString());
+                i.putExtra("show", item.source.toString());
                 context.startActivity(i);
             }
         });
@@ -89,7 +89,7 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             viewHolder.mImageView.setImageBitmap(item.bmp);
         }*/
         if (item.getThumbnail() != null) {
-            Log.d("HUSTLE", "La bitmap già c'è");
+            //Log.d("HUSTLE", "La bitmap già c'è");
             viewHolder.mImageView.setImageBitmap(item.getThumbnail());
         } else {
             if (!item.banner.equals("http://thetvdb.com/banners/")) {

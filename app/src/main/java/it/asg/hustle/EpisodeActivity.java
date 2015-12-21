@@ -26,9 +26,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Friend;
+import it.asg.hustle.Info.Season;
+import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.UpdateEpisodeState;
 
 public class EpisodeActivity extends AppCompatActivity {
@@ -53,8 +56,9 @@ public class EpisodeActivity extends AppCompatActivity {
             JSONObject jo = new JSONObject(b.getString("episode"));
             ep = new Episode(jo);
             Bitmap bmp = b.getParcelable("picture");
-            if (bmp == null)
-                Log.d("HUSTLE", "No bitmap nell'intent");
+            if (bmp == null) {
+                //Log.d("HUSTLE", "No bitmap nell'intent");
+            }
             ep.setThumbnail((Bitmap) b.getParcelable("picture"));
             //descrizione card
             TextView description_title = (TextView) findViewById(R.id.description_text_title_episode);
@@ -70,7 +74,7 @@ public class EpisodeActivity extends AppCompatActivity {
             collapsingToolbar.setTitle(ep.title);
             ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);
             if(ep.getThumbnail()!=null){
-                Log.d("HUSTLE", "L'episodio ha la foto");
+                //Log.d("HUSTLE", "L'episodio ha la foto");
                 iv_epImg.setImageBitmap(ep.getThumbnail());
             }
         } catch (JSONException e) {
@@ -87,7 +91,7 @@ public class EpisodeActivity extends AppCompatActivity {
         fabCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("HUSTLE", "FAB (in EpisodeActivity) was pressed");
+                //Log.d("HUSTLE", "FAB (in EpisodeActivity) was pressed");
                 if (!UpdateEpisodeState.changeState(getApplicationContext(), ep, null, !ep.checked, fabCheck,null)) {
                     Toast.makeText(getApplicationContext(), "Impossibile selezionare l'elemento. Effettuare il login", Toast.LENGTH_LONG).show();
                 }

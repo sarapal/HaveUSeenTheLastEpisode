@@ -92,14 +92,12 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         int dimPX = getDisplayDimensionsPX(display);
         int maxImageWidth = dimPX/4;
 
+        //imposto larghezze per farle entrare nella riga
         viewHolder.epImg.setMaxWidth(maxImageWidth);
         viewHolder.mTextView.setWidth(dimPX/2);
         //viewHolder.cb.setWidth(dimPX/4);
 
-        // PROVA width
         viewHolder.cb.setWidth(dimPX/12);
-        //viewHolder.friendsIcon.setMaxWidth(dimPX/12);
-        //viewHolder.numberFriends.setWidth(dimPX/12);
 
 
         // Imposta la TextView con indice episodio: titolo episodio
@@ -146,17 +144,17 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         viewHolder.cb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("HUSTLE", "check (In EpisodeRecyclerAdapter)");
+                //Log.d("HUSTLE", "check (In EpisodeRecyclerAdapter)");
                 // Invia dati al server esterno e cambia l'oggetto ep sulla base di come è impostata la cb
                 boolean newState = viewHolder.cb.isChecked();
-                Log.d("HUSTLE", "Nuovo stato per episodio: " + newState);
+                //Log.d("HUSTLE", "Nuovo stato per episodio: " + newState);
                 if (!UpdateEpisodeState.changeState(context, ep, viewHolder.cb, newState, null, null)) {
                     // Qui posso cambiare lo stato della cb
                     viewHolder.cb.setChecked(!newState);
                     // avvisa l'utente che non è possibile cambiare lo stato dell'episodio
                     Toast.makeText(context, "Impossibile cambiare lo stato dell'episodio se non si effettua prima il login", Toast.LENGTH_LONG).show();
                 }
-                Log.d("HUSTLE", "status ep.checked (EpisodeRecyclerAdapter): " + ep.checked.toString());
+                //Log.d("HUSTLE", "status ep.checked (EpisodeRecyclerAdapter): " + ep.checked.toString());
 
             }
         });

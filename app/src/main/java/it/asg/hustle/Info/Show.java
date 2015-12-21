@@ -26,13 +26,14 @@ public class Show implements ThumbnailViewer {
     public String fanart;
     public String actors;
     public String genre;
-    public int progress = -1;
     public Bitmap bmp;
     public int seasonNumber;
     public JSONObject source;
     public ArrayList<Season> seasonsList;
     public ArrayList<Friend> friends = null;
     public Episode lastViewed = null;
+    public String airday;
+    public String airtime;
 
 
     public Show(String title)
@@ -55,16 +56,12 @@ public class Show implements ThumbnailViewer {
             if (jo.has("poster")) {
                 this.poster = jo.getString("poster");
             }
-            if (jo.has("progress")) {
-                this.progress = jo.getInt("progress");
-            }
             if (jo.has("genre")) {
                 this.genre = jo.getString("genre");
             }
             if (jo.has("actors")) {
                 this.actors = parseActors(jo.getString("actors"));
             }
-
             if (jo.has("fanart")) {
                 this.fanart = jo.getString("fanart");
             }
@@ -90,6 +87,12 @@ public class Show implements ThumbnailViewer {
             }
             if (jo.has("overview")) {
                 this.overview =jo.getString("overview");
+            }
+            if (jo.has("airday")) {
+                this.airday =jo.getString("airday");
+            }
+            if (jo.has("airtime")) {
+                this.airtime =jo.getString("airtime");
             }
 
             Log.d("HUSTLE", "Show in creazione con lingua: " + jo.getString("language"));
@@ -132,16 +135,11 @@ public class Show implements ThumbnailViewer {
         }
         try {
             this.source.put("friends", array);
-            this.source.put("progress",this.progress);
-            this.source.put("last",this.lastViewed);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return this.source;
     }
-
-
-
 
     public JSONArray toSeasonsJSON() {
         JSONArray seasonsJSON = new JSONArray();

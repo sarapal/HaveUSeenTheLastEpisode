@@ -22,9 +22,8 @@
     </style>
 
 
-<!--    <style name="ActionbarTitle" parent="AppTheme">
-        <item name="android:background">@color/title_background</item>
-    </style> -->
-
+    <style name="CalendarFABstyle" parent="Widget.Design.FloatingActionButton">
+        <item name="colorAccent">@color/rounded_share</item>
+    </style>
 
 </resources>

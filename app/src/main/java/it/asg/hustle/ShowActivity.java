@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.CalendarContract;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -18,10 +19,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -35,14 +34,11 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.facebook.login.widget.ProfilePictureView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,6 +52,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import it.asg.hustle.Info.Episode;
@@ -83,10 +81,7 @@ public class ShowActivity extends AppCompatActivity {
     private ArrayList<Friend> show_friends = null;
     private ArrayList<Friend> all_friends = null;
     private boolean updateFromServer = false;
-    static private String friend_id = null;
-    static private String friend_name = null;
-    static private int friend_progress=-1;
-    static private Episode friend_lastViewed = null;
+    static Episode lastEpisode;
 
 
 
@@ -99,9 +94,6 @@ public class ShowActivity extends AppCompatActivity {
 
         //caso in cui l'activity è stata stoppata o messa in pausa, ricrea i dati dai savedInstanceState
         if (savedInstanceState != null) posterBitmap = savedInstanceState.getParcelable("poster"); //ripristina l'immagine salvata poster
-
-        //Log.d("HUSTLE", "Devo far vedere il progresso per nome: " + friend_name + " e id: " + friend_id);
-
         if (savedInstanceState != null) {try {
             //ricrea gli oggetti java show stagioni e episodi
             showJSON = new JSONObject(savedInstanceState.getString("show"));
@@ -110,6 +102,7 @@ public class ShowActivity extends AppCompatActivity {
             }
             show.fillSeasonsList(seasonsJSON);
         }
+
         posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
 
         //caso in cui l'activity viene generata dalla ricerca
@@ -122,10 +115,6 @@ public class ShowActivity extends AppCompatActivity {
                     showJSON = new JSONObject(s);
                     show = new Show(showJSON);
 
-                    String id_bundle=null;
-                    String id = getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
-
-
                     int dimPX = getDisplayDimensionsPX();
                     //Log.d("DIMENSIONI", ""+dimPX);
                     //int heightPX = dimPX*1080/1920;
@@ -135,7 +124,7 @@ public class ShowActivity extends AppCompatActivity {
                     //((ImageView) findViewById(R.id.show_activity_poster)).setMaxHeight(heightPX);
 
                     if (!new ImageDownloader(this, dimPX, dimPX).download(show.fanart, posterImageView, show)) {
-                        Log.d("HUSTLE", "Gli arriva il NULL");
+                        Log.d("HUSTLE", "Non scarica immagine, gli arriva NULL");
                     }
                     doGetInfo(show);
                 } catch (JSONException e) {
@@ -164,6 +153,54 @@ public class ShowActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        //fab calendario
+        FloatingActionButton addCalendar = (FloatingActionButton) findViewById(R.id.fab_addCalendar);
+        addCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("CALENDAR","FAB-calendar was pressed");
+
+
+                int lastSeason = show.seasonsList.size();
+                Log.d("CALENDAR", "airday: " + show.airday + " //  airtime: " + show.airtime);
+                Season last = show.seasonsList.get(show.seasonsList.size() - 1);
+                String title = last.episodesList.get(last.episodesList.size()-1).title;
+                Log.d("CALENDAR", "Season: " + lastSeason + " Episode: "+ title);
+
+                Calendar cal = Calendar.getInstance();
+                Intent intent = new Intent(Intent.ACTION_EDIT);
+                intent.setType("vnd.android.cursor.item/event");
+
+                String nextDate = getNextEpisodeDate(lastEpisode);
+                Log.d("CALENDAR", lastEpisode.toString());
+                if(nextDate==null){
+                    Toast.makeText(ShowActivity.this, "Error in setting calendar event", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.d("CALENDAR", "date of next episode: " + nextDate);
+                // returns an array of string:
+                // elem 0 is year, elem 1 is month, elem 2 is day
+                String[] parsedDate = parsingDate(nextDate);
+                int year = Integer.parseInt(parsedDate[0]);
+                int month = Integer.parseInt(parsedDate[1]) - 1;
+                int day = Integer.parseInt(parsedDate[2]);
+
+                Log.d("CALENDAR", "Parsed: year " + year + " month " + month + "day " + day);
+
+                GregorianCalendar gc = new GregorianCalendar(year, month, day);
+                // or new GregorianCalendar(year, month, day, hour, minute);
+
+                intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+                intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, gc.getTimeInMillis());
+                intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, gc.getTimeInMillis());
+
+                //intent.putExtra("rrule", "FREQ=WEEKLY");
+
+                intent.putExtra("title", show.title+" - Season "+lastSeason+" Episode: "+title);
+                startActivity(intent);
+            }
+        });
+
         //scarico la lista amici che vedono la serie
         show_friends = new ArrayList<Friend>();
         adapter_friends = new FriendsAdapter(show_friends,getApplicationContext());
@@ -182,7 +219,7 @@ public class ShowActivity extends AppCompatActivity {
 
         //get poster image
         if(posterBitmap!=null){
-            Log.d("HUSTLE", "prendo poster da savedInstanceState");
+            //Log.d("HUSTLE", "prendo poster da savedInstanceState");
             posterImageView.setImageBitmap(posterBitmap);
         }
 
@@ -206,7 +243,7 @@ public class ShowActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("HUSTLE", "onActivityResult di ShowActivity");
+        //Log.d("HUSTLE", "onActivityResult di ShowActivity");
         if (requestCode == EpisodeRecyclerAdapter.EP_CHANGED){
             if (resultCode == Activity.RESULT_OK){
 
@@ -215,7 +252,7 @@ public class ShowActivity extends AppCompatActivity {
                 int ep_num = b.getInt("episode_num");
                 int season = b.getInt("season");
 
-                Log.d("HUSTLE", "Episodio n " + ep_num + " stagione " + season + " stato " + status);
+                //Log.d("HUSTLE", "Episodio n " + ep_num + " stagione " + season + " stato " + status);
 
                 EpisodeRecyclerAdapter era = adapterList.get(season);
                 // prende l'episodio
@@ -231,10 +268,10 @@ public class ShowActivity extends AppCompatActivity {
                     e1.printStackTrace();
                 }
             } else {
-                Log.d("HUSTLE", "result: "+resultCode+" OK è " + Activity.RESULT_OK);
+                //Log.d("HUSTLE", "result: "+resultCode+" OK è " + Activity.RESULT_OK);
             }
         } else {
-            Log.d("HUSTLE", "" + requestCode);
+            //Log.d("HUSTLE", "" + requestCode);
         }
     }
 
@@ -255,7 +292,7 @@ public class ShowActivity extends AppCompatActivity {
         if (!updateFromServer) {
             JSONArray season = DBHelper.getSeasonFromDB(showInfo, seasonNumber);
             if (season != null) {
-                Log.d("HUSTLE", "Trovata la stagione nel DB");
+                //Log.d("HUSTLE", "Trovata la stagione nel DB");
                 show.seasonsList.get(seasonNumber - 1).fromJson(season);
                 show.seasonsList.get(seasonNumber - 1).seasonNumber = seasonNumber;
                 return;
@@ -320,15 +357,15 @@ public class ShowActivity extends AppCompatActivity {
                 // se updateFromServer è false, significa che la stagione non si trova
                 // nel DB e devo aggiungerla
                 if (!updateFromServer) {
-                    Log.d("HUSTLE", "Aggiungo la stagione al DB");
+                    //Log.d("HUSTLE", "Aggiungo la stagione al DB");
                     DBHelper.addSeasonDB(show.seasonsList.get(season.seasonNumber - 1));
                 } else {
-                    Log.d("HUSTLE", "Devo aggiornare la serie dal server");
+                    //Log.d("HUSTLE", "Devo aggiornare la serie dal server");
                     if (DBHelper.getSeasonFromDB(show, season.seasonNumber) == null) {
-                        Log.d("HUSTLE", "Non c'è, la aggiungo");
+                        //Log.d("HUSTLE", "Non c'è, la aggiungo");
                         DBHelper.addSeasonDB(season);
                     } else {
-                        Log.d("HUSTLE", "c'è già, la aggiorno");
+                        //Log.d("HUSTLE", "c'è già, la aggiorno");
                         DBHelper.updateSeasonDB(show.seasonsList.get(season.seasonNumber - 1));
                     }
                 }
@@ -437,10 +474,7 @@ public class ShowActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
         savedInstanceState.putParcelable("poster", show.getThumbnail());
-        savedInstanceState.putString("show", show.toJSON().toString());
-        savedInstanceState.putString("friend_id", friend_id);
-        savedInstanceState.putString("friend_name", friend_name);
-        savedInstanceState.putInt("friend_progress", friend_progress);
+        savedInstanceState.putString("show", showJSON.toString());
         seasonsJSON = show.toSeasonsJSON();
 
         if(seasonsJSON != null){savedInstanceState.putString("seasons", seasonsJSON.toString());}
@@ -472,6 +506,7 @@ public class ShowActivity extends AppCompatActivity {
         private static final String TAB_POSITION = "tab_position";
         private FloatingActionButton checkall;
 
+
         public SeasonsFragment() {
 
         }
@@ -491,9 +526,17 @@ public class ShowActivity extends AppCompatActivity {
 
             if (ShowActivity.viewPager.getCurrentItem() == 0) {
                 ((FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll)).setVisibility(View.GONE);
+                ((FloatingActionButton) getActivity().findViewById(R.id.fab_addCalendar)).setVisibility(View.INVISIBLE);
             }
             else{
                 ((FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll)).setVisibility(View.VISIBLE);
+                if (ShowActivity.viewPager.getCurrentItem() == show.seasonsList.size()) {
+                    ((FloatingActionButton) getActivity().findViewById(R.id.fab_addCalendar)).setVisibility(View.VISIBLE);
+                }
+                else {
+                    ((FloatingActionButton) getActivity().findViewById(R.id.fab_addCalendar)).setVisibility(View.INVISIBLE);
+                }
+
             }
             super.onResume();
         }
@@ -507,38 +550,27 @@ public class ShowActivity extends AppCompatActivity {
 
             if (tabPosition == 0){
                 v = inflater.inflate(R.layout.cardview_info_scrollview, container,false);
-                final TextView card_progress = (TextView) v.findViewById(R.id.card_description_progress);
-                //progress bar
-                CardView progressCard = (CardView) v.findViewById(R.id.cardview_progress);
-                final ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress_bar_value);
-                progressBar.setMax(10000);
-                final String userid = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
-                final String nameid = getActivity().getSharedPreferences("name_facebook", Context.MODE_PRIVATE).getString("name_facebook", null);
-                String init = getActivity().getResources().getString(R.string.last_seen);
-                if(userid != null && nameid != null){
-                    if(show.lastViewed!=null){
-
-                        progressBar.setProgress(show.progress);
-                        card_progress.setText(init + " " + nameid + ": " + show.lastViewed.episodeNumber + "X" + show.lastViewed.season + ": " + show.lastViewed.title);
-
-                    }
-                    if(show.lastViewed==null){
-                        doGetProgress(getActivity(), show.id, userid, show, progressBar, card_progress, nameid, false);
-                    }
-                }
-
-
-                progressCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        doGetProgress(getActivity(), show.id, userid, show, progressBar,card_progress,nameid,false);
-                    }
-                });
-
-
-
-                //description card
                 TextView card_description = (TextView) v.findViewById(R.id.card_description_text);
+                ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress_bar_value);
+
+
+                /*TextView card_series_id = (TextView) v.findViewById(R.id.id_serie_info);
+                card_series_id.setText(show.id);*/
+                //progress
+                int totEpisode=0;
+                int actEpisode = 0;
+
+                //actEpisode+= show.lastViewed.episodeNumber;
+                //int numberOfSeasons = show.seasonNumber;
+                //int actualEpisodeNumber = show.lastViewed.episodeNumber;
+                //int actualSeason  = show.lastViewed.season;
+                //int actualSeasonNumberEpisodes  = show.lastViewed.seasonEpisodeNumber;
+
+                //progressBar.setProgress((100000/numberOfSeasons)*(actualSeason-1) + (100000/numberOfSeasons/actualSeasonNumberEpisodes)*actualEpisodeNumber);
+                final String userid = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
+                doGetProgress(getActivity(), show.id, userid, show, progressBar);
+                //Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
+                //description card
                 card_description.setText(show.overview);
                 //card friend
                 RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview_friends_card);
@@ -561,11 +593,12 @@ public class ShowActivity extends AppCompatActivity {
                 card_actors.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d("HUSTLE","CLICCO SU CARD ATTORI");
+                        //Log.d("HUSTLE", "CLICCO SU CARD ATTORI");
                     }
                 });
                 card_genre.setText(show.genre);
                 checkall = (FloatingActionButton) getActivity().findViewById(R.id.fab_checkAll);
+
 
             }
             else {
@@ -580,12 +613,13 @@ public class ShowActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         int pos = ShowActivity.viewPager.getCurrentItem();
-                        Log.d("HUSTLE", "FAB-checkall was pressed tabPosition " + pos);
+                        //Log.d("HUSTLE", "FAB-checkall was pressed tabPosition " + pos);
                         if (pos != 0)
                             checkAll(adapterList.get(pos));
                     }
                 });
             }
+
 
             if (ShowActivity.viewPager.getCurrentItem() == 0) {
                 checkall.setVisibility(View.GONE);
@@ -614,7 +648,7 @@ public class ShowActivity extends AppCompatActivity {
                 if (i.checked != new_status){
                     if (!UpdateEpisodeState.changeState(getActivity(), i, null, new_status, null, episodeRecyclerAdapter)){
                         Toast.makeText(getActivity(),"Impossibile effettuare il check-all",Toast.LENGTH_SHORT);
-                        Log.d("HUSTLE", "Impossibile effettuare il check-all");
+                        //Log.d("HUSTLE", "Impossibile effettuare il check-all");
                     }
                 }
 
@@ -680,12 +714,11 @@ public class ShowActivity extends AppCompatActivity {
         return return_list;
     }
 
-    private static void doGetProgress(final Context context,final String series_id, final String user_id, final Show showProgress,final ProgressBar progressBar,final TextView textview,final String name,final boolean friend){
+    private static void doGetProgress(final Context context,final String series_id, final String user_id, final Show showProgress,final ProgressBar progressBar){
 
         AsyncTask<String, Void, String> progress_asynctask = new AsyncTask<String, Void, String>() {
             @Override
             protected String doInBackground(String... params) {
-                Episode lastEpisode;
                 JSONObject lastEpisodeJSON = null;
                 String s = null;
 
@@ -732,11 +765,7 @@ public class ShowActivity extends AppCompatActivity {
                 if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
                     return null;
                 }
-
-                show.lastViewed = lastEpisode;
-
-
-                Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
+                //Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
 
 
                 return ""+((10000/numberOfSeasons)*(actualSeason-1) + (10000/numberOfSeasons/actualSeasonNumberEpisodes)*actualEpisodeNumber);
@@ -749,14 +778,7 @@ public class ShowActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.VISIBLE);
                     progressBar.setMax(10000);
                     progressBar.setProgress(Integer.parseInt(n));
-                    String init = context.getResources().getString(R.string.last_seen);
-
-
-                    showProgress.progress=Integer.parseInt(n);
-                    textview.setText(init +" "+name+": "+ show.lastViewed.episodeNumber + "X" + show.lastViewed.season + ": " + show.lastViewed.title);
-                    Log.d("HUSTLEprogress", "progresso di " + showProgress.title + ": " + Integer.parseInt(n) + " di 10000");
-
-
+                    //Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
                 }
             }
         };
@@ -809,7 +831,7 @@ public class ShowActivity extends AppCompatActivity {
                     try {
                         friendshowsJSON= new JSONArray(s);
                         if(friendshowsJSON.length() >= 1){
-                            Log.d("HUSTLE", "utente " + actual.name + " segue la serie");
+                            //Log.d("HUSTLE", "utente " + actual.name + " segue la serie");
                             show_friends.add(actual);
                         }
 
@@ -840,4 +862,23 @@ public class ShowActivity extends AppCompatActivity {
     }
 
 
+    String getNextEpisodeDate(Episode episode) {
+        int n = episode.episodeNumber;
+
+        if ( n == show.seasonsList.get((episode.season)-1).episodesList.size()) {
+            return null;
+        }
+        Episode nextepisode = show.seasonsList.get((episode.season)-1).episodesList.get(n+1);
+
+        String date = nextepisode.firstaired ;
+
+        return date;
+    }
+
+    String[] parsingDate(String nextEpisodedate){
+        String [] date = nextEpisodedate.split("-");
+        Log.d("CALENDAR","ParseDate: "+date);
+        return date;
+
+    }
 }

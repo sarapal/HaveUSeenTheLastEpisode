@@ -22,6 +22,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             >
 
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
@@ -37,19 +38,6 @@
                 app:layout_collapseMode="pin"
                 />
 
-            <!--<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/titleSeason"
-                android:textAlignment="center"
-                android:layout_gravity="bottom"
-                android:gravity="center"
-                style="@style/ActionbarTitle"
-                android:textSize="20dp"
-                android:fontFamily="@string/abc_action_bar_home_description_format"
-                android:textColor="@color/text_primary"
-                /> -->
-
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
@@ -61,6 +49,7 @@
         android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+
         <android.support.design.widget.TabLayout
             android:id="@+id/tablayout"
             android:layout_width="match_parent"
@@ -70,6 +59,9 @@
             app:layout_scrollFlags="enterAlways"
             app:tabGravity="fill"
             android:fillViewport="false" />
+
+
+
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
@@ -92,5 +84,19 @@
         app:fabSize="mini"
         android:layout_marginTop="10dp"
         android:visibility="invisible" />
+
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_addCalendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="top|left"
+        android:src="@drawable/ic_calendar"
+        app:fabSize="mini"
+        android:layout_marginTop="10dp"
+        android:theme="@style/CalendarFABstyle"/>
 
 </android.support.design.widget.CoordinatorLayout>

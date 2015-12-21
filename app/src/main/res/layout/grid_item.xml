@@ -41,7 +41,6 @@
             <ImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="@dimen/grid_item_ImageView_width"
-                android:foreground="?android:attr/selectableItemBackground"
                 android:layout_height="@dimen/grid_item_RelativeLayout_height"
                 android:scaleType="centerCrop"
                 android:layout_above="@+id/title" />
@@ -65,18 +64,18 @@
 
 
             <TextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:layout_above="@id/progress_bar_show"
+                android:layout_height="@dimen/grid_item_TextView_height"
                 android:paddingLeft="5dp"
                 android:paddingRight="2dp"
                 android:layout_gravity="bottom"
                 android:gravity="center_vertical"
-                android:id="@+id/text_view_last_episode"
-                android:background="@color/progressbar_background"
+                android:background="#B33F51B5"
                 android:textColor="#fff"
                 android:textSize="15dp"
-                android:visibility="gone"
+                android:visibility="invisible"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
