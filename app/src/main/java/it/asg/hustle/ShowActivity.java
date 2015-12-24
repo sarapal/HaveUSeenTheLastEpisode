@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -34,6 +35,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -51,8 +53,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -159,7 +164,16 @@ public class ShowActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("CALENDAR","FAB-calendar was pressed");
+                String date= new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+                Log.d("CALENDAR-CurrentDate","currentDate= "+ date);
 
+                String[] currentDate = parsingDate(date);
+                int currDay = Integer.parseInt(currentDate[0]);
+                int currMonth = Integer.parseInt(currentDate[1]);
+                int currYear = Integer.parseInt(currentDate[2]);
+                Log.d("CALENDAR-CurrentDate","currDay= "+currDay);
+                Log.d("CALENDAR-CurrentDate", "currMonth= " + currMonth);
+                Log.d("CALENDAR-CurrentDate","currYear= "+currYear);
 
                 int lastSeason = show.seasonsList.size();
                 Log.d("CALENDAR", "airday: " + show.airday + " //  airtime: " + show.airtime);
@@ -185,14 +199,33 @@ public class ShowActivity extends AppCompatActivity {
                 int month = Integer.parseInt(parsedDate[1]) - 1;
                 int day = Integer.parseInt(parsedDate[2]);
 
+                Log.d("CALENDAR-EpDay","EpDay= "+day);
+                Log.d("CALENDAR-EpMonth", "EpMonth= " + month);
+                Log.d("CALENDAR-EpYear","EpYear= "+year);
+
+                // TODO:
+                /* comparing Episode airday, that user wants to save on calendar with current day
+                 * calendar event is added ONLY IF the airday isn't passed yet */
+
+                if (currMonth>month) {
+                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG);
+                    return;
+                }
+                if (currMonth==month && currDay>day){
+                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG);
+                    return;
+                }
+
+                int[] parsedTime = parsingTime(show.airtime, ":");
+
                 Log.d("CALENDAR", "Parsed: year " + year + " month " + month + "day " + day);
 
-                GregorianCalendar gc = new GregorianCalendar(year, month, day);
+                GregorianCalendar gc = new GregorianCalendar(year, month, day,parsedTime[0],parsedTime[1]);
                 // or new GregorianCalendar(year, month, day, hour, minute);
 
-                intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+               // intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
                 intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, gc.getTimeInMillis());
-                intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, gc.getTimeInMillis());
+                intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, gc.getTimeInMillis()+(45*60*1000));
 
                 //intent.putExtra("rrule", "FREQ=WEEKLY");
 
@@ -877,8 +910,27 @@ public class ShowActivity extends AppCompatActivity {
 
     String[] parsingDate(String nextEpisodedate){
         String [] date = nextEpisodedate.split("-");
-        Log.d("CALENDAR","ParseDate: "+date);
+       // Log.d("CALENDAR","ParseDate: "+date);
         return date;
 
+    }
+    int[] parsingTime(String timeS, String delimiter){
+        int[] time = new int[2];
+        String[] hours = timeS.split(delimiter);
+        Log.d("CALENDAR","ParsedTime: "+hours);
+        String[] minutes = hours[1].split(" ");
+        int min = Integer.parseInt(minutes[0]);
+        int hour = Integer.parseInt(hours[0]);
+
+        if ((minutes[1]).equals("PM")) {
+            hour += 12;
+        }
+
+        time[0] = hour;
+        time[1] = min;
+
+        //Log.d("CALENDAR-parsingDate","time[0]: "+time[0]);
+        //Log.d("CALENDAR-parsingDate","time[1]: "+time[1]);
+        return time;
     }
 }
