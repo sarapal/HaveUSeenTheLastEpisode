@@ -706,6 +706,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
+                    Log.d("MYSERIES", s);
                     if(s!=null) {
                         showSeries(s, gridAdapter, true);
                     }

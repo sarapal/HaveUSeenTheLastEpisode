@@ -169,7 +169,7 @@ public class ShowActivity extends AppCompatActivity {
 
                 String[] currentDate = parsingDate(date);
                 int currDay = Integer.parseInt(currentDate[0]);
-                int currMonth = Integer.parseInt(currentDate[1]);
+                int currMonth = Integer.parseInt(currentDate[1])-1;
                 int currYear = Integer.parseInt(currentDate[2]);
                 Log.d("CALENDAR-CurrentDate","currDay= "+currDay);
                 Log.d("CALENDAR-CurrentDate", "currMonth= " + currMonth);
@@ -208,15 +208,15 @@ public class ShowActivity extends AppCompatActivity {
                  * calendar event is added ONLY IF the airday isn't passed yet */
 
                 if (currYear > year){
-                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG).show();
                     return;
                 }
                 if (currYear==year && currMonth>month) {
-                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG).show();
                     return;
                 }
                 if (currYear==year && currMonth==month && currDay>day){
-                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG).show();
                     return;
                 }
 
