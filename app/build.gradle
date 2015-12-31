@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-  //  signingConfigs {
-  //      release {
-  //          keyAlias System.getenv("KEY_ALIAS")
-  //          keyPassword System.getenv("KEY_PASSWORD")
-  //          storeFile file(System.getenv("KEYSTORE"))
-  //          storePassword System.getenv("KEYSTORE_PASSWORD")
-  //
-  //      }
-  //  }
+    signingConfigs {
+        release {
+            //storeFile file("/home/sara/keystores/hustle.jks")
+            storeFile file(System.getenv("KEYSTORE"))
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
     defaultConfig {
@@ -23,7 +23,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//            signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
         debug {
         }

@@ -207,11 +207,15 @@ public class ShowActivity extends AppCompatActivity {
                 /* comparing Episode airday, that user wants to save on calendar with current day
                  * calendar event is added ONLY IF the airday isn't passed yet */
 
-                if (currMonth>month) {
+                if (currYear > year){
                     Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG);
                     return;
                 }
-                if (currMonth==month && currDay>day){
+                if (currYear==year && currMonth>month) {
+                    Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG);
+                    return;
+                }
+                if (currYear==year && currMonth==month && currDay>day){
                     Toast.makeText(getApplicationContext(),"Error: the event is alrady passed",Toast.LENGTH_LONG);
                     return;
                 }
