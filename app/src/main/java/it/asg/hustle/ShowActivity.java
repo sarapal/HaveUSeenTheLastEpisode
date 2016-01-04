@@ -163,9 +163,9 @@ public class ShowActivity extends AppCompatActivity {
         addCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CALENDAR","FAB-calendar was pressed");
+                //Log.d("CALENDAR","FAB-calendar was pressed");
                 String date= new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-                Log.d("CALENDAR-CurrentDate","currentDate= "+ date);
+                //Log.d("CALENDAR-CurrentDate","currentDate= "+ date);
 
                 String[] currentDate = parsingDate(date);
                 int currDay = Integer.parseInt(currentDate[0]);
@@ -175,20 +175,24 @@ public class ShowActivity extends AppCompatActivity {
                 Log.d("CALENDAR-CurrentDate", "currMonth= " + currMonth);
                 Log.d("CALENDAR-CurrentDate","currYear= "+currYear);
 
-                int lastSeason = show.seasonsList.size();
+                int lastSeasonNumber = lastEpisode.season;
+                int lastNumber = lastEpisode.episodeNumber;
+
                 Log.d("CALENDAR", "airday: " + show.airday + " //  airtime: " + show.airtime);
-                Season last = show.seasonsList.get(show.seasonsList.size() - 1);
-                String title = last.episodesList.get(last.episodesList.size()-1).title;
-                Log.d("CALENDAR", "Season: " + lastSeason + " Episode: "+ title);
+                Log.d("CALENDAR", "Last episode, Season: " + lastSeasonNumber + " Episode: "+ lastNumber);
+                Log.d("CALENDAR", lastEpisode.toString());
 
                 Calendar cal = Calendar.getInstance();
                 Intent intent = new Intent(Intent.ACTION_EDIT);
                 intent.setType("vnd.android.cursor.item/event");
 
                 String nextDate = getNextEpisodeDate(lastEpisode);
-                Log.d("CALENDAR", lastEpisode.toString());
                 if(nextDate==null){
                     Toast.makeText(ShowActivity.this, "Error in setting calendar event", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (nextDate.equals("")) {
+                    Toast.makeText(ShowActivity.this, "Next episode date is TBA", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Log.d("CALENDAR", "date of next episode: " + nextDate);
@@ -203,7 +207,7 @@ public class ShowActivity extends AppCompatActivity {
                 Log.d("CALENDAR-EpMonth", "EpMonth= " + month);
                 Log.d("CALENDAR-EpYear","EpYear= "+year);
 
-                // TODO:
+                //
                 /* comparing Episode airday, that user wants to save on calendar with current day
                  * calendar event is added ONLY IF the airday isn't passed yet */
 
@@ -222,7 +226,7 @@ public class ShowActivity extends AppCompatActivity {
 
                 int[] parsedTime = parsingTime(show.airtime, ":");
 
-                Log.d("CALENDAR", "Parsed: year " + year + " month " + month + "day " + day);
+                //Log.d("CALENDAR", "Parsed: year " + year + " month " + month + "day " + day);
 
                 GregorianCalendar gc = new GregorianCalendar(year, month, day,parsedTime[0],parsedTime[1]);
                 // or new GregorianCalendar(year, month, day, hour, minute);
@@ -233,7 +237,7 @@ public class ShowActivity extends AppCompatActivity {
 
                 //intent.putExtra("rrule", "FREQ=WEEKLY");
 
-                intent.putExtra("title", show.title+" - Season "+lastSeason+" Episode: "+title);
+                intent.putExtra("title", show.title+" - Season "+lastEpisode.season+" Episode: "+lastEpisode.title);
                 startActivity(intent);
             }
         });
@@ -901,11 +905,21 @@ public class ShowActivity extends AppCompatActivity {
 
     String getNextEpisodeDate(Episode episode) {
         int n = episode.episodeNumber;
+        Season lastSeason = show.seasonsList.get(episode.season-1);
 
-        if ( n == show.seasonsList.get((episode.season)-1).episodesList.size()) {
-            return null;
+        // if it is the last episode of the season
+        if ( n == lastSeason.episodesList.size()) {
+            // if this is the last season, there is no next episode
+            if (episode.season == show.seasonsList.size()) {
+                return null;
+            }
+            // go to next season
+            lastSeason = show.seasonsList.get(episode.season+1-1);
+            // next episode is the first
+            n = 1;
         }
-        Episode nextepisode = show.seasonsList.get((episode.season)-1).episodesList.get(n+1);
+        // +1 for next episode. -1 because indexes start from 0
+        Episode nextepisode = lastSeason.episodesList.get(n+1-1);
 
         String date = nextepisode.firstaired ;
 

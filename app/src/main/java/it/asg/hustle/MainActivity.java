@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 menuItem.setChecked(true);
                 myDrawerLayout.closeDrawers();
-                Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
                 if (menuItem.getTitle().equals(getResources().getString(R.string.nav_item_login)) == true) {
                     // accesso facebook
                     Intent intentactivityfacebook = new Intent(MainActivity.this, FacebookActivity.class);
@@ -480,12 +480,14 @@ public class MainActivity extends AppCompatActivity {
 
             if (tabPosition == 0) {
                 Log.d("HUSTLE", "onResume fragment delle mie serie TV");
+                my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
                 if (CheckConnection.isConnected(getActivity())) {
+                    showSeries(my_series, gridAdapter[0], true);
                     downloadMySeries(gridAdapter[0], false);
                 } else if (my_series != null)
                     showSeries(my_series, gridAdapter[0], true);
                 else {
-                    my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
+                    //my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
                     if (my_series != null)
                         showSeries(my_series, gridAdapter[0], true);
                 }
@@ -661,13 +663,14 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPreExecute() {
                     super.onPreExecute();
-                    spinner.setVisibility(View.VISIBLE);
+                    //spinner.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 protected String doInBackground(String... params) {
                     URL url = null;
                     String s = null;
+                    long start = System.currentTimeMillis();
                     try {
                         Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
                                 buildUpon().
@@ -691,11 +694,13 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                         return null;
                     }
+                    Log.d("TIME22", ""+(System.currentTimeMillis()-start));
                     //Log.d("HUSTLE", "returned: " + s);
                     // Salva le mie serie TV nelle SharedPreferences
                     Context c = getActivity();
                     if (c == null)
                         return s;
+                    Log.d("MY_SERIES", s);
                     SharedPreferences.Editor editor = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).edit();
                     editor.putString("my_series_json", s);
                     editor.commit();
@@ -736,8 +741,8 @@ public class MainActivity extends AppCompatActivity {
                         Uri builtUri = Uri.parse("http://hustle.altervista.org/getSeries.php?").
                                 buildUpon().
                                 appendQueryParameter("most_viewed", null).
-                                appendQueryParameter("max", "30").
-                                appendQueryParameter("language", Locale.getDefault().getLanguage()).
+                                appendQueryParameter("max", "100").
+                                //appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
                         Log.d("MOST", "requesting: " + u);
@@ -765,7 +770,7 @@ public class MainActivity extends AppCompatActivity {
                     super.onPostExecute(s);
 
                     if(s!=null) {
-                        //Log.d("MOST", s);
+                        Log.d("MOST_V", s);
                         showSeries(s, gridAdapter, false);
                         swipeView.setRefreshing(false);
 

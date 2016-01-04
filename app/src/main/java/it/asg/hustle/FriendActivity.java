@@ -204,7 +204,7 @@ public class FriendActivity extends AppCompatActivity {
         int dp = (int) ((px/displayMetrics.density)+0.5);
         return dp;
     }
-
+/*
     private static void doGetProgress(final Context context,final String series_id, final String user_id, final Show showProgress,final ProgressBar progressBar,final GridItem griditem){
 
         AsyncTask<String, Void, String> progress_asynctask = new AsyncTask<String, Void, String>() {
@@ -278,5 +278,6 @@ public class FriendActivity extends AppCompatActivity {
             progress_asynctask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
+    */
 
 }
