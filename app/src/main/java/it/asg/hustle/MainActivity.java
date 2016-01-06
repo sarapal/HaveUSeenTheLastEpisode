@@ -482,7 +482,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("HUSTLE", "onResume fragment delle mie serie TV");
                 my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
                 if (CheckConnection.isConnected(getActivity())) {
-                    showSeries(my_series, gridAdapter[0], true);
+                    if (my_series != null)
+                        showSeries(my_series, gridAdapter[0], true);
                     downloadMySeries(gridAdapter[0], false);
                 } else if (my_series != null)
                     showSeries(my_series, gridAdapter[0], true);
