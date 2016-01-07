@@ -19,6 +19,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -93,7 +95,8 @@ public class SearchShowRecyclerAdapter extends RecyclerView.Adapter<SearchShowRe
             viewHolder.mImageView.setImageBitmap(item.getThumbnail());
         } else {
             if (!item.banner.equals("http://thetvdb.com/banners/")) {
-                new ImageDownloader(c,maxImagePX,maxImagePX).download(item.banner, viewHolder.mImageView, item);
+                //new ImageDownloader(c,maxImagePX,maxImagePX).download(item.banner, viewHolder.mImageView, item);
+                Picasso.with(c).load(item.banner).into(viewHolder.mImageView);
             }
         }
     }

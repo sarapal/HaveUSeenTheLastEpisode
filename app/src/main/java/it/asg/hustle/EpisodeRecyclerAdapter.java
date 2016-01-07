@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import it.asg.hustle.Info.Episode;
@@ -131,7 +133,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         }*/
 
         if (!ep.bmpPath.equals("http://thetvdb.com/banners/")) {
-            new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
+            //new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
+            Picasso.with(context).load(imgURL).into(viewHolder.epImg);
         }
 
         // mette check o uncheck per l'episodio a seconda del valore che ha l'oggetto Episode

@@ -1,0 +1,6 @@
+1- Show a spinner (or some other loading images) while the check-all FAB is running (ShowActivity)
+2- EpisodeActivity TabLayout with all episodes of season
+3- Use PLACEHOLDER in episode image in ShowActivity
+4- Add actors images
+5- Switch between light and dark theme
+6- Fix FriendCard: vertical scroll (instead of horizontal) + last seen episode for each friend

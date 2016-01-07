@@ -42,6 +42,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,9 +130,10 @@ public class ShowActivity extends AppCompatActivity {
 
                     //((ImageView) findViewById(R.id.show_activity_poster)).setMaxHeight(heightPX);
 
-                    if (!new ImageDownloader(this, dimPX, dimPX).download(show.fanart, posterImageView, show)) {
-                        Log.d("HUSTLE", "Non scarica immagine, gli arriva NULL");
-                    }
+                    //if (!new ImageDownloader(this, dimPX, dimPX).download(show.fanart, posterImageView, show)) {
+                    //    Log.d("HUSTLE", "Non scarica immagine, gli arriva NULL");
+                    //}
+                    Picasso.with(this).load(show.fanart).into(posterImageView);
                     doGetInfo(show);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -293,6 +296,9 @@ public class ShowActivity extends AppCompatActivity {
                 int ep_num = b.getInt("episode_num");
                 int season = b.getInt("season");
 
+                if (ep_num == 0) {
+                    return;
+                }
                 //Log.d("HUSTLE", "Episodio n " + ep_num + " stagione " + season + " stato " + status);
 
                 EpisodeRecyclerAdapter era = adapterList.get(season);

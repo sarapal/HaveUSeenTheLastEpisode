@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,7 +96,11 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
         } else {
             if (item.getShow().poster != null) {
                 if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
-                    new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
+                    //new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
+                    /*Picasso p = Picasso.with(ctx);
+                    p.setIndicatorsEnabled(true);
+                    p.load(item.getShow().poster).into(viewHolder.thumbnail);*/
+                    Picasso.with(ctx).load(item.getShow().poster).into(viewHolder.thumbnail);
                 }
             } else {
                 //Log.d("NOPOSTER", "Lo show " + item.getShow().title + " non ha poster: " + item.getShow());

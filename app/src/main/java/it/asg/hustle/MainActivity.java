@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -108,12 +109,16 @@ public class MainActivity extends AppCompatActivity {
 
     private ShareDialog shareDialog;
 
+    private static ArrayList<AsyncTask> tasks;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // initialize facebook sdk
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+
+        tasks = new ArrayList<AsyncTask>();
 
         // apre o crea il db
         helper = new DBHelper(this);
@@ -400,6 +405,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Kill all Async Tasks
+        if (tasks == null) {
+            return;
+        }
+        int i = 0;
+        int count = tasks.size();
+        AsyncTask a;
+        for (i=0; i < count; i++) {
+            try {
+                a = tasks.get(i);
+            } catch (Exception e) {
+                continue;
+            }
+            a.cancel(true);
+        }
+    }
+
     //
     @Override
     public void onBackPressed() {
@@ -665,6 +690,7 @@ public class MainActivity extends AppCompatActivity {
                 protected void onPreExecute() {
                     super.onPreExecute();
                     //spinner.setVisibility(View.VISIBLE);
+                    tasks.add(this);
                 }
 
                 @Override
@@ -732,6 +758,7 @@ public class MainActivity extends AppCompatActivity {
                 protected void onPreExecute() {
                     super.onPreExecute();
                     spinner.setVisibility(View.VISIBLE);
+                    tasks.add(this);
                 }
 
                 @Override
@@ -793,6 +820,7 @@ public class MainActivity extends AppCompatActivity {
                 protected void onPreExecute() {
                     super.onPreExecute();
                     spinner.setVisibility(View.VISIBLE);
+                    tasks.add(this);
                 }
 
                 @Override
@@ -1024,6 +1052,12 @@ public class MainActivity extends AppCompatActivity {
 
         AsyncTask<Void, Void, Void> updateFriendShowTask = new AsyncTask<Void,Void,Void>() {
             @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                tasks.add(this);
+            }
+
+            @Override
             protected Void doInBackground(Void... params) {
                 SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
                 String friend_list_json_string = options.getString("friend_list", null);
@@ -1135,6 +1169,12 @@ public class MainActivity extends AppCompatActivity {
     private static void doGetProgress(final Context context,final String series_id, final String user_id, final Show showProgress,final ProgressBar progressBar){
 
         AsyncTask<String, Void, String> progress_asynctask = new AsyncTask<String, Void, String>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                tasks.add(this);
+            }
+
             @Override
             protected String doInBackground(String... params) {
                 Episode lastEpisode;
