@@ -92,7 +92,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                     /*Picasso p = Picasso.with(ctx);
                     p.setIndicatorsEnabled(true);
                     p.load(item.getShow().poster).into(viewHolder.thumbnail);*/
-                    Picasso.with(ctx).load(item.getShow().poster).into(viewHolder.thumbnail);
+                    Picasso.with(ctx).load(item.getShow().poster).fit().into(viewHolder.thumbnail);
                 }
             } else {
                 //Log.d("NOPOSTER", "Lo show " + item.getShow().title + " non ha poster: " + item.getShow());

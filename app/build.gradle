@@ -5,12 +5,12 @@ android {
         release {
         }
     }
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion "21.1.2"
     defaultConfig {
         applicationId "it.asg.hustle"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 3
         versionName "1.0"
     }
@@ -29,12 +29,12 @@ repositories {
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
-    compile 'com.android.support:appcompat-v7:22.+'
-    compile 'com.android.support:design:22.+'
-    compile 'com.android.support:recyclerview-v7:22.2.1'
-    compile 'com.android.support:cardview-v7:22.2.1'
-    compile 'de.hdodenhof:circleimageview:1.3.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.7.0'
+    compile 'com.android.support:appcompat-v7:23.+'
+    compile 'com.android.support:design:23.+'
+    compile 'com.android.support:recyclerview-v7:23.+'
+    compile 'com.android.support:cardview-v7:23.+'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
 }
 

@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout myDrawerLayout;    // imposta NavigationDrawer
     private FloatingActionButton fab;       // FloatingActionButton
     private NavigationView navigationView;  // NavigationView (per il navigation drawer)
+    private View headerNav;
 
     private MenuItem SearchAction;
     private boolean isSearchOpened = false;
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
         //click elementi su NavigationDrawer
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        headerNav = navigationView.getHeaderView(0);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -207,7 +209,8 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
         // Imposta
-        circleImageView = (de.hdodenhof.circleimageview.CircleImageView)findViewById(R.id.circleView);
+
+        circleImageView = (de.hdodenhof.circleimageview.CircleImageView) headerNav.findViewById(R.id.circleView);
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,8 +219,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intentactivityfacebook);
             }
         });
-        profilePictureInvisible = (com.facebook.login.widget.ProfilePictureView)findViewById(R.id.profilePictureInvisible);
-        account_name_facebook_tv = (TextView) findViewById(R.id.account_name_facebook);
+
+        profilePictureInvisible = (com.facebook.login.widget.ProfilePictureView)headerNav.findViewById(R.id.profilePictureInvisible);
+        account_name_facebook_tv = (TextView) headerNav.findViewById(R.id.account_name_facebook);
         //Log.d("HUSTLE", "profilePictureInvisible: " + profilePictureInvisible);
         if (CheckConnection.isConnected(this)) {
             updateLogInServer();
