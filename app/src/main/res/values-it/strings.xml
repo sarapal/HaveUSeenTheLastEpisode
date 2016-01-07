@@ -31,4 +31,6 @@
     <string name="searching">Ricerca...</string>
     <string name="tv_show_activity_title">Serie TV</string>
     <string name="toast_failure_refresh">Errore nell\'aggiornamento</string>
+    <string name="drawer_header_text" translatable="false">Account</string>
+    <string name="progress_text_title">Progresso</string>
 </resources>
