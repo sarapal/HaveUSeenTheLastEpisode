@@ -1,16 +1,10 @@
 package it.asg.hustle;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +15,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import it.asg.hustle.Info.Show;
-import it.asg.hustle.Utils.BitmapHelper;
-import it.asg.hustle.Utils.ImageDownloader;
 
 /**
  * Created by sara on 8/26/15.

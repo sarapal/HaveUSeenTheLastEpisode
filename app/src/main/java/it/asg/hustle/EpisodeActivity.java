@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,12 +25,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Friend;
-import it.asg.hustle.Info.Season;
-import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.UpdateEpisodeState;
 
 public class EpisodeActivity extends AppCompatActivity {

@@ -8,7 +8,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +18,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Season;
-import it.asg.hustle.Utils.ImageDownloader;
 import it.asg.hustle.Utils.UpdateEpisodeState;
 
 /**
@@ -134,7 +133,19 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
         if (!ep.bmpPath.equals("http://thetvdb.com/banners/")) {
             //new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
-            Picasso.with(context).load(imgURL).into(viewHolder.epImg);
+            // TODO: add placeholder
+            Picasso.with(context).load(imgURL).resize(maxImageWidth, maxImageWidth).centerCrop().into(viewHolder.epImg, new Callback() {
+                @Override
+                public void onSuccess() {
+                    // TODO: setThumbnail on ep Object is not working
+                    //ep.setThumbnail(((BitmapDrawable) viewHolder.epImg.getDrawable()).getBitmap());
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
         }
 
         // mette check o uncheck per l'episodio a seconda del valore che ha l'oggetto Episode

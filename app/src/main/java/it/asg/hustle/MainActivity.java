@@ -10,7 +10,6 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -494,6 +493,8 @@ public class MainActivity extends AppCompatActivity {
         private static String my_series = null;
         private JSONArray jsonArraySeries = null;
 
+        private static boolean just_updated = false;
+
         public TvShowFragment() {
         }
 
@@ -509,7 +510,8 @@ public class MainActivity extends AppCompatActivity {
                 if (CheckConnection.isConnected(getActivity())) {
                     if (my_series != null)
                         showSeries(my_series, gridAdapter[0], true);
-                    downloadMySeries(gridAdapter[0], false);
+                    if (!just_updated)
+                        downloadMySeries(gridAdapter[0], false);
                 } else if (my_series != null)
                     showSeries(my_series, gridAdapter[0], true);
                 else {
@@ -741,6 +743,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MYSERIES", s);
                     if(s!=null) {
                         showSeries(s, gridAdapter, true);
+                        if (!just_updated)
+                            just_updated = true;
                     }
                     swipeView.setRefreshing(false);
                     spinner.setVisibility(View.GONE);

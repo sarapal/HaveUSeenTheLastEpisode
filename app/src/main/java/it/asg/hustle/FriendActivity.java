@@ -1,10 +1,6 @@
 package it.asg.hustle;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,10 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -36,7 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
-import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.CheckConnection;
 

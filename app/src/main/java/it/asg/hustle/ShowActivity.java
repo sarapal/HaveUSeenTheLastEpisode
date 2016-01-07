@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.CalendarContract;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -24,10 +25,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +34,6 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.accessibility.AccessibilityManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -55,7 +53,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,7 +66,6 @@ import it.asg.hustle.Info.Season;
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.CheckConnection;
 import it.asg.hustle.Utils.DBHelper;
-import it.asg.hustle.Utils.ImageDownloader;
 import it.asg.hustle.Utils.UpdateEpisodeState;
 
 public class ShowActivity extends AppCompatActivity {
@@ -111,6 +107,12 @@ public class ShowActivity extends AppCompatActivity {
         }
 
         posterImageView = (ImageView) findViewById(R.id.show_activity_poster);
+        // width is dimensions[0], height is dimensions[1]
+        int []dimensions = getDisplayWidthHeightPX();
+        //posterImageView.setMaxHeight(dimensions[1]/3);
+
+        AppBarLayout al = (AppBarLayout) findViewById(R.id.appbar);
+        al.setMinimumHeight(dimensions[1] / 3);
 
         //caso in cui l'activity viene generata dalla ricerca
         if(savedInstanceState == null){
@@ -122,7 +124,7 @@ public class ShowActivity extends AppCompatActivity {
                     showJSON = new JSONObject(s);
                     show = new Show(showJSON);
 
-                    int dimPX = getDisplayDimensionsPX();
+                    //int dimPX = getDisplayDimensionsPX();
                     //Log.d("DIMENSIONI", ""+dimPX);
                     //int heightPX = dimPX*1080/1920;
 
@@ -133,7 +135,7 @@ public class ShowActivity extends AppCompatActivity {
                     //if (!new ImageDownloader(this, dimPX, dimPX).download(show.fanart, posterImageView, show)) {
                     //    Log.d("HUSTLE", "Non scarica immagine, gli arriva NULL");
                     //}
-                    Picasso.with(this).load(show.fanart).into(posterImageView);
+                    //Picasso.with(this).load(show.fanart).resize(dimensions[0], dimensions[1]/3).centerCrop().into(posterImageView);
                     doGetInfo(show);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -147,6 +149,8 @@ public class ShowActivity extends AppCompatActivity {
             adapterList.add(new EpisodeRecyclerAdapter(getApplicationContext(), ShowActivity.this, show.seasonsList.get(i - 1)));
 
         }
+
+        Picasso.with(this).load(show.fanart).resize(dimensions[0], dimensions[1]/3).centerCrop().into(posterImageView);
 
         // get toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -281,6 +285,17 @@ public class ShowActivity extends AppCompatActivity {
         int widthPX = size.x;
 
         return widthPX;
+    }
+
+    public int[] getDisplayWidthHeightPX() {
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int []res = new int[2];
+        res[0] = size.x;
+        res[1] = size.y;
+        return res;
     }
 
 
