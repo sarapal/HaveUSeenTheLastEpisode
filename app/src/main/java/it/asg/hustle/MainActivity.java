@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         helper = new DBHelper(this);
         db = helper.getWritableDatabase();
         DBHelper.getInstance(this);
-        Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
+        //Log.d("HUSTLE", "Aperto database con nome: " + helper.getDatabaseName());
 
         // Initialize bitmap cache
         bitmapCache = BitmapCache.createOrOpen(getApplicationContext());
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         String name = getSharedPreferences("name_facebook", Context.MODE_PRIVATE).getString("name_facebook", null);
 
         if (id == null || name == null) {
-            Log.d("HUSTLE", "Non sei loggato su FB, quindi non puoi essere loggato sul server");
+            ////Log.d("HUSTLE", "Non sei loggato su FB, quindi non puoi essere loggato sul server");
             Toast.makeText(getApplicationContext(),"Login non effettuato. Effettuare l'accesso per vedere le serie",Toast.LENGTH_SHORT).show();
             logged = false;
             SharedPreferences o = getSharedPreferences("logged", Context.MODE_PRIVATE);
@@ -246,11 +246,11 @@ public class MainActivity extends AppCompatActivity {
         logged = getSharedPreferences("logged", Context.MODE_PRIVATE).getBoolean("logged", false);
         if (!logged) {
             if (id != null) {
-                Log.d("HUSTLE", "Non sei registrato sul server, registrazione in corso per: id " + id + " e nome: " + name);
+                //Log.d("HUSTLE", "Non sei registrato sul server, registrazione in corso per: id " + id + " e nome: " + name);
                 logIn(id, name);
             }
         } else {
-            Log.d("HUSTLE", "Sei già loggato sul server, non effettuo registrazione");
+            //Log.d("HUSTLE", "Sei già loggato sul server, non effettuo registrazione");
         }
     }
 
@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
                 String auth = MD5.hash(id+name);
                 try {
                     String data = "id="+id+"&name="+name+"&auth="+auth;
-                    Log.d("HUSTLE", "Invio richiesta di registrazione: "+data);
+                    //Log.d("HUSTLE", "Invio richiesta di registrazione: "+data);
                     url = new URL("http://hustle.altervista.org/signup.php");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("POST");
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
                     InputStream in = new BufferedInputStream(con.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
                     s = br.readLine();
-                    Log.d("HUSTLE", "Ecco che ha risposto il server mentre mi loggo: " + s);
+                    //Log.d("HUSTLE", "Ecco che ha risposto il server mentre mi loggo: " + s);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e){
                     e.printStackTrace();
                 }
-                Log.d("HUSTLE", "returned: " + s);
+                //Log.d("HUSTLE", "returned: " + s);
                 return s;
             }
 
@@ -300,10 +300,10 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject jo = new JSONObject(s);
                     if (jo.getBoolean("logged")) {
-                        Log.d("HUSTLE", "Ti sei loggato sul server");
+                        //Log.d("HUSTLE", "Ti sei loggato sul server");
                         logged = true;
                     } else {
-                        Log.d("HUSTLE", "Non sei loggato sul server");
+                        //Log.d("HUSTLE", "Non sei loggato sul server");
                         logged = false;
                     }
                 } catch (JSONException e) {
@@ -505,7 +505,7 @@ public class MainActivity extends AppCompatActivity {
             int tabPosition = args.getInt(TAB_POSITION);
 
             if (tabPosition == 0) {
-                Log.d("HUSTLE", "onResume fragment delle mie serie TV");
+                //Log.d("HUSTLE", "onResume fragment delle mie serie TV");
                 my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
                 if (CheckConnection.isConnected(getActivity())) {
                     if (my_series != null)
@@ -536,7 +536,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSaveInstanceState(Bundle outState) {
             // Salva le serie viste
-            Log.d("HUSTLE", "Saving state");
+            //Log.d("HUSTLE", "Saving state");
             outState.putString("my_series", my_series);
             super.onSaveInstanceState(outState);
         }
@@ -545,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
             Bundle args = getArguments();
             final int tabPosition = args.getInt(TAB_POSITION);
-            Log.d("asg","tabPosition "+tabPosition);
+            //Log.d("asg","tabPosition "+tabPosition);
 
             View v = inflater.inflate(R.layout.fragment_list_view, container, false);
             swipeView = (SwipeRefreshLayout) v.findViewById(R.id.refresh_swipe_main);
@@ -573,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onRefresh() {
                         if(CheckConnection.isConnected(getActivity())) {
-                            Log.d("HUSTLE", "refresh on " + tabPosition);
+                            //Log.d("HUSTLE", "refresh on " + tabPosition);
                             downloadMySeries(gridAdapter[0], true);
                         }
                         else{
@@ -585,17 +585,17 @@ public class MainActivity extends AppCompatActivity {
                 // Se c'è uno stato salvato, usa quello
                 if (savedInstanceState != null) {
                     my_series = savedInstanceState.getString("my_series");
-                    Log.d("HUSTLE", "Ripristino mie serie da savedInstanceState");
+                    //Log.d("HUSTLE", "Ripristino mie serie da savedInstanceState");
                 }
                 // Se l'utente è connesso a internet scarica le sue serie TV
                 if (CheckConnection.isConnected(getActivity())) {
-                    Log.d("HUSTLE", "onCreate, connesso a internet, scarico le serie");
+                    //Log.d("HUSTLE", "onCreate, connesso a internet, scarico le serie");
                     downloadMySeries(gridAdapter[tabPosition], true);
                 } else {
                     // Altrimenti prende le mie serie TV dalle SharedPreferences e mostra quelle
                     // se my_series è diverso da null significa che ho già ripristinato lo stato
                     if (my_series == null) {
-                        Log.d("HUSTLE", "Ripristino da shared preferences");
+                        //Log.d("HUSTLE", "Ripristino da shared preferences");
                         my_series = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).getString("my_series_json", null);
                     }
                     // Mostra le serie
@@ -708,7 +708,7 @@ public class MainActivity extends AppCompatActivity {
                                 appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
-                        Log.d("HUSTLE", "requesting: " + u);
+                        //Log.d("HUSTLE", "requesting: " + u);
                         url = new URL(u);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -724,13 +724,13 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                         return null;
                     }
-                    Log.d("TIME22", ""+(System.currentTimeMillis()-start));
-                    //Log.d("HUSTLE", "returned: " + s);
+                    //Log.d("TIME22", ""+(System.currentTimeMillis()-start));
+                    ////Log.d("HUSTLE", "returned: " + s);
                     // Salva le mie serie TV nelle SharedPreferences
                     Context c = getActivity();
                     if (c == null)
                         return s;
-                    Log.d("MY_SERIES", s);
+                    //Log.d("MY_SERIES", s);
                     SharedPreferences.Editor editor = getActivity().getSharedPreferences("my_series", Context.MODE_PRIVATE).edit();
                     editor.putString("my_series_json", s);
                     editor.commit();
@@ -741,7 +741,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(String s) {
                     super.onPostExecute(s);
-                    Log.d("MYSERIES", s);
+                    //Log.d("MYSERIES", s);
                     if(s!=null) {
                         showSeries(s, gridAdapter, true);
                         just_updated = true;
