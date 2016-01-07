@@ -510,8 +510,7 @@ public class MainActivity extends AppCompatActivity {
                 if (CheckConnection.isConnected(getActivity())) {
                     if (my_series != null)
                         showSeries(my_series, gridAdapter[0], true);
-                    if (!just_updated)
-                        downloadMySeries(gridAdapter[0], false);
+                    downloadMySeries(gridAdapter[0], false);
                 } else if (my_series != null)
                     showSeries(my_series, gridAdapter[0], true);
                 else {
@@ -684,6 +683,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void downloadMySeries(final GridAdapter gridAdapter, final boolean oncreate) {
+            if (just_updated)
+                return;
             // Prende id di Facebook
             final String id = getActivity().getSharedPreferences("id_facebook", Context.MODE_PRIVATE).getString("id_facebook", null);
             // Definisce un AsyncTask che scaricherà le serie viste dall'utente
@@ -743,8 +744,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MYSERIES", s);
                     if(s!=null) {
                         showSeries(s, gridAdapter, true);
-                        if (!just_updated)
-                            just_updated = true;
+                        just_updated = true;
                     }
                     swipeView.setRefreshing(false);
                     spinner.setVisibility(View.GONE);
@@ -777,7 +777,7 @@ public class MainActivity extends AppCompatActivity {
                                 //appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
-                        Log.d("MOST", "requesting: " + u);
+                        //Log.d("MOST", "requesting: " + u);
                         url = new URL(u);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -802,7 +802,7 @@ public class MainActivity extends AppCompatActivity {
                     super.onPostExecute(s);
 
                     if(s!=null) {
-                        Log.d("MOST_V", s);
+                        //Log.d("MOST_V", s);
                         showSeries(s, gridAdapter, false);
                         swipeView.setRefreshing(false);
 
@@ -831,7 +831,7 @@ public class MainActivity extends AppCompatActivity {
                 protected ArrayList<GridItem> doInBackground(ArrayList<Friend> ...params) {
                     SharedPreferences options = getActivity().getSharedPreferences("friend_list", Context.MODE_PRIVATE);
                     String friend_list_json_string = options.getString("friend_list", null);
-                    Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
+                    //Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
                     ArrayList<Friend> return_list = new ArrayList<Friend>();
                     ArrayList<GridItem> listItem = new ArrayList<GridItem>();
                     if(friend_list_json_string != null){
@@ -862,7 +862,7 @@ public class MainActivity extends AppCompatActivity {
                                                 appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                                 build();
                                         String u = builtUri.toString();
-                                        Log.d("FRIEND", "requesting: " + u);
+                                        //Log.d("FRIEND", "requesting: " + u);
                                         URL url = new URL(u);
                                         //URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id+"&language="+Locale.getDefault().getLanguage());
                                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -909,7 +909,7 @@ public class MainActivity extends AppCompatActivity {
                                         }
 
                                     } catch (JSONException e) {
-                                        Log.d("HUSTLE", "errore! +"+actual.name+" :" + s);
+                                        //Log.d("HUSTLE", "errore! +"+actual.name+" :" + s);
                                         e.printStackTrace();
                                     }catch(Exception e){
                                         e.printStackTrace();
@@ -977,7 +977,7 @@ public class MainActivity extends AppCompatActivity {
                     new GraphRequest.Callback() {
                         public void onCompleted(GraphResponse response) {
                             try {
-                                Log.d("HUSTLE", "amici: " + response.getJSONObject().getJSONArray("data").toString());
+                                //Log.d("HUSTLE", "amici: " + response.getJSONObject().getJSONArray("data").toString());
                                 SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = options.edit();
                                 editor.putString("friend_list", response.getJSONObject().getJSONArray("data").toString());
@@ -1065,7 +1065,7 @@ public class MainActivity extends AppCompatActivity {
             protected Void doInBackground(Void... params) {
                 SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
                 String friend_list_json_string = options.getString("friend_list", null);
-                Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
+                //Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
                 ArrayList<Friend> return_list = new ArrayList<Friend>();
                 if (friend_list_json_string != null) {
                     try {
@@ -1089,20 +1089,20 @@ public class MainActivity extends AppCompatActivity {
                                 appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
-                        Log.d("FRIEND", "requesting: " + u);
+                        //Log.d("FRIEND", "requesting: " + u);
                         URL url = new URL(u);
                         //URL url = new URL("http://hustle.altervista.org/getSeries.php?user_id=" + user_id);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
                         s = br.readLine();
-                        Log.d("HUSTLE", "aggiornato profilo show di " + friend.name);
+                        //Log.d("HUSTLE", "aggiornato profilo show di " + friend.name);
                         options = getSharedPreferences(user_id, Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = options.edit();
                         editor.putString(user_id, s);
                         editor.commit();
                     } catch (IOException e) {
-                        Log.d("HUSTLE", "ERRORE " + s);
+                        //Log.d("HUSTLE", "ERRORE " + s);
                         e.printStackTrace();
                     }catch(Exception e){
                         e.printStackTrace();
@@ -1128,10 +1128,10 @@ public class MainActivity extends AppCompatActivity {
         String id = options.getString("id_facebook", null);
 
         String fbId = profilePictureInvisible.getProfileId();
-        Log.d("HUSTLE", "Sto per aggiornare facebook, profileID: " + profilePictureInvisible.getProfileId() + ", id delle preferenze: " + id);
+        //Log.d("HUSTLE", "Sto per aggiornare facebook, profileID: " + profilePictureInvisible.getProfileId() + ", id delle preferenze: " + id);
         profilePictureInvisible.setProfileId(id);
 
-        Log.d("HUSTLE", "Updating circle profile");
+        //Log.d("HUSTLE", "Updating circle profile");
         //ImageView profileImageView = ((ImageView)profilePictureInvisible.getChildAt(0));
         Bitmap bitmap  = ((BitmapDrawable)((ImageView)profilePictureInvisible.getChildAt(0)).getDrawable()).getBitmap();
         circleImageView.setImageBitmap(bitmap);
@@ -1195,7 +1195,7 @@ public class MainActivity extends AppCompatActivity {
                             appendQueryParameter("language", Locale.getDefault().getLanguage()).
                             build();
                     String u = builtUri.toString();
-                    Log.d("SEASON", "requesting: " + u);
+                    //Log.d("SEASON", "requesting: " + u);
                     URL url = new URL(u);
                     //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -1227,7 +1227,7 @@ public class MainActivity extends AppCompatActivity {
                 if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
                     return null;
                 }
-                Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
+                //Log.d("HUSTLEPROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
 
 
                 return ""+((10000/numberOfSeasons)*(actualSeason-1) + (10000/numberOfSeasons/actualSeasonNumberEpisodes)*actualEpisodeNumber);
@@ -1240,7 +1240,7 @@ public class MainActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.VISIBLE);
                     progressBar.setMax(10000);
                     progressBar.setProgress(Integer.parseInt(n));
-                    Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
+                    //Log.d("HUSTLEprogress", "progresso di "+showProgress.title+": "+Integer.parseInt(n) + " di 10000");
                 }
             }
         };

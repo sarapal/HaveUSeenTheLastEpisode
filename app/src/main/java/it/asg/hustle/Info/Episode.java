@@ -52,7 +52,7 @@ public class Episode implements ThumbnailViewer {
     }
 
     public Episode(JSONObject jo) {
-        Log.d("HUSTLE", "Chiamato costruttore episode con parametro: " + jo.toString());
+        //Log.d("HUSTLE", "Chiamato costruttore episode con parametro: " + jo.toString());
         this.watchingFriends =new ArrayList<Friend>();
         this.bmp = null;
         try {
@@ -90,7 +90,7 @@ public class Episode implements ThumbnailViewer {
                 }
             }
             if (jo.has("language")) {
-                Log.d("HUSTLE", "Episode in creazione con lingua: " + jo.getString("language"));
+                //Log.d("HUSTLE", "Episode in creazione con lingua: " + jo.getString("language"));
                 this.language = new String(jo.getString("language"));
             }
             if (jo.has("firstaired")) {
@@ -116,7 +116,7 @@ public class Episode implements ThumbnailViewer {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d("HUSTLE", "Episode creato ");
+        //Log.d("HUSTLE", "Episode creato ");
     }
 
     public JSONObject toJSON()

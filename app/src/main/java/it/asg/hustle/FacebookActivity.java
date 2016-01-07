@@ -79,7 +79,7 @@ public class FacebookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(AccessToken.getCurrentAccessToken() != null) {
-                    Log.d("HUSTLE", "Setting id_facebook e name to NULL");
+                    //Log.d("HUSTLE", "Setting id_facebook e name to NULL");
                     SharedPreferences options = getSharedPreferences("id_facebook", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = options.edit();
                     editor.putString("id_facebook", null);
@@ -158,7 +158,7 @@ public class FacebookActivity extends AppCompatActivity {
                         editor = options.edit();
                         editor.putString("name_facebook", json.getString("name"));
                         editor.commit();
-                        Log.d("HUSTLE", "SAVING id_facebook :" + json.getString("id") + " with name: " + json.getString("name"));
+                        //Log.d("HUSTLE", "SAVING id_facebook :" + json.getString("id") + " with name: " + json.getString("name"));
                     }
 
                 } catch (JSONException e) {

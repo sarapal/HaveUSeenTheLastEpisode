@@ -44,7 +44,7 @@ public class Show implements ThumbnailViewer {
     }
 
     public Show(JSONObject jo) {
-        Log.d("HUSTLE", "Chiamato costruttore show con parametro: " + jo.toString());
+        //Log.d("HUSTLE", "Chiamato costruttore show con parametro: " + jo.toString());
         this.friends = new ArrayList<Friend>();
         try {
             if (jo.has("banner")) {
@@ -95,7 +95,7 @@ public class Show implements ThumbnailViewer {
                 this.airtime =jo.getString("airtime");
             }
 
-            Log.d("HUSTLE", "Show in creazione con lingua: " + jo.getString("language"));
+            //Log.d("HUSTLE", "Show in creazione con lingua: " + jo.getString("language"));
             this.language = new String(jo.getString("language"));
 
             this.source = jo;
@@ -108,7 +108,7 @@ public class Show implements ThumbnailViewer {
             e.printStackTrace();
         }
         this.bmp = null;
-        Log.d("HUSTLE", "Show creato con lingua: " + this.language);
+        //Log.d("HUSTLE", "Show creato con lingua: " + this.language);
     }
 
     private String parseActors(String actors) {

@@ -82,7 +82,7 @@ public class FriendActivity extends AppCompatActivity {
 
 
         if (CheckConnection.isConnected(getApplicationContext())) {
-            Log.d("HUSTLE", "onCreate, connesso a internet, scarico le serie");
+            //Log.d("HUSTLE", "onCreate, connesso a internet, scarico le serie");
             downloadMySeries(gridAdapter, id);
         }
     }
@@ -140,7 +140,7 @@ public class FriendActivity extends AppCompatActivity {
                             appendQueryParameter("language", Locale.getDefault().getLanguage()).
                             build();
                     String u = builtUri.toString();
-                    Log.d("HUSTLE", "requesting: " + u);
+                    //Log.d("HUSTLE", "requesting: " + u);
                     url = new URL(u);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());

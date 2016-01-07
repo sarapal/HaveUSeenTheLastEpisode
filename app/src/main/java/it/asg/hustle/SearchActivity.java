@@ -84,7 +84,7 @@ public class SearchActivity extends AppCompatActivity {
         } else {
             searchv.requestFocus();
         }
-        Log.d("HUSTLE", "SearchActivity onCreate() completed");
+        //Log.d("HUSTLE", "SearchActivity onCreate() completed");
 
     }
 
@@ -100,7 +100,7 @@ public class SearchActivity extends AppCompatActivity {
         adapter = new SearchShowRecyclerAdapter(shows, this);
         rw.setAdapter(adapter);
         if (!CheckConnection.isConnected(getApplicationContext())) {
-            Log.d("HUSTLE","NO connessione. sto scaricando serie dal db locale");
+            //Log.d("HUSTLE","NO connessione. sto scaricando serie dal db locale");
             // Effettua la ricerca nel DB locale
             JSONArray ja = DBHelper.getSeriesByNameFromDB(tvShowTitle, this.locale);
             if (ja != null) {
@@ -112,7 +112,7 @@ public class SearchActivity extends AppCompatActivity {
         }
 
 
-        Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
+        //Log.d("HUSTLE", "Searching for serie: " + tvShowTitle);
         final ProgressDialog progDailog = new ProgressDialog(SearchActivity.this);
         final String msg_loading = getResources().getString(R.string.searching);
 
@@ -141,7 +141,7 @@ public class SearchActivity extends AppCompatActivity {
                             appendQueryParameter("full", null).
                             build();
                     String u = builtUri.toString();
-                    Log.d("HUSTLE", "requesting: " + u);
+                    //Log.d("HUSTLE", "requesting: " + u);
                     url = new URL(u);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -152,7 +152,7 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Log.d("HUSTLE", "returned: " + s);
+                //Log.d("HUSTLE", "returned: " + s);
                 return s;
             }
 
@@ -182,7 +182,7 @@ public class SearchActivity extends AppCompatActivity {
         for (int i = 0; i< (ja != null ? ja.length() : 0); i++) {
             try {
                 JSONObject jo = ja.getJSONObject(i);
-                Log.d("HUSTLE", "Show: " + jo.toString());
+                //Log.d("HUSTLE", "Show: " + jo.toString());
                 Show s1 = new Show(jo);
                 shows.add(s1);
                 adapter.notifyDataSetChanged();

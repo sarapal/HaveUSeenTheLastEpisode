@@ -178,16 +178,16 @@ public class ShowActivity extends AppCompatActivity {
                 int currDay = Integer.parseInt(currentDate[0]);
                 int currMonth = Integer.parseInt(currentDate[1])-1;
                 int currYear = Integer.parseInt(currentDate[2]);
-                Log.d("CALENDAR-CurrentDate","currDay= "+currDay);
-                Log.d("CALENDAR-CurrentDate", "currMonth= " + currMonth);
-                Log.d("CALENDAR-CurrentDate","currYear= "+currYear);
+                //Log.d("CALENDAR-CurrentDate","currDay= "+currDay);
+                //Log.d("CALENDAR-CurrentDate", "currMonth= " + currMonth);
+                //Log.d("CALENDAR-CurrentDate","currYear= "+currYear);
 
                 int lastSeasonNumber = lastEpisode.season;
                 int lastNumber = lastEpisode.episodeNumber;
 
-                Log.d("CALENDAR", "airday: " + show.airday + " //  airtime: " + show.airtime);
-                Log.d("CALENDAR", "Last episode, Season: " + lastSeasonNumber + " Episode: "+ lastNumber);
-                Log.d("CALENDAR", lastEpisode.toString());
+                //Log.d("CALENDAR", "airday: " + show.airday + " //  airtime: " + show.airtime);
+                //Log.d("CALENDAR", "Last episode, Season: " + lastSeasonNumber + " Episode: "+ lastNumber);
+                //Log.d("CALENDAR", lastEpisode.toString());
 
                 Calendar cal = Calendar.getInstance();
                 Intent intent = new Intent(Intent.ACTION_EDIT);
@@ -202,7 +202,7 @@ public class ShowActivity extends AppCompatActivity {
                     Toast.makeText(ShowActivity.this, "Next episode date is TBA", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Log.d("CALENDAR", "date of next episode: " + nextDate);
+                //Log.d("CALENDAR", "date of next episode: " + nextDate);
                 // returns an array of string:
                 // elem 0 is year, elem 1 is month, elem 2 is day
                 String[] parsedDate = parsingDate(nextDate);
@@ -210,9 +210,9 @@ public class ShowActivity extends AppCompatActivity {
                 int month = Integer.parseInt(parsedDate[1]) - 1;
                 int day = Integer.parseInt(parsedDate[2]);
 
-                Log.d("CALENDAR-EpDay","EpDay= "+day);
-                Log.d("CALENDAR-EpMonth", "EpMonth= " + month);
-                Log.d("CALENDAR-EpYear","EpYear= "+year);
+                //Log.d("CALENDAR-EpDay","EpDay= "+day);
+                //Log.d("CALENDAR-EpMonth", "EpMonth= " + month);
+                //Log.d("CALENDAR-EpYear","EpYear= "+year);
 
                 //
                 /* comparing Episode airday, that user wants to save on calendar with current day
@@ -273,7 +273,7 @@ public class ShowActivity extends AppCompatActivity {
 
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
         if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270){
-            Log.d("HUSTLE", "landscape mode!");
+            //Log.d("HUSTLE", "landscape mode!");
         }
     }
 
@@ -383,7 +383,7 @@ public class ShowActivity extends AppCompatActivity {
                                 appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
-                        Log.d("SEASON", "requesting: " + u);
+                        //Log.d("SEASON", "requesting: " + u);
                         URL url = new URL(u);
                         //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + params[0] + "&season=" + params[1] + x);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -478,14 +478,14 @@ public class ShowActivity extends AppCompatActivity {
                                 appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
-                        Log.d("SEASON", "requesting: " + u);
+                        //Log.d("SEASON", "requesting: " + u);
                         URL url = new URL(u);
                         //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         InputStream in = new BufferedInputStream(conn.getInputStream());
                         BufferedReader br = new BufferedReader(new InputStreamReader(in));
                         s = br.readLine();
-                        Log.d("HUSTLE", "puntate viste da " + friend.name + ": " + s);
+                        //Log.d("HUSTLE", "puntate viste da " + friend.name + ": " + s);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -761,7 +761,7 @@ public class ShowActivity extends AppCompatActivity {
     ArrayList<Friend> getFriendList(){
         SharedPreferences options = getSharedPreferences("friend_list", Context.MODE_PRIVATE);
         String friend_list_json_string = options.getString("friend_list", null);
-        Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
+        //Log.d("HUSTLE", "lista amici totale: " + friend_list_json_string);
         ArrayList<Friend> return_list = new ArrayList<Friend>();
         if(friend_list_json_string != null){
             try {
@@ -794,7 +794,7 @@ public class ShowActivity extends AppCompatActivity {
                             appendQueryParameter("language", Locale.getDefault().getLanguage()).
                             build();
                     String u = builtUri.toString();
-                    Log.d("SEASON", "requesting: " + u);
+                    //Log.d("SEASON", "requesting: " + u);
                     URL url = new URL(u);
                     //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -876,7 +876,7 @@ public class ShowActivity extends AppCompatActivity {
                                 appendQueryParameter("language", Locale.getDefault().getLanguage()).
                                 build();
                         String u = builtUri.toString();
-                        Log.d("FRIEND", "requesting: " + u);
+                        //Log.d("FRIEND", "requesting: " + u);
                         URL url = new URL(u);
                         //URL url = new URL("http://hustle.altervista.org/getSeries_bis.php?user_id_short=" + user_id + "&seriesid_short=" + series_id);
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -956,7 +956,7 @@ public class ShowActivity extends AppCompatActivity {
     int[] parsingTime(String timeS, String delimiter){
         int[] time = new int[2];
         String[] hours = timeS.split(delimiter);
-        Log.d("CALENDAR","ParsedTime: "+hours);
+        //Log.d("CALENDAR","ParsedTime: "+hours);
         String[] minutes = hours[1].split(" ");
         int min = Integer.parseInt(minutes[0]);
         int hour = Integer.parseInt(hours[0]);

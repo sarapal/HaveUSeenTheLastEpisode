@@ -150,7 +150,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                             appendQueryParameter("language", Locale.getDefault().getLanguage()).
                             build();
                     String u = builtUri.toString();
-                    Log.d("SEASON_PROGRESS", "requesting: " + u);
+                    //Log.d("SEASON_PROGRESS", "requesting: " + u);
                     URL url = new URL(u);
                     //URL url = new URL("http://hustle.altervista.org/getEpisodes.php?seriesid=" + series_id + "&season=all&user_id=" + friend_id + "&short=true");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -182,7 +182,7 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                 if (numberOfSeasons ==0 || actualSeasonNumberEpisodes==0){
                     return null;
                 }
-                Log.d("SEASON_PROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
+                //Log.d("SEASON_PROGRESS", "SeasonTot:" +numberOfSeasons+ ";SeasonNumber:"+actualSeason+";EpisodeNumber:"+actualEpisodeNumber+" of "+actualSeasonNumberEpisodes+" episodes");
 
 
                 return ""+((10000/numberOfSeasons)*(actualSeason-1) + (10000/numberOfSeasons/actualSeasonNumberEpisodes)*actualEpisodeNumber);
