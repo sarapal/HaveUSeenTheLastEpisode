@@ -66,6 +66,9 @@ public class EpisodeActivity extends AppCompatActivity {
             updateRatingBar(ep);
             //overview card
             description.setText(ep.overview);
+            // airdate
+            TextView air = (TextView) findViewById(R.id.airdate_episode);
+            air.setText(ep.firstaired);
             //titolo e immagine
             collapsingToolbar.setTitle(ep.title);
             ImageView iv_epImg = (ImageView) findViewById(R.id.episode_image);

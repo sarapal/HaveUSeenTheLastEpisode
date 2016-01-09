@@ -134,7 +134,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
         if (!ep.bmpPath.equals("http://thetvdb.com/banners/")) {
             //new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
             // TODO: add placeholder
-            Picasso.with(context).load(imgURL).resize(maxImageWidth, maxImageWidth).centerCrop().into(viewHolder.epImg, new Callback() {
+            Picasso.with(context).load(imgURL).resize(maxImageWidth, maxImageWidth/2).centerCrop().into(viewHolder.epImg, new Callback() {
                 @Override
                 public void onSuccess() {
                     // TODO: setThumbnail on ep Object is not working

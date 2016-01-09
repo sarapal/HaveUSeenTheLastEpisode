@@ -108,6 +108,45 @@
 
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/activity_episode_airdate"
+                    android:layout_gravity="top"
+                    android:layout_width="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_height="wrap_content"
+                    card_view:theme="@style/CardStyleEp"
+                    card_view:cardPreventCornerOverlap="false"
+                    card_view:cardCornerRadius="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/airdate_episode_title"
+                            android:text="@string/airdate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="24dp"
+                            android:paddingRight="24dp"
+                            android:paddingTop="24dp"
+                            android:textColor="@color/cardview_title"
+                            android:textSize="14dp" />
+
+                        <TextView
+                            android:id="@+id/airdate_episode"
+                            android:padding="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:textColor="@color/cardview_text"/>
+
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
                 <android.support.v7.widget.CardView
                     xmlns:card_view="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/activity_episode_rating"

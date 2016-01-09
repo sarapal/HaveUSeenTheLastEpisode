@@ -89,9 +89,8 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
             if (item.getShow().poster != null) {
                 if (!item.getShow().poster.equals("http://thetvdb.com/banners/")) {
                     //new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
-                    /*Picasso p = Picasso.with(ctx);
-                    p.setIndicatorsEnabled(true);
-                    p.load(item.getShow().poster).into(viewHolder.thumbnail);*/
+                    //Picasso.with(ctx).setIndicatorsEnabled(true);
+                    //Log.d("HUSTLE", "requesting: " + item.getShow().poster);
                     Picasso.with(ctx).load(item.getShow().poster).fit().into(viewHolder.thumbnail);
                 }
             } else {

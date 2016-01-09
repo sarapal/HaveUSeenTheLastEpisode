@@ -45,6 +45,8 @@
     <string name="progress_text_title">Progress</string>
     <string name="title_activity_friend" translatable="false">FriendActivity</string>
 
+    <string name="airdate">Air date</string>
+
     <string name="hello_world" translatable="false">Hello world!</string>
 
 </resources>
