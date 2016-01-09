@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -30,6 +32,8 @@ import java.util.Locale;
 import it.asg.hustle.Info.Episode;
 import it.asg.hustle.Info.Show;
 import it.asg.hustle.Utils.CheckConnection;
+import it.asg.hustle.Utils.ImageDownloader;
+
 /**
  * Created by sara on 17/09/2015.
  */
@@ -90,7 +94,19 @@ public class GridAdapter  extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
                     //new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
                     //Picasso.with(ctx).setIndicatorsEnabled(true);
                     //Log.d("HUSTLE", "requesting: " + item.getShow().poster);
-                    Picasso.with(ctx).load(item.getShow().poster).fit().into(viewHolder.thumbnail);
+                    // TODO: error image is blurry
+                    Picasso.with(ctx).load(item.getShow().poster).placeholder(R.drawable.placeholder).error(R.drawable.ic_not_found).fit().into(viewHolder.thumbnail, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError() {
+                            //Log.d("ERROR_PICASSO", "fail to fetch " + item.getShow().poster);
+                            new ImageDownloader(ctx, reqWidth, reqHeight).download(item.getShow().poster, viewHolder.thumbnail, item);
+                        }
+                    });
                 }
             } else {
                 //Log.d("NOPOSTER", "Lo show " + item.getShow().title + " non ha poster: " + item.getShow());

@@ -43,7 +43,8 @@
                 android:layout_width="@dimen/grid_item_ImageView_width"
                 android:layout_height="@dimen/grid_item_RelativeLayout_height"
                 android:scaleType="centerCrop"
-                android:layout_above="@+id/title" />
+                android:layout_above="@+id/title"
+                android:background="@color/cardview_background"/>
 
             <ProgressBar
                 android:layout_width="match_parent"
