@@ -1,7 +1,5 @@
 package it.asg.hustle.Info;
 
-import android.graphics.Bitmap;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 

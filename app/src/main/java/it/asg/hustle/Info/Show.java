@@ -1,13 +1,11 @@
 package it.asg.hustle.Info;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import it.asg.hustle.Interfaces.ThumbnailViewer;

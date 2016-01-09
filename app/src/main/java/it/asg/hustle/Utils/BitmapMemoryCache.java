@@ -1,7 +1,6 @@
 package it.asg.hustle.Utils;
 
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.LruCache;
 

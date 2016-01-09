@@ -2,9 +2,7 @@ package it.asg.hustle.Utils;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 
 import java.lang.ref.WeakReference;
 
