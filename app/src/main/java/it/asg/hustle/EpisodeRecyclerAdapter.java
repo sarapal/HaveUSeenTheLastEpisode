@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -18,8 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
@@ -131,15 +132,20 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
         if (!ep.bmpPath.equals("http://thetvdb.com/banners/")) {
             //new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
-            Picasso.with(context).load(imgURL).placeholder(R.drawable.placeholder).resize(maxImageWidth, maxImageWidth / 2).centerCrop().into(viewHolder.epImg, new Callback() {
+            Picasso.with(context).load(imgURL).placeholder(R.drawable.placeholder).resize(maxImageWidth, maxImageWidth / 2).centerCrop().into(new Target() {
                 @Override
-                public void onSuccess() {
-                    // TODO: setThumbnail on ep Object is not working
-                    //ep.setThumbnail(((BitmapDrawable) viewHolder.epImg.getDrawable()).getBitmap());
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    viewHolder.epImg.setImageBitmap(bitmap);
+                    ep.setThumbnail(bitmap);
                 }
 
                 @Override
-                public void onError() {
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
 
                 }
             });
