@@ -39,7 +39,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     private Display display;
     public static final int EP_CHANGED = 1;
 
-
     public EpisodeRecyclerAdapter(Context c, Season season) {
         this.context = c;
         if (season.episodesList != null) {
@@ -100,7 +99,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
         viewHolder.cb.setWidth(dimPX/12);
 
-
         // Imposta la TextView con indice episodio: titolo episodio
         viewHolder.mTextView.setText((i+1)+": "+item);
         if (episodes.get(i).watchingFriends.size() != 0) {
@@ -133,8 +131,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
         if (!ep.bmpPath.equals("http://thetvdb.com/banners/")) {
             //new ImageDownloader(context, maxImageWidth, maxImageWidth).download(imgURL, viewHolder.epImg, ep);
-            // TODO: add placeholder
-            Picasso.with(context).load(imgURL).resize(maxImageWidth, maxImageWidth/2).centerCrop().into(viewHolder.epImg, new Callback() {
+            Picasso.with(context).load(imgURL).placeholder(R.drawable.placeholder).resize(maxImageWidth, maxImageWidth / 2).centerCrop().into(viewHolder.epImg, new Callback() {
                 @Override
                 public void onSuccess() {
                     // TODO: setThumbnail on ep Object is not working
@@ -146,6 +143,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
                 }
             });
+        } else {
+            Picasso.with(context).load(R.drawable.placeholder).placeholder(R.drawable.placeholder).error(R.drawable.placeholder).resize(maxImageWidth, maxImageWidth/2).into(viewHolder.epImg);
         }
 
         // mette check o uncheck per l'episodio a seconda del valore che ha l'oggetto Episode
